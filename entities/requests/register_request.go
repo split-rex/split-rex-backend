@@ -1,12 +1,8 @@
 package requests
 
-import (
-	"split-rex-backend/types"
-)
-
 type RegisterRequest struct {
-	Name     string                `gorm:"not null"`
-	Email    string                `gorm:"not null;unique"`
-	Username string                `gorm:"not null;unique"`
-	Password types.EncryptedString `gorm:"not null"`
+	Name     string `json:"name" form:"name" query:"name"`
+	Email    string `json:"email" form:"email" query:"email"`
+	Username string `json:"username" form:"username" query:"username"`
+	Password string `json:"password" form:"password" query:"password"`
 }

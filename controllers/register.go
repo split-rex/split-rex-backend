@@ -7,9 +7,11 @@ import (
 	"split-rex-backend/configs/middlewares"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
+	"split-rex-backend/types"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -49,7 +51,13 @@ func RegisterController(c echo.Context) error {
 	}
 
 	// insert user
-	if err := db.Create(&registerRequest).Error; err != nil {
+	if err := db.Create(&entities.User{
+		ID:       uuid.New(),
+		Username: registerRequest.Username,
+		Email:    registerRequest.Email,
+		Name:     registerRequest.Name,
+		Password: types.EncryptedString(registerRequest.Password),
+	}).Error; err != nil {
 		response.Message = "ERROR: INTERNAL SERVER ERROR"
 		return c.JSON(http.StatusInternalServerError, response)
 	}
