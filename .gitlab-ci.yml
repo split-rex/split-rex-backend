@@ -1,23 +1,19 @@
-image: golang:1.19
+image: golang:latest
 
 stages:
   - test
   - build
 
-before_script:
-  - go get -u github.com/golang/dep/cmd/dep
-  - mkdir -p $GOPATH/src
-  - cd $GOPATH/src
-  - ln -s $CI_PROJECT_DIR
-  - cd $CI_PROJECT_NAME
-  - dep ensure
-
-test:
+format:
   stage: test
   script:
-    - go test
+    - go test ./tests -v
 
-build:
+compile:
   stage: build
   script:
-    - go build
+    - mkdir -p mybinaries
+    - go build -o mybinaries ./...
+  artifacts:
+    paths:
+      - mybinaries
