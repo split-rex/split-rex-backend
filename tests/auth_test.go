@@ -11,7 +11,7 @@ import (
 )
 
 func TestRegister(t *testing.T) {
-	err := godotenv.Load("../.env")
+	err := godotenv.Load()
 	if err != nil {
 		t.Fatalf("err loading: %v", err)
 	}
@@ -30,7 +30,7 @@ func TestRegister(t *testing.T) {
 }
 
 func TestLogin(t *testing.T) {
-	err := godotenv.Load("../.env")
+	err := godotenv.Load()
 	if err != nil {
 		t.Fatalf("err loading: %v", err)
 	}
