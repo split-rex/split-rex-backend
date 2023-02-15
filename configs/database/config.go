@@ -35,7 +35,7 @@ func (database *Database) lazyInit() {
 		}
 
 		db.AutoMigrate(
-			&entities.Example{},
+			&entities.User{},
 		)
 
 		database.connection = db

@@ -18,7 +18,7 @@ func Run() {
 	e.Use(middlewares.Cors())
 
 	/* Routes */
-	routes.ExampleRoute(e)
+	routes.AuthRoute(e)
 
 	port := os.Getenv("PORT")
 	e.Logger.Fatal(e.Start(":" + port))
