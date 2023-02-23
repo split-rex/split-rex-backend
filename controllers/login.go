@@ -7,6 +7,7 @@ import (
 	"split-rex-backend/configs/middlewares"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
+	"split-rex-backend/types"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -21,23 +22,23 @@ func LoginController(c echo.Context) error {
 
 	loginRequest := requests.LoginRequest{}
 	if err := c.Bind(&loginRequest); err != nil {
-		response.Message = "ERROR: BAD REQUEST"
+		response.Message = types.ERROR_BAD_REQUEST
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
 	user := entities.User{}
 	condition := entities.User{Email: loginRequest.Email}
 	if err := db.Where(&condition).Find(&user).Error; err != nil {
-		response.Message = "ERROR: INTERNAL SERVER ERROR"
+		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 	if user.Username == "" {
-		response.Message = "ERROR: INVALID USERNAME OR PASSWORD"
+		response.Message = types.ERROR_FAILED_LOGIN
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
 	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(loginRequest.Password)); err != nil {
-		response.Message = "ERROR: INVALID USERNAME OR PASSWORD"
+		response.Message = types.ERROR_FAILED_LOGIN
 		return c.JSON(http.StatusUnauthorized, response)
 	}
 
@@ -51,11 +52,15 @@ func LoginController(c echo.Context) error {
 	
 	signedAuthToken, err := unsignedAuthToken.SignedString(config.JWTSignatureKey)
 	if err != nil {
-		response.Message = "ERROR: JWT SIGNING ERROR"
+		response.Message = types.ERROR_JWT_SIGNING
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
-	response.Message = "SUCCESS"
+	response.Message = types.SUCCESS
 	response.Data = signedAuthToken
 	return c.JSON(http.StatusAccepted, response)
+}
+
+func LoginGoogleHandler(c echo.Context) {
+
 }

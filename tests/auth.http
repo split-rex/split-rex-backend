@@ -1,19 +1,19 @@
-POST http://localhost:8080/register
+POST https://split-rex-backend-7v6i6rndga-et.a.run.app/register
 Content-Type: application/json
 
 {
-    "name": "Samuel C",
-    "email": "samuel.swandi@gmail.com",
-    "username": "samuelswandi",
-    "password": "sem"
+    "name": "samuel",
+    "email": "",
+    "username": "",
+    "password": ""
 }
 
 ###
 
-POST http://localhost:8080/login
+POST https://split-rex-backend-7v6i6rndga-et.a.run.app//login
 Content-Type: application/json
 
 {
-    "email": "samuel.swandi@gmail.com",
-    "password": "semA"
+    "email": "patrick@gmail.com",
+    "password": "patrick"
 }

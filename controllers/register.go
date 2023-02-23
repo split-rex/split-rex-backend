@@ -22,7 +22,7 @@ func RegisterController(c echo.Context) error {
 
 	registerRequest := requests.RegisterRequest{}
 	if err := c.Bind(&registerRequest); err != nil {
-		response.Message = "ERROR: BAD REQUEST"
+		response.Message = types.ERROR_BAD_REQUEST
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
@@ -32,21 +32,21 @@ func RegisterController(c echo.Context) error {
 
 	// check email
 	if err := db.Where(&conditionEmail).Find(&user).Error; err != nil {
-		response.Message = "ERROR: INTERNAL SERVER ERROR"
+		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 	if user.Email != "" {
-		response.Message = "EMAIL_EXISTED"
+		response.Message = types.ERROR_EMAIL_EXISTED
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
 	// check username
 	if err := db.Where(&conditionUsername).Find(&user).Error; err != nil {
-		response.Message = "ERROR: INTERNAL SERVER ERROR"
+		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 	if user.Username != "" {
-		response.Message = "USERNAME_EXISTED"
+		response.Message = types.ERROR_USERNAME_EXISTED
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
@@ -58,7 +58,7 @@ func RegisterController(c echo.Context) error {
 		Name:     registerRequest.Name,
 		Password: types.EncryptedString(registerRequest.Password),
 	}).Error; err != nil {
-		response.Message = "ERROR: INTERNAL SERVER ERROR"
+		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
@@ -72,11 +72,11 @@ func RegisterController(c echo.Context) error {
 
 	signedAuthToken, err := unsignedAuthToken.SignedString(config.JWTSignatureKey)
 	if err != nil {
-		response.Message = "ERROR: JWT SIGNING ERROR"
+		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
-	response.Message = "SUCCESS"
+	response.Message = types.SUCCESS
 	response.Data = signedAuthToken
 	return c.JSON(http.StatusAccepted, response)
 }
