@@ -17,3 +17,13 @@ Content-Type: application/json
     "email": "patrick@gmail.com",
     "password": "patrick"
 }
+
+###
+
+POST http://localhost:8080/makeFriendRequest
+Content-Type: application/json
+
+{
+    "user_id": "ec1cfc1c-1518-445f-850b-58b09c3eccd0",
+    "friend_id": "8116941c-cb21-4948-bd39-de54b24f534d"
+}

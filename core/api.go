@@ -19,6 +19,7 @@ func Run() {
 
 	/* Routes */
 	routes.AuthRoute(e)
+	routes.FriendRoute(e)
 
 	port := os.Getenv("PORT")
 	e.Logger.Fatal(e.Start(":" + port))
