@@ -5,6 +5,7 @@ import (
 	"split-rex-backend/configs/database"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
+	"split-rex-backend/entities/responses"
 	"split-rex-backend/types"
 
 	"github.com/google/uuid"
@@ -67,15 +68,77 @@ func EditGroupInfoController(c echo.Context) error {
 }
 
 func UserGroupsController(c echo.Context) error {
-	// db := database.DB.GetConnection()
-	response := entities.Response[string]{}
+	db := database.DB.GetConnection()
+	response := entities.Response[[]responses.UserGroupResponse]{}
+
+	// TODO: get uuid from jwt token
+	userID := 1
+
+	groups := []entities.Group{}
+
+	// TODO: Make Sure Query is Correct
+	if err := db.Where("member_id @> ARRAY[?]::uuid[]", userID).Find(&groups).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	data := []responses.UserGroupResponse{}
+
+	for _, group := range groups {
+		data = append(data, responses.UserGroupResponse{
+			GroupID:   group.GroupID,
+			Name:      group.Name,
+			MemberID:  group.MemberID,
+			StartDate: group.StartDate,
+			EndDate:   group.EndDate,
+
+			// TODO: Calculate Things & Determine Types
+			Type:         "HARDCODED",
+			TotalUnpaid:  0,
+			TotalExpense: 0,
+		})
+	}
+
+	response.Message = types.SUCCESS
+	response.Data = data
+
 	return c.JSON(http.StatusAccepted, response)
 }
 
 func GroupDetailController(c echo.Context) error {
-	// db := database.DB.GetConnection()
-	// config := configs.Config.GetMetadata()
-	response := entities.Response[string]{}
+	db := database.DB.GetConnection()
+	response := entities.Response[responses.GroupDetailResponse]{}
+
+	group := entities.Group{}
+	condition := entities.Group{GroupID: uuid.MustParse(c.QueryParam("id"))}
+
+	if err := db.Where(&condition).Find(&group).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	data := responses.GroupDetailResponse{
+		GroupID:    group.GroupID,
+		Name:       group.Name,
+		StartDate:  group.StartDate,
+		EndDate:    group.EndDate,
+		ListMember: []responses.MemberDetail{},
+	}
+
+	for _, memberID := range group.MemberID {
+		data.ListMember = append(data.ListMember,
+			responses.MemberDetail{
+				ID: memberID,
+
+				// TODO: Calculate Things & Determine Types
+				Type:        "hardcoded",
+				TotalUnpaid: 0,
+			})
+	}
+
+	response.Message = types.SUCCESS
+	response.Data = data
+
 	return c.JSON(http.StatusAccepted, response)
 }
 

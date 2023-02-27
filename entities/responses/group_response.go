@@ -8,6 +8,7 @@ import (
 
 type UserGroupResponse struct {
 	GroupID      uuid.UUID   `json:"group_id"`
+	Name         string      `json:"name"`
 	MemberID     []uuid.UUID `json:"member_id"`
 	StartDate    time.Time   `json:"start_date"`
 	EndDate      time.Time   `json:"end_date"`
@@ -18,6 +19,7 @@ type UserGroupResponse struct {
 
 type GroupDetailResponse struct {
 	GroupID    uuid.UUID      `json:"group_id"`
+	Name       string         `json:"name"`
 	MemberID   []uuid.UUID    `json:"member_id"`
 	StartDate  time.Time      `json:"start_date"`
 	EndDate    time.Time      `json:"end_date"`
