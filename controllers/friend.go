@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"split-rex-backend/configs/database"
@@ -105,8 +104,7 @@ func FriendRequestSent(c echo.Context) error {
 	user_id := c.Get("id").(uuid.UUID)
 	fmt.Println(user_id)
 	db := database.DB.GetConnection()
-	// config := configs.Config.GetMetadata()
-	response := entities.Response[[]string]{}
+	response := entities.Response[[]entities.User]{}
 
 	//check if user_id exist in friend table
 	userFriend := entities.Friend{}
@@ -123,27 +121,35 @@ func FriendRequestSent(c echo.Context) error {
 
 	if userExist {
 		// get username and full name where user_id in Req_sent
-		users := entities.User{}
-		if err := db.Select("id", "username", "name").Where("id IN (?)", userFriend.Req_sent).Find(&users).Error; err != nil {
+		// TODO: ini kayanya harus loop
+		users := []entities.User{}
+		if err := db.Where("id IN ?", userFriend.Req_sent).Select("id", "username", "name").Find(&users).Error; err != nil {
 			response.Message = types.ERROR_INTERNAL_SERVER
 			return c.JSON(http.StatusInternalServerError, response)
 		}
-		// return json of id, username, and full name
-		newResponse := entities.Response[[]byte]{}
-		usersJson, _ := json.MarshalIndent(users, "", " ")
-		fmt.Println(users)
-		fmt.Println(usersJson)
 
-		newResponse.Message = types.SUCCESS
-		newResponse.Data = usersJson
-		fmt.Println("masuk")
-		return c.JSON(http.StatusOK, newResponse)
+		response.Message = types.SUCCESS
+		response.Data = users
+		return c.JSON(http.StatusOK, response)
+
+		// return json of id, username, and full name
+		// newResponse := entities.Response[[]byte]{}
+		// usersJson, _ := json.MarshalIndent(users, "", " ")
+		// fmt.Println(users)
+		// fmt.Println(usersJson)
+
+		// newResponse.Message = types.SUCCESS
+		// newResponse.Data = usersJson
 
 	} else {
-		newResponse := entities.Response[[]byte]{}
-		newResponse.Message = types.SUCCESS
-		newResponse.Data = []byte("[]")
-		fmt.Println("kosong")
-		return c.JSON(http.StatusOK, newResponse)
+		response.Message = types.SUCCESS
+		response.Data = []entities.User{}
+		return c.JSON(http.StatusOK, response)
+
+		// newResponse := entities.Response[[]byte]{}
+		// newResponse.Message = types.SUCCESS
+		// newResponse.Data = []byte("[]")
+		// fmt.Println("kosong")
+		// return c.JSON(http.StatusOK, newResponse)
 	}
 }
