@@ -11,6 +11,7 @@ require (
 
 require (
 	github.com/golang-jwt/jwt/v4 v4.4.3
+	github.com/labstack/echo v3.3.10+incompatible
 	github.com/lib/pq v1.10.7
 )
 

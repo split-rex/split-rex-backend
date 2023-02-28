@@ -10,7 +10,7 @@ Content-Type: application/json
 
 ###
 
-POST https://split-rex-backend-7v6i6rndga-et.a.run.app//login
+POST http://localhost:8080/login
 Content-Type: application/json
 
 {
@@ -24,6 +24,11 @@ POST http://localhost:8080/makeFriendRequest
 Content-Type: application/json
 
 {
-    "user_id": "ec1cfc1c-1518-445f-850b-58b09c3eccd0",
-    "friend_id": "8116941c-cb21-4948-bd39-de54b24f534d"
+    "user_id": "6251ac85-e43d-4b88-8779-588099df5008",
+    "friend_id": "1933514c-ae76-43ee-aeef-c98e22010c99"
 }
+
+###
+GET http://localhost:8080/friendRequestSent
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc2MzY3OTMsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.AWMzI0YFscCm8fQuG1JeeweZVOJrsTlp0aBj1VS4DmQ

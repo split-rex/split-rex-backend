@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"split-rex-backend/configs/middlewares"
 	"split-rex-backend/controllers"
 
 	"github.com/labstack/echo/v4"
@@ -8,4 +9,6 @@ import (
 
 func FriendRoute(e *echo.Echo) {
 	e.POST("/makeFriendRequest", controllers.MakeFriendRequest)
+	e.GET("/friendRequestSent", controllers.FriendRequestSent, middlewares.AuthMiddleware)
+	// e.GET("/friendRequestReceived", controllers.FriendRequestReceived)
 }
