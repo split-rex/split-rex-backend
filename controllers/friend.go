@@ -154,5 +154,6 @@ func FriendRequestSent(c echo.Context) error {
 		fmt.Println("kosong")
 		return c.JSON(http.StatusOK, newResponse)
 	}
-
 }
+
+
