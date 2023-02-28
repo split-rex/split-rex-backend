@@ -24,20 +24,12 @@ func MakeFriendRequest(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
-	//check if user_id exist in user table
-	user := entities.User{}
-	user_id, _ := uuid.Parse(friendRequest.User_id)
-
-	condition := entities.User{ID: user_id}
-	if err := db.Where(&condition).Find(&user).Error; err != nil {
-		response.Message = types.ERROR_INTERNAL_SERVER
-		return c.JSON(http.StatusInternalServerError, response)
-	}
+	user_id := c.Get("id").(uuid.UUID)
 
 	//check if friend_id exist in user table
 	friend := entities.User{}
 	friend_id, _ := uuid.Parse(friendRequest.Friend_id)
-	condition = entities.User{ID: friend_id}
+	condition := entities.User{ID: friend_id}
 	if err := db.Where(&condition).Find(&friend).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
@@ -155,5 +147,3 @@ func FriendRequestSent(c echo.Context) error {
 		return c.JSON(http.StatusOK, newResponse)
 	}
 }
-
-

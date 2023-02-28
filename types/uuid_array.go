@@ -26,5 +26,5 @@ func (arrayOfUUID ArrayOfUUID) Value() (driver.Value, error) {
 }
 
 func (ArrayOfUUID) GormDataType() string {
-	return "uuid.UUID[]"
+	return "uuid[]"
 }
