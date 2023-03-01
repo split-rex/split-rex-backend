@@ -66,6 +66,14 @@ func MakeFriendRequest(c echo.Context) error {
 		friendExist = false
 	}
 
+	// TRANSACTION
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
 	//if userExist true
 	if userExist {
 		// check if friend_id already in Friend_id
@@ -91,7 +99,8 @@ func MakeFriendRequest(c echo.Context) error {
 		}
 		// insert friend_id to friend table
 		userFriend.Req_sent = append(userFriend.Req_sent, friend_id)
-		if err := db.Save(&userFriend).Error; err != nil {
+		if err := tx.Save(&userFriend).Error; err != nil {
+			tx.Rollback()
 			response.Message = types.ERROR_INTERNAL_SERVER
 			return c.JSON(http.StatusInternalServerError, response)
 		}
@@ -99,7 +108,8 @@ func MakeFriendRequest(c echo.Context) error {
 		//insert user_id and friend_id to friend table
 		userFriend.ID = user_id
 		userFriend.Req_sent = append(userFriend.Req_sent, friend_id)
-		if err := db.Create(&userFriend).Error; err != nil {
+		if err := tx.Create(&userFriend).Error; err != nil {
+			tx.Rollback()
 			response.Message = types.ERROR_INTERNAL_SERVER
 			return c.JSON(http.StatusInternalServerError, response)
 		}
@@ -109,7 +119,8 @@ func MakeFriendRequest(c echo.Context) error {
 	if friendExist {
 		// insert user_id to friend table
 		friendFriend.Req_received = append(friendFriend.Req_received, user_id)
-		if err := db.Save(&friendFriend).Error; err != nil {
+		if err := tx.Save(&friendFriend).Error; err != nil {
+			tx.Rollback()
 			response.Message = types.ERROR_INTERNAL_SERVER
 			return c.JSON(http.StatusInternalServerError, response)
 		}
@@ -117,12 +128,18 @@ func MakeFriendRequest(c echo.Context) error {
 		//insert friend_id and user_id to friend table
 		friendFriend.ID = friend_id
 		friendFriend.Req_received = append(friendFriend.Req_received, user_id)
-		if err := db.Create(&friendFriend).Error; err != nil {
+		if err := tx.Create(&friendFriend).Error; err != nil {
+			tx.Rollback()
 			response.Message = types.ERROR_INTERNAL_SERVER
 			return c.JSON(http.StatusInternalServerError, response)
 		}
 	}
 
+	// commit transaction
+	if err := tx.Commit().Error; err != nil {
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
+	}
 	response.Message = types.SUCCESS
 	return c.JSON(http.StatusOK, response)
 }
