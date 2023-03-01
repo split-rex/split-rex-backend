@@ -10,6 +10,5 @@ import (
 func AuthRoute(e *echo.Echo) {
 	e.POST("/login", controllers.LoginController)
 	e.POST("/register", controllers.RegisterController)
-
 	e.GET("/profile", controllers.ProfileController, middlewares.AuthMiddleware)
 }

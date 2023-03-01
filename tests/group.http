@@ -1,15 +1,21 @@
-POST https://localhost:8080/userCreateGroup
+POST http://localhost:8080/userCreateGroup
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3MjEzNjgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.cY6c8KlQir0yFApcpgE5-Xfph7hSfCToTQYaC0y8hr0
+
 
 {
     "name": "DAGORLZ",
-    "member_id": [1,2,3],
+    "member_id": [],
     "start_date" : "2020-12-12",
     "end_date" : "2020-12-22",
 }
 
-POST https://localhost:8080/editGroupInfo
+###
+
+POST http://localhost:8080/editGroupInfo
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3MjEzNjgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.cY6c8KlQir0yFApcpgE5-Xfph7hSfCToTQYaC0y8hr0
+
 
 {
     "group_id" : 1,
@@ -17,3 +23,11 @@ Content-Type: application/json
     "start_date" : "2020-12-15",
     "end_date" : "2020-12-25",
 }
+
+###
+GET https://localhost:8080/userGroupOwed
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3MjEzNjgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.cY6c8KlQir0yFApcpgE5-Xfph7hSfCToTQYaC0y8hr0
+
+###
+GET https://localhost:8080/userGroupLent
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3MjEzNjgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.cY6c8KlQir0yFApcpgE5-Xfph7hSfCToTQYaC0y8hr0

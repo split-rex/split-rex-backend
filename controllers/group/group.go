@@ -22,13 +22,42 @@ func UserCreateGroupController(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
-	if err := db.Create(
-		&entities.Group{
-			GroupID:   uuid.New(),
-			Name:      request.Name,
-			StartDate: request.StartDate,
-			EndDate:   request.EndDate,
-		}).Error; err != nil {
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	// please check if user is in member_id or no @patrickamadeus
+	group := &entities.Group{
+		GroupID:   uuid.New(),
+		Name:      request.Name,
+		StartDate: request.StartDate,
+		EndDate:   request.EndDate,
+	}
+	if err := tx.Create(group).Error; err != nil {
+		tx.Rollback()
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// adding group uuid to user's groups (make transaction) @patrickamadeus please check again
+	// get user detail
+	user_id := c.Get("id").(uuid.UUID)
+	user := entities.User{}
+	if err := db.Find(&user, user_id).Error; err != nil {
+		tx.Rollback()
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// add new group to user groups
+	user.Groups = append(user.Groups, group.GroupID)
+
+	// then update
+	if err := db.Save(&user).Error; err != nil {
+		tx.Rollback()
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
@@ -71,7 +100,7 @@ func UserGroupsController(c echo.Context) error {
 	db := database.DB.GetConnection()
 	response := entities.Response[[]responses.UserGroupResponse]{}
 
-	// TODO: get uuid from jwt token
+	// TODO: get uuid from jwt token @patrickamadeus
 	userID := 1
 
 	groups := []entities.Group{}
