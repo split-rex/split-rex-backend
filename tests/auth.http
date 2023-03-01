@@ -18,3 +18,9 @@ Content-Type: application/json
     "password": "nando"
 }
 
+
+###
+
+GET http://localhost:8080/profile
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3MjEzNjgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.cY6c8KlQir0yFApcpgE5-Xfph7hSfCToTQYaC0y8hr0
