@@ -6,6 +6,7 @@ import (
 	"split-rex-backend/configs/database"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
+	"split-rex-backend/entities/responses"
 	"split-rex-backend/types"
 
 	"github.com/google/uuid"
@@ -104,7 +105,7 @@ func FriendRequestSent(c echo.Context) error {
 	user_id := c.Get("id").(uuid.UUID)
 	fmt.Println(user_id)
 	db := database.DB.GetConnection()
-	response := entities.Response[[]entities.User]{}
+	response := entities.Response[[]responses.FriendResponse]{}
 
 	//check if user_id exist in friend table
 	userFriend := entities.Friend{}
@@ -121,35 +122,75 @@ func FriendRequestSent(c echo.Context) error {
 
 	if userExist {
 		// get username and full name where user_id in Req_sent
-		// TODO: ini kayanya harus loop
-		users := []entities.User{}
-		if err := db.Where("id IN ?", userFriend.Req_sent).Select("id", "username", "name").Find(&users).Error; err != nil {
-			response.Message = types.ERROR_INTERNAL_SERVER
-			return c.JSON(http.StatusInternalServerError, response)
+		users := []responses.FriendResponse{}
+		for _, id := range userFriend.Req_sent {
+			user := entities.User{}
+			friend := responses.FriendResponse{}
+			condition := entities.User{ID: id}
+			db.Where(&condition).Select("id", "username", "name").Find(&user)
+			friend.User_id = user.ID.String()
+			friend.Username = user.Username
+			friend.Fullname = user.Name
+			users = append(users, friend)
 		}
-
 		response.Message = types.SUCCESS
-		response.Data = users
+		if len(users) > 0 {
+			response.Data = users
+		} else {
+			response.Message = types.DATA_NOT_FOUND
+		}
 		return c.JSON(http.StatusOK, response)
-
-		// return json of id, username, and full name
-		// newResponse := entities.Response[[]byte]{}
-		// usersJson, _ := json.MarshalIndent(users, "", " ")
-		// fmt.Println(users)
-		// fmt.Println(usersJson)
-
-		// newResponse.Message = types.SUCCESS
-		// newResponse.Data = usersJson
 
 	} else {
+		response.Message = types.DATA_NOT_FOUND
+		response.Data = []responses.FriendResponse{}
+		return c.JSON(http.StatusOK, response)
+	}
+}
+
+func FriendRequestReceived(c echo.Context) error {
+	user_id := c.Get("id").(uuid.UUID)
+	fmt.Println(user_id)
+	db := database.DB.GetConnection()
+	response := entities.Response[[]responses.FriendResponse]{}
+
+	//check if user_id exist in friend table
+	userFriend := entities.Friend{}
+	userExist := true
+	conditionFriend := entities.Friend{ID: user_id}
+	if err := db.Where(&conditionFriend).Find(&userFriend).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+	//check if userFriend empty
+	if userFriend.ID == uuid.Nil {
+		userExist = false
+	}
+
+	if userExist {
+		// get username and full name where user_id in Req_sent
+		users := []responses.FriendResponse{}
+		for _, id := range userFriend.Req_received {
+			user := entities.User{}
+			friend := responses.FriendResponse{}
+			condition := entities.User{ID: id}
+			db.Where(&condition).Select("id", "username", "name").Find(&user)
+			friend.User_id = user.ID.String()
+			friend.Username = user.Username
+			friend.Fullname = user.Name
+			users = append(users, friend)
+		}
 		response.Message = types.SUCCESS
-		response.Data = []entities.User{}
+		if len(users) > 0 {
+			response.Data = users
+		} else {
+			response.Message = types.DATA_NOT_FOUND
+		}
 		return c.JSON(http.StatusOK, response)
 
-		// newResponse := entities.Response[[]byte]{}
-		// newResponse.Message = types.SUCCESS
-		// newResponse.Data = []byte("[]")
-		// fmt.Println("kosong")
-		// return c.JSON(http.StatusOK, newResponse)
+	} else {
+		response.Message = types.DATA_NOT_FOUND
+		response.Data = []responses.FriendResponse{}
+		return c.JSON(http.StatusOK, response)
 	}
 }
