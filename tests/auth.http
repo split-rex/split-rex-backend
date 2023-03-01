@@ -1,11 +1,11 @@
-POST https://split-rex-backend-7v6i6rndga-et.a.run.app/register
+POST http://localhost:8080/register
 Content-Type: application/json
 
 {
-    "name": "samuel",
-    "email": "",
-    "username": "",
-    "password": ""
+    "name": "nando",
+    "email": "nando@gmail.com",
+    "username": "nando",
+    "password": "nando"
 }
 
 ###
@@ -14,34 +14,7 @@ POST http://localhost:8080/login
 Content-Type: application/json
 
 {
-    "email": "patrick@gmail.com",
-    "password": "patrick"
+    "email": "nando@gmail.com",
+    "password": "nando"
 }
 
-###
-
-POST http://localhost:8080/makeFriendRequest
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3NTAzODQsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.idSDttcIXBaGAynBzUGAZvPMxDLhZra6KGedaOMKSK0
-
-{
-    "friend_id": "1933514c-ae76-43ee-aeef-c98e22010c99"
-}
-
-###
-
-GET http://localhost:8080/friendRequestSent
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3MjEzNjgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.cY6c8KlQir0yFApcpgE5-Xfph7hSfCToTQYaC0y8hr0
-
-###
-
-GET http://localhost:8080/friendRequestReceived
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3MjEzNjgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.cY6c8KlQir0yFApcpgE5-Xfph7hSfCToTQYaC0y8hr0
-
-###
-
-GET http://localhost:8080/searchUser?username=gca
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3MjEzNjgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.cY6c8KlQir0yFApcpgE5-Xfph7hSfCToTQYaC0y8hr0

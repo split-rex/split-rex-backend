@@ -313,12 +313,14 @@ func AcceptRequest(c echo.Context) error {
 
 	// check if requester_id exist in req received[] user's friend table
 	found := false
-	user_new_req_received := []uuid.UUID{}
-	for _, id := range userInFriend.Req_received {
+	// user_new_req_received := []uuid.UUID{}
+	fmt.Println(userInFriend.Req_received)
+	for i, id := range userInFriend.Req_received {
+		fmt.Println(id.String())
 		if id.String() == requester_id {
 			found = true
-		} else {
-			user_new_req_received = append(user_new_req_received, id)
+			userInFriend.Req_received = append(userInFriend.Req_received[:i], userInFriend.Req_received[i+1:]...)
+			break
 		}
 	}
 
@@ -335,32 +337,21 @@ func AcceptRequest(c echo.Context) error {
 			tx.Rollback()
 		}
 	}()
-	// user
-	// get all friend_id
-	user_new_friends := []uuid.UUID{}
-	for _, id := range userInFriend.Friend_id {
-		user_new_friends = append(user_new_friends, id)
-	}
-	// append friend_id
-	u_id, _ := uuid.Parse(requester_id)
-	user_new_friends = append(user_new_friends, u_id)
-	// update friend_id
-	if err := tx.Model(&userInFriend).Where(conditionFriend).Update("friend_id", user_new_friends).Error; err != nil {
-		tx.Rollback()
-		response.Message = types.ERROR_INTERNAL_SERVER
-		return c.JSON(http.StatusInternalServerError, response)
-	}
 
-	// update req_received
-	if err := tx.Model(&userInFriend).Where(conditionFriend).Update("req_received", user_new_req_received).Error; err != nil {
+	// user
+	// update userInFriend value
+	req_id, _ := uuid.Parse(requester_id)
+	userInFriend.Friend_id = append(userInFriend.Friend_id, req_id)
+
+	// update user on database
+	if err := tx.Save(&userInFriend).Error; err != nil {
 		tx.Rollback()
-		response.Message = types.ERROR_INTERNAL_SERVER
+		response.Message = types.ERROR_BAD_REQUEST
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
 	// requester
 	requesterInFriend := entities.Friend{}
-	req_id, _ := uuid.Parse(requester_id)
 	conditionRequester := entities.Friend{ID: req_id}
 	// check requester in table friends
 	if err := tx.Where(&conditionRequester).Find(&requesterInFriend).Error; err != nil {
@@ -368,33 +359,30 @@ func AcceptRequest(c echo.Context) error {
 		response.Message = types.ERROR_BAD_REQUEST
 		return c.JSON(http.StatusInternalServerError, response)
 	}
-	// get all req_sent
-	requester_new_req_sent := []uuid.UUID{}
-	for _, id := range requesterInFriend.Req_sent {
-		if id.String() != user_id.String() {
-			requester_new_req_sent = append(requester_new_req_sent, id)
+
+	// update requesterInFriend value
+	for i, id := range requesterInFriend.Req_sent {
+		if id.String() == user_id.String() {
+			//delete element
+			requesterInFriend.Req_sent = append(requesterInFriend.Req_sent[:i], requesterInFriend.Req_sent[i+1:]...)
+			break
 		}
 	}
-	requester_new_friends := []uuid.UUID{}
-	// get all friend
-	for _, id := range requesterInFriend.Friend_id {
-		requester_new_friends = append(requester_new_friends, id)
-	}
-	// append friend_id
-	requester_new_friends = append(requester_new_friends, user_id)
-	// update friend_id
-	if err := tx.Model(&requesterInFriend).Where(conditionRequester).Update("friend_id", requester_new_friends).Error; err != nil {
-		tx.Rollback()
-		response.Message = types.ERROR_BAD_REQUEST
-		return c.JSON(http.StatusInternalServerError, response)
-	}
-	// update req_sent
-	if err := tx.Model(&requesterInFriend).Where(conditionRequester).Update("req_sent", requester_new_req_sent).Error; err != nil {
+	requesterInFriend.Friend_id = append(requesterInFriend.Friend_id, user_id)
+
+	// update requester on database
+	if err := tx.Save(&requesterInFriend).Error; err != nil {
 		tx.Rollback()
 		response.Message = types.ERROR_BAD_REQUEST
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
+	// commit transaction
+	if err := tx.Commit().Error; err != nil {
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+	response.Message = types.SUCCESS
 	return c.JSON(http.StatusOK, response)
 }
 
@@ -430,12 +418,11 @@ func RejectRequest(c echo.Context) error {
 
 	// check if requester_id exist in req received[] user's friend table
 	found := false
-	user_new_req_received := []uuid.UUID{}
-	for _, id := range userInFriend.Req_received {
+	for i, id := range userInFriend.Req_received {
 		if id.String() == requester_id {
 			found = true
-		} else {
-			user_new_req_received = append(user_new_req_received, id)
+			userInFriend.Req_received = append(userInFriend.Req_received[:i], userInFriend.Req_received[i+1:]...)
+			break
 		}
 	}
 
@@ -452,17 +439,12 @@ func RejectRequest(c echo.Context) error {
 			tx.Rollback()
 		}
 	}()
-	// user
-	// get all friend_id
-	user_new_friends := []uuid.UUID{}
-	for _, id := range userInFriend.Friend_id {
-		user_new_friends = append(user_new_friends, id)
-	}
 
-	// update req_received
-	if err := tx.Model(&userInFriend).Where(conditionFriend).Update("req_received", user_new_req_received).Error; err != nil {
+	// user
+	// update user
+	if err := tx.Save(&userInFriend).Error; err != nil {
 		tx.Rollback()
-		response.Message = types.ERROR_INTERNAL_SERVER
+		response.Message = types.ERROR_BAD_REQUEST
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
@@ -476,20 +458,30 @@ func RejectRequest(c echo.Context) error {
 		response.Message = types.ERROR_BAD_REQUEST
 		return c.JSON(http.StatusInternalServerError, response)
 	}
-	// get all req_sent
-	requester_new_req_sent := []uuid.UUID{}
-	for _, id := range requesterInFriend.Req_sent {
-		if id.String() != user_id.String() {
-			requester_new_req_sent = append(requester_new_req_sent, id)
+
+	// update requesterInFriend value
+	for i, id := range requesterInFriend.Req_sent {
+		if id.String() == user_id.String() {
+			//delete element
+			requesterInFriend.Req_sent = append(requesterInFriend.Req_sent[:i], requesterInFriend.Req_sent[i+1:]...)
+			break
 		}
 	}
-	// update req_sent
-	if err := tx.Model(&requesterInFriend).Where(conditionRequester).Update("req_sent", requester_new_req_sent).Error; err != nil {
+
+	// update requester on database
+	if err := tx.Save(&requesterInFriend).Error; err != nil {
 		tx.Rollback()
 		response.Message = types.ERROR_BAD_REQUEST
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
+	// commit transaction
+	if err := tx.Commit().Error; err != nil {
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	response.Message = types.SUCCESS
 	return c.JSON(http.StatusOK, response)
 }
 
