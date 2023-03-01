@@ -1,0 +1,21 @@
+package requests
+
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
+type UserCreateGroupRequest struct {
+	Name      string      `json:"name" form:"name" query:"name"`
+	MemberID  []uuid.UUID `json:"member_id" form:"member_id" query:"member_id"`
+	StartDate time.Time   `json:"start_date" form:"start_date" query:"start_date"`
+	EndDate   time.Time   `json:"end_date" form:"end_date" query:"end_date"`
+}
+
+type EditGroupInfoRequest struct {
+	GroupID   uuid.UUID `json:"group_id" form:"group_id" query:"group_id"`
+	Name      string    `json:"name" form:"name" query:"name"`
+	StartDate time.Time `json:"start_date" form:"start_date" query:"start_date"`
+	EndDate   time.Time `json:"end_date" form:"end_date" query:"end_date"`
+}

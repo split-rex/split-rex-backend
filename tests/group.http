@@ -1,0 +1,19 @@
+POST https://localhost:8080/userCreateGroup
+Content-Type: application/json
+
+{
+    "name": "DAGORLZ",
+    "member_id": [1,2,3],
+    "start_date" : "2020-12-12",
+    "end_date" : "2020-12-22",
+}
+
+POST https://localhost:8080/editGroupInfo
+Content-Type: application/json
+
+{
+    "group_id" : 1,
+    "name": "DABOYZ",
+    "start_date" : "2020-12-15",
+    "end_date" : "2020-12-25",
+}
