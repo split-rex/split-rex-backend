@@ -135,7 +135,7 @@ func MakeFriendRequest(c echo.Context) error {
 
 	// commit transaction
 	if err := tx.Commit().Error; err != nil {
-		response.Message = types.ERROR_BAD_REQUEST
+		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 	response.Message = types.SUCCESS

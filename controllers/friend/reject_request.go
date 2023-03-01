@@ -69,7 +69,7 @@ func RejectRequest(c echo.Context) error {
 	// update user
 	if err := tx.Save(&userInFriend).Error; err != nil {
 		tx.Rollback()
-		response.Message = types.ERROR_BAD_REQUEST
+		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
@@ -80,7 +80,7 @@ func RejectRequest(c echo.Context) error {
 	// check requester in table friends
 	if err := tx.Where(&conditionRequester).Find(&requesterInFriend).Error; err != nil {
 		tx.Rollback()
-		response.Message = types.ERROR_BAD_REQUEST
+		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
@@ -96,13 +96,13 @@ func RejectRequest(c echo.Context) error {
 	// update requester on database
 	if err := tx.Save(&requesterInFriend).Error; err != nil {
 		tx.Rollback()
-		response.Message = types.ERROR_BAD_REQUEST
+		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
 	// commit transaction
 	if err := tx.Commit().Error; err != nil {
-		response.Message = types.ERROR_BAD_REQUEST
+		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
