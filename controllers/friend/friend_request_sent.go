@@ -13,7 +13,6 @@ import (
 
 func FriendRequestSent(c echo.Context) error {
 	user_id := c.Get("id").(uuid.UUID)
-	// fmt.Println(user_id)
 	db := database.DB.GetConnection()
 	response := entities.Response[[]responses.FriendResponse]{}
 
