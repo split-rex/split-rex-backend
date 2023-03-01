@@ -153,7 +153,10 @@ func FriendRequestSent(c echo.Context) error {
 			user := entities.User{}
 			friend := responses.FriendResponse{}
 			condition := entities.User{ID: id}
-			db.Where(&condition).Select("id", "username", "name").Find(&user)
+			if err := db.Where(&condition).Select("id", "username", "name").Find(&user).Error; err != nil {
+				response.Message = types.ERROR_INTERNAL_SERVER
+				return c.JSON(http.StatusInternalServerError, response)
+			}
 			friend.User_id = user.ID.String()
 			friend.Username = user.Username
 			friend.Fullname = user.Name
@@ -200,7 +203,10 @@ func FriendRequestReceived(c echo.Context) error {
 			user := entities.User{}
 			friend := responses.FriendResponse{}
 			condition := entities.User{ID: id}
-			db.Where(&condition).Select("id", "username", "name").Find(&user)
+			if err := db.Where(&condition).Select("id", "username", "name").Find(&user).Error; err != nil {
+				response.Message = types.ERROR_INTERNAL_SERVER
+				return c.JSON(http.StatusInternalServerError, response)
+			}
 			friend.User_id = user.ID.String()
 			friend.Username = user.Username
 			friend.Fullname = user.Name
