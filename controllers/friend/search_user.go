@@ -13,7 +13,7 @@ import (
 func SearchUser(c echo.Context) error {
 	username := c.QueryParam("username")
 	db := database.DB.GetConnection()
-	response := entities.Response[responses.FriendResponse]{}
+	response := entities.Response[responses.ProfileResponse]{}
 
 	//check if username exist in user table
 	user := []entities.User{}
@@ -25,7 +25,7 @@ func SearchUser(c echo.Context) error {
 
 	if len(user) > 0 {
 		response.Message = types.SUCCESS
-		friend := responses.FriendResponse{}
+		friend := responses.ProfileResponse{}
 		friend.User_id = user[0].ID.String()
 		friend.Username = user[0].Username
 		friend.Fullname = user[0].Name

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"split-rex-backend/configs/database"
 	"split-rex-backend/entities"

@@ -18,7 +18,7 @@ func UserFriendList(c echo.Context) error {
 	user_id := c.Get("id").(uuid.UUID)
 
 	// returning array of friendResponse struct
-	response := entities.Response[[]responses.FriendResponse]{}
+	response := entities.Response[[]responses.ProfileResponse]{}
 
 	//check if user_id exist in friend table
 	userInFriend := entities.Friend{}
@@ -31,15 +31,15 @@ func UserFriendList(c echo.Context) error {
 	//check if userFriend empty
 	if userInFriend.ID == uuid.Nil {
 		response.Message = types.DATA_NOT_FOUND
-		response.Data = []responses.FriendResponse{}
+		response.Data = []responses.ProfileResponse{}
 		return c.JSON(http.StatusOK, response)
 	}
 
 	// get username and full name where friend_id (Friend table) exist for user
-	friends := []responses.FriendResponse{}
+	friends := []responses.ProfileResponse{}
 	for _, id := range userInFriend.Friend_id {
 		user := entities.User{}
-		friend := responses.FriendResponse{}
+		friend := responses.ProfileResponse{}
 		condition := entities.User{ID: id}
 		// get id, username, and name from user table
 		if err := db.Where(&condition).Select("id", "username", "name").Find(&user).Error; err != nil {

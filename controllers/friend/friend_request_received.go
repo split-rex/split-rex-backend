@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"split-rex-backend/configs/database"
 	"split-rex-backend/entities"
@@ -15,7 +14,7 @@ import (
 func FriendRequestReceived(c echo.Context) error {
 	user_id := c.Get("id").(uuid.UUID)
 	db := database.DB.GetConnection()
-	response := entities.Response[[]responses.FriendResponse]{}
+	response := entities.Response[[]responses.ProfileResponse]{}
 
 	//check if user_id exist in friend table
 	userFriend := entities.Friend{}
@@ -32,10 +31,10 @@ func FriendRequestReceived(c echo.Context) error {
 
 	if userExist {
 		// get username and full name where user_id in Req_sent
-		users := []responses.FriendResponse{}
+		users := []responses.ProfileResponse{}
 		for _, id := range userFriend.Req_received {
 			user := entities.User{}
-			friend := responses.FriendResponse{}
+			friend := responses.ProfileResponse{}
 			condition := entities.User{ID: id}
 			if err := db.Where(&condition).Select("id", "username", "name").Find(&user).Error; err != nil {
 				response.Message = types.ERROR_INTERNAL_SERVER
@@ -56,7 +55,7 @@ func FriendRequestReceived(c echo.Context) error {
 
 	} else {
 		response.Message = types.DATA_NOT_FOUND
-		response.Data = []responses.FriendResponse{}
+		response.Data = []responses.ProfileResponse{}
 		return c.JSON(http.StatusOK, response)
 	}
 }
