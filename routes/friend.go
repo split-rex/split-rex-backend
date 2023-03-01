@@ -8,7 +8,15 @@ import (
 )
 
 func FriendRoute(e *echo.Echo) {
-	e.POST("/makeFriendRequest", controllers.MakeFriendRequest, middlewares.AuthMiddleware)
+	// Get all user's friend
+	e.GET("/userFriendList", controllers.UserFriendList, middlewares.AuthMiddleware)
 	e.GET("/friendRequestSent", controllers.FriendRequestSent, middlewares.AuthMiddleware)
 	e.GET("/friendRequestReceived", controllers.FriendRequestReceived, middlewares.AuthMiddleware)
+
+	e.POST("/makeFriendRequest", controllers.MakeFriendRequest, middlewares.AuthMiddleware)
+	// Accept and reject request received
+	e.POST("/acceptRequest/", controllers.AcceptRequest, middlewares.AuthMiddleware)
+	e.POST("/rejectRequest/", controllers.RejectRequest, middlewares.AuthMiddleware)
+
+
 }

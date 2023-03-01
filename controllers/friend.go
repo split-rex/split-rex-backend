@@ -103,7 +103,7 @@ func MakeFriendRequest(c echo.Context) error {
 
 func FriendRequestSent(c echo.Context) error {
 	user_id := c.Get("id").(uuid.UUID)
-	fmt.Println(user_id)
+	// fmt.Println(user_id)
 	db := database.DB.GetConnection()
 	response := entities.Response[[]responses.FriendResponse]{}
 
@@ -193,4 +193,270 @@ func FriendRequestReceived(c echo.Context) error {
 		response.Data = []responses.FriendResponse{}
 		return c.JSON(http.StatusOK, response)
 	}
+}
+
+func UserFriendList(c echo.Context) error {
+	db := database.DB.GetConnection()
+
+	// get user id from context, cast to uuid
+	user_id := c.Get("id").(uuid.UUID)
+
+	// returning array of friendResponse struct
+	response := entities.Response[[]responses.FriendResponse]{}
+
+	//check if user_id exist in friend table
+	userInFriend := entities.Friend{}
+	conditionSearchUser := entities.Friend{ID: user_id}
+	if err := db.Where(&conditionSearchUser).Find(&userInFriend).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	//check if userFriend empty
+	if userInFriend.ID == uuid.Nil {
+		response.Message = types.DATA_NOT_FOUND
+		response.Data = []responses.FriendResponse{}
+		return c.JSON(http.StatusOK, response)
+	}
+
+	// get username and full name where friend_id (Friend table) exist for user
+	friends := []responses.FriendResponse{}
+	for _, id := range userInFriend.Friend_id {
+		user := entities.User{}
+		friend := responses.FriendResponse{}
+		condition := entities.User{ID: id}
+		// get id, username, and name from user table
+		if err := db.Where(&condition).Select("id", "username", "name").Find(&user).Error; err != nil {
+			response.Message = types.ERROR_INTERNAL_SERVER
+			return c.JSON(http.StatusInternalServerError, response)
+		}
+		friend.User_id = user.ID.String()
+		friend.Username = user.Username
+		friend.Fullname = user.Name
+		friends = append(friends, friend)
+	}
+
+	response.Data = friends
+
+	// if no friends, data not found but status success
+	if len(friends) <= 0 {
+		response.Message = types.DATA_NOT_FOUND
+		return c.JSON(http.StatusOK, response)
+	}
+
+	response.Message = types.SUCCESS
+	return c.JSON(http.StatusOK, response)
+
+}
+
+func AcceptRequest(c echo.Context) error {
+	db := database.DB.GetConnection()
+
+	response := entities.Response[string]{}
+
+	// get user id from context, cast to uuid
+	user_id := c.Get("id").(uuid.UUID)
+
+	// get request_id from body
+	friendRequest := requests.FriendRequest{}
+	if err := c.Bind(&friendRequest); err != nil {
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusBadRequest, response)
+	}
+	requester_id := friendRequest.Friend_id
+
+	// check if user in friend table
+	userInFriend := entities.Friend{}
+	conditionFriend := entities.Friend{ID: user_id}
+	if err := db.Where(&conditionFriend).Find(&userInFriend).Error; err != nil {
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// error if no user in friend table
+	if userInFriend.ID == uuid.Nil {
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// check if requester_id exist in req received[] user's friend table
+	found := false
+	user_new_req_received := []uuid.UUID{}
+	for _, id := range userInFriend.Req_received {
+		if id.String() == requester_id {
+			found = true
+		} else {
+			user_new_req_received = append(user_new_req_received, id)
+		}
+	}
+
+	// error if no friend request from userFriend.ID
+	if !found {
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// TRANSACTION
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	// user
+	// get all friend_id
+	user_new_friends := []uuid.UUID{}
+	for _, id := range userInFriend.Friend_id {
+		user_new_friends = append(user_new_friends, id)
+	}
+	// append friend_id
+	u_id, _ := uuid.Parse(requester_id)
+	user_new_friends = append(user_new_friends, u_id)
+	// update friend_id
+	if err := tx.Model(&userInFriend).Where(conditionFriend).Update("friend_id", user_new_friends).Error; err != nil {
+		tx.Rollback()
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// update req_received
+	if err := tx.Model(&userInFriend).Where(conditionFriend).Update("req_received", user_new_req_received).Error; err != nil {
+		tx.Rollback()
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// requester
+	requesterInFriend := entities.Friend{}
+	req_id, _ := uuid.Parse(requester_id)
+	conditionRequester := entities.Friend{ID: req_id}
+	// check requester in table friends
+	if err := tx.Where(&conditionRequester).Find(&requesterInFriend).Error; err != nil {
+		tx.Rollback()
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+	// get all req_sent
+	requester_new_req_sent := []uuid.UUID{}
+	for _, id := range requesterInFriend.Req_sent {
+		if id.String() != user_id.String() {
+			requester_new_req_sent = append(requester_new_req_sent, id)
+		}
+	}
+	requester_new_friends := []uuid.UUID{}
+	// get all friend
+	for _, id := range requesterInFriend.Friend_id {
+		requester_new_friends = append(requester_new_friends, id)
+	}
+	// append friend_id
+	requester_new_friends = append(requester_new_friends, user_id)
+	// update friend_id
+	if err := tx.Model(&requesterInFriend).Where(conditionRequester).Update("friend_id", requester_new_friends).Error; err != nil {
+		tx.Rollback()
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+	// update req_sent
+	if err := tx.Model(&requesterInFriend).Where(conditionRequester).Update("req_sent", requester_new_req_sent).Error; err != nil {
+		tx.Rollback()
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	return c.JSON(http.StatusOK, response)
+}
+
+func RejectRequest(c echo.Context) error {
+	db := database.DB.GetConnection()
+
+	response := entities.Response[string]{}
+
+	// get user id from context, cast to uuid
+	user_id := c.Get("id").(uuid.UUID)
+
+	// get request_id from body
+	friendRequest := requests.FriendRequest{}
+	if err := c.Bind(&friendRequest); err != nil {
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusBadRequest, response)
+	}
+	requester_id := friendRequest.Friend_id
+
+	// check if user in friend table
+	userInFriend := entities.Friend{}
+	conditionFriend := entities.Friend{ID: user_id}
+	if err := db.Where(&conditionFriend).Find(&userInFriend).Error; err != nil {
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// error if no user in friend table
+	if userInFriend.ID == uuid.Nil {
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// check if requester_id exist in req received[] user's friend table
+	found := false
+	user_new_req_received := []uuid.UUID{}
+	for _, id := range userInFriend.Req_received {
+		if id.String() == requester_id {
+			found = true
+		} else {
+			user_new_req_received = append(user_new_req_received, id)
+		}
+	}
+
+	// error if no friend request from userFriend.ID
+	if !found {
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// TRANSACTION
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	// user
+	// get all friend_id
+	user_new_friends := []uuid.UUID{}
+	for _, id := range userInFriend.Friend_id {
+		user_new_friends = append(user_new_friends, id)
+	}
+
+	// update req_received
+	if err := tx.Model(&userInFriend).Where(conditionFriend).Update("req_received", user_new_req_received).Error; err != nil {
+		tx.Rollback()
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// requester
+	requesterInFriend := entities.Friend{}
+	req_id, _ := uuid.Parse(requester_id)
+	conditionRequester := entities.Friend{ID: req_id}
+	// check requester in table friends
+	if err := tx.Where(&conditionRequester).Find(&requesterInFriend).Error; err != nil {
+		tx.Rollback()
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+	// get all req_sent
+	requester_new_req_sent := []uuid.UUID{}
+	for _, id := range requesterInFriend.Req_sent {
+		if id.String() != user_id.String() {
+			requester_new_req_sent = append(requester_new_req_sent, id)
+		}
+	}
+	// update req_sent
+	if err := tx.Model(&requesterInFriend).Where(conditionRequester).Update("req_sent", requester_new_req_sent).Error; err != nil {
+		tx.Rollback()
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	return c.JSON(http.StatusOK, response)
 }

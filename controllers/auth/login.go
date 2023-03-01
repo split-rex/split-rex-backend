@@ -47,9 +47,9 @@ func LoginController(c echo.Context) error {
 			Issuer:    config.ApplicationName,
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(config.LoginExpirationDuration)),
 		},
-		ID:   user.ID,
+		ID: user.ID,
 	})
-	
+
 	signedAuthToken, err := unsignedAuthToken.SignedString(config.JWTSignatureKey)
 	if err != nil {
 		response.Message = types.ERROR_JWT_SIGNING
