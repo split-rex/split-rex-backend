@@ -19,3 +19,29 @@ Content-Type: application/json
 }
 
 ###
+
+POST http://localhost:8080/makeFriendRequest
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3NTAzODQsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.idSDttcIXBaGAynBzUGAZvPMxDLhZra6KGedaOMKSK0
+
+{
+    "friend_id": "1933514c-ae76-43ee-aeef-c98e22010c99"
+}
+
+###
+
+GET http://localhost:8080/friendRequestSent
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3MjEzNjgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.cY6c8KlQir0yFApcpgE5-Xfph7hSfCToTQYaC0y8hr0
+
+###
+
+GET http://localhost:8080/friendRequestReceived
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3MjEzNjgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.cY6c8KlQir0yFApcpgE5-Xfph7hSfCToTQYaC0y8hr0
+
+###
+
+GET http://localhost:8080/searchUser?username=gca
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3MjEzNjgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.cY6c8KlQir0yFApcpgE5-Xfph7hSfCToTQYaC0y8hr0

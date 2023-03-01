@@ -25,14 +25,20 @@ func MakeFriendRequest(c echo.Context) error {
 	}
 
 	user_id := c.Get("id").(uuid.UUID)
+	friend_id, _ := uuid.Parse(friendRequest.Friend_id)
 
 	//check if friend_id exist in user table
 	friend := entities.User{}
-	friend_id, _ := uuid.Parse(friendRequest.Friend_id)
 	condition := entities.User{ID: friend_id}
 	if err := db.Where(&condition).Find(&friend).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	//check if friend empty
+	if friend.ID == uuid.Nil {
+		response.Message = types.ERROR_USER_NOT_FOUND
+		return c.JSON(http.StatusNotFound, response)
 	}
 
 	//check if user_id exist in friend table
@@ -62,8 +68,28 @@ func MakeFriendRequest(c echo.Context) error {
 
 	//if userExist true
 	if userExist {
+		// check if friend_id already in Friend_id
+		for _, friend := range userFriend.Friend_id {
+			if friend == friend_id {
+				response.Message = types.ERROR_ALREADY_FRIEND
+				return c.JSON(http.StatusConflict, response)
+			}
+		}
+		// check if friend_id already in Req_received
+		for _, friend := range userFriend.Req_received {
+			if friend == friend_id {
+				response.Message = types.ERROR_ALREADY_REQUESTED
+				return c.JSON(http.StatusConflict, response)
+			}
+		}
+		// check if friend_id already in Req_sent
+		for _, friend := range userFriend.Req_sent {
+			if friend == friend_id {
+				response.Message = types.ERROR_ALREADY_REQUESTED
+				return c.JSON(http.StatusConflict, response)
+			}
+		}
 		// insert friend_id to friend table
-
 		userFriend.Req_sent = append(userFriend.Req_sent, friend_id)
 		if err := db.Save(&userFriend).Error; err != nil {
 			response.Message = types.ERROR_INTERNAL_SERVER
@@ -458,5 +484,31 @@ func RejectRequest(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
+	return c.JSON(http.StatusOK, response)
+}
+
+func SearchUser(c echo.Context) error {
+	username := c.QueryParam("username")
+	db := database.DB.GetConnection()
+	response := entities.Response[responses.FriendResponse]{}
+
+	//check if username exist in user table
+	user := []entities.User{}
+	conditionUser := entities.User{Username: username}
+	if err := db.Where(&conditionUser).Find(&user).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	if len(user) > 0 {
+		response.Message = types.SUCCESS
+		friend := responses.FriendResponse{}
+		friend.User_id = user[0].ID.String()
+		friend.Username = user[0].Username
+		friend.Fullname = user[0].Name
+		response.Data = friend
+	} else {
+		response.Message = types.DATA_NOT_FOUND
+	}
 	return c.JSON(http.StatusOK, response)
 }

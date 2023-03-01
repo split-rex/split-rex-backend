@@ -19,4 +19,5 @@ func FriendRoute(e *echo.Echo) {
 	e.POST("/rejectRequest/", controllers.RejectRequest, middlewares.AuthMiddleware)
 
 
+	e.GET("/searchUser", controllers.SearchUser, middlewares.AuthMiddleware)
 }
