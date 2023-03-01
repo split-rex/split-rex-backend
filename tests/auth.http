@@ -1,19 +1,26 @@
-POST https://split-rex-backend-7v6i6rndga-et.a.run.app/register
+POST http://localhost:8080/register
 Content-Type: application/json
 
 {
-    "name": "samuel",
-    "email": "",
-    "username": "",
-    "password": ""
+    "name": "nando",
+    "email": "nando@gmail.com",
+    "username": "nando",
+    "password": "nando"
 }
 
 ###
 
-POST https://split-rex-backend-7v6i6rndga-et.a.run.app//login
+POST http://localhost:8080/login
 Content-Type: application/json
 
 {
-    "email": "patrick@gmail.com",
-    "password": "patrick"
+    "email": "nando@gmail.com",
+    "password": "nando"
 }
+
+
+###
+
+GET http://localhost:8080/profile
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3MjEzNjgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.cY6c8KlQir0yFApcpgE5-Xfph7hSfCToTQYaC0y8hr0
