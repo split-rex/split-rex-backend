@@ -12,12 +12,11 @@ func FriendRoute(e *echo.Echo) {
 	e.GET("/userFriendList", controllers.UserFriendList, middlewares.AuthMiddleware)
 	e.GET("/friendRequestSent", controllers.FriendRequestSent, middlewares.AuthMiddleware)
 	e.GET("/friendRequestReceived", controllers.FriendRequestReceived, middlewares.AuthMiddleware)
+	e.GET("/searchUser", controllers.SearchUser, middlewares.AuthMiddleware)
 
 	e.POST("/makeFriendRequest", controllers.MakeFriendRequest, middlewares.AuthMiddleware)
+
 	// Accept and reject request received
-	e.POST("/acceptRequest/", controllers.AcceptRequest, middlewares.AuthMiddleware)
-	e.POST("/rejectRequest/", controllers.RejectRequest, middlewares.AuthMiddleware)
-
-
-	e.GET("/searchUser", controllers.SearchUser, middlewares.AuthMiddleware)
+	e.POST("/acceptRequest", controllers.AcceptRequest, middlewares.AuthMiddleware)
+	e.POST("/rejectRequest", controllers.RejectRequest, middlewares.AuthMiddleware)
 }
