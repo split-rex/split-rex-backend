@@ -148,7 +148,7 @@ func GroupDetailController(c echo.Context) error {
 	response := entities.Response[responses.GroupDetailResponse]{}
 
 	group := entities.Group{}
-	groupID, _ := uuid.Parse(c.Param("id"))
+	groupID, _ := uuid.Parse(c.QueryParam("id"))
 
 	condition := entities.Group{GroupID: groupID}
 	if err := db.Where(&condition).Find(&group).Error; err != nil {
@@ -186,7 +186,7 @@ func GroupTransactionsController(c echo.Context) error {
 	db := database.DB.GetConnection()
 	response := entities.Response[[]responses.GroupTransactionsResponse]{}
 
-	groupID, _ := uuid.Parse(c.Param("id"))
+	groupID, _ := uuid.Parse(c.QueryParam("id"))
 
 	transactions := []entities.Transaction{}
 	condition := entities.Transaction{GroupID: groupID}

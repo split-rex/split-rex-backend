@@ -5,7 +5,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZ
 {
     "name": "New Transaction",
     "description": "New Transaction Description",
-    "group_id" : "092b4f6d-5a28-4811-b904-f4bcf4bcd283",
+    "group_id" : "0b865d7f-e40e-4440-905e-eccf2caaa6ed",
     "date" : "2023-02-07T17:19:20.968831+07:00",
     "subtotal" : 1000.0,
     "tax" : 100.0,
