@@ -1,11 +1,11 @@
 POST http://localhost:8080/userCreateGroup
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc4MDkyOTgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.o2Gbc_7w7zhqRUV3NN4DR2WBYMRp-emGL0XpUJtkpxI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc4NDA3NzUsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.4wgVsa0fBM5GndB7ka8vD6yCHjOX0eYaf3T3DESH5Mw
 
 {
-    "name": "New Group 5",
+    "name": "New Group nEWW",
     "member_id": ["6251ac85-e43d-4b88-8779-588099df5008","183e04d7-c653-4c7d-aa66-3d751d4d7358"],
-    "start_date": "2023-03-01T16:19:20.968831+07:00",
+    "start_date": "2023-03-01T17:19:20.968831+07:00",
     "end_date" : "2023-03-01T19:19:20.968831+07:00"
 }
 
@@ -26,11 +26,11 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZ
 
 GET http://localhost:8080/userGroups
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc4MDkyOTgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.o2Gbc_7w7zhqRUV3NN4DR2WBYMRp-emGL0XpUJtkpxI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc4NDA3NzUsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.4wgVsa0fBM5GndB7ka8vD6yCHjOX0eYaf3T3DESH5Mw
 
 ### GET GROUP DETAIL
 
 GET http://localhost:8080/groupDetail/1c4716df-703f-43e9-bdc6-18dc362900e1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc4MDkyOTgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.o2Gbc_7w7zhqRUV3NN4DR2WBYMRp-emGL0XpUJtkpxI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc4NDA3NzUsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.4wgVsa0fBM5GndB7ka8vD6yCHjOX0eYaf3T3DESH5Mw
 

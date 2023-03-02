@@ -12,4 +12,5 @@ type User struct {
 	Email    string                `gorm:"not null;unique"`
 	Username string                `gorm:"not null;unique"`
 	Password types.EncryptedString `gorm:"not null"`
+	Groups   types.ArrayOfUUID
 }

@@ -1,0 +1,16 @@
+POST http://localhost:8080/userCreateTransaction
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3ODA1NDgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.pMi0vhgm9DbSEVcp8XtRrgSJHTfUQ1ANNSPQeRNI5JY
+
+{
+    "name": "New Transaction",
+    "description": "New Transaction Description",
+    "group_id" : "092b4f6d-5a28-4811-b904-f4bcf4bcd283",
+    "date" : "2023-02-07T17:19:20.968831+07:00",
+    "subtotal" : 1000.0,
+    "tax" : 100.0,
+    "service" : 100.0,
+    "total" : 1200.0,
+    "bill_owner" : "6251ac85-e43d-4b88-8779-588099df5008",
+    "items" : ["6251ac85-e43d-4b88-8779-588099df5008"]
+}
