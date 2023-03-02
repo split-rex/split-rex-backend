@@ -3,14 +3,36 @@ Content-Type: application/json
 
 {
     "name": "samuel",
-    "email": "",
-    "username": "",
-    "password": ""
+    "email": "mencoba@gmail.com",
+    "username": "coba",
+    "password": "coba"
 }
 
 ###
 
 POST https://split-rex-backend-7v6i6rndga-et.a.run.app//login
+Content-Type: application/json
+
+{
+    "email": "patrick@gmail.com",
+    "password": "patrick"
+}
+
+###
+
+POST http://localhost:8080/register
+Content-Type: application/json
+
+{
+    "name": "samuel",
+    "email": "mencoba@gmail.com",
+    "username": "coba",
+    "password": "coba"
+}
+
+###
+
+POST http://localhost:8080/login
 Content-Type: application/json
 
 {

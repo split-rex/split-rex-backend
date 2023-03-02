@@ -19,6 +19,8 @@ func Run() {
 
 	/* Routes */
 	routes.AuthRoute(e)
+	routes.GroupRoute(e)
+	routes.TransactionRoute(e)
 
 	port := os.Getenv("PORT")
 	e.Logger.Fatal(e.Start(":" + port))

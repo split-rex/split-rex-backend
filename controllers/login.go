@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"split-rex-backend/configs"
 	"split-rex-backend/configs/database"
@@ -32,6 +33,7 @@ func LoginController(c echo.Context) error {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
+	fmt.Println("pass", user.Password)
 	if user.Username == "" {
 		response.Message = types.ERROR_FAILED_LOGIN
 		return c.JSON(http.StatusBadRequest, response)
@@ -47,9 +49,9 @@ func LoginController(c echo.Context) error {
 			Issuer:    config.ApplicationName,
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(config.LoginExpirationDuration)),
 		},
-		ID:   user.ID,
+		ID: user.ID,
 	})
-	
+
 	signedAuthToken, err := unsignedAuthToken.SignedString(config.JWTSignatureKey)
 	if err != nil {
 		response.Message = types.ERROR_JWT_SIGNING

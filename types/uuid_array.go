@@ -2,6 +2,7 @@ package types
 
 import (
 	"database/sql/driver"
+	"encoding/json"
 
 	"github.com/google/uuid"
 )
@@ -9,22 +10,14 @@ import (
 type ArrayOfUUID []uuid.UUID
 
 func (arrayOfUUID *ArrayOfUUID) Scan(value interface{}) error {
-	*arrayOfUUID = []uuid.UUID{}
-	for _, uid := range value.([]uuid.UUID) {
-		*arrayOfUUID = append(*arrayOfUUID, uid)
-	}
-
-	return nil
+	return json.Unmarshal([]byte(value.(string)), &arrayOfUUID)
 }
 
 func (arrayOfUUID ArrayOfUUID) Value() (driver.Value, error) {
-	var values []uuid.UUID
-	for _, uid := range arrayOfUUID {
-		values = append(values, uid)
-	}
-	return values, nil
+	val, err := json.Marshal(arrayOfUUID)
+	return string(val), err
 }
 
 func (ArrayOfUUID) GormDataType() string {
-	return "uuid.UUID[]"
+	return "string"
 }

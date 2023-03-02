@@ -26,6 +26,7 @@ func UserCreateGroupController(c echo.Context) error {
 		&entities.Group{
 			GroupID:   uuid.New(),
 			Name:      request.Name,
+			MemberID:  request.MemberID,
 			StartDate: request.StartDate,
 			EndDate:   request.EndDate,
 		}).Error; err != nil {
@@ -43,23 +44,19 @@ func EditGroupInfoController(c echo.Context) error {
 
 	request := requests.EditGroupInfoRequest{}
 	if err := c.Bind(&request); err != nil {
-		response.Message = types.ERROR_BAD_REQUEST
+		response.Message = err.Error()
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
 	group := entities.Group{}
 	condition := entities.Group{GroupID: request.GroupID}
-	if err := db.Where(&condition).Find(&group).Error; err != nil {
-		response.Message = types.ERROR_INTERNAL_SERVER
-		return c.JSON(http.StatusInternalServerError, response)
-	}
 
-	group.Name = request.Name
-	group.StartDate = request.StartDate
-	group.EndDate = request.EndDate
-
-	if err := db.Save(&group).Error; err != nil {
-		response.Message = types.ERROR_INTERNAL_SERVER
+	if err := db.Model(&group).Where(&condition).Updates(entities.Group{
+		Name:      request.Name,
+		StartDate: request.StartDate,
+		EndDate:   request.EndDate,
+	}).Error; err != nil {
+		response.Message = err.Error()
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
@@ -71,14 +68,13 @@ func UserGroupsController(c echo.Context) error {
 	db := database.DB.GetConnection()
 	response := entities.Response[[]responses.UserGroupResponse]{}
 
-	// TODO: get uuid from jwt token
-	userID := 1
-
+	userID := c.Get("id").(uuid.UUID)
 	groups := []entities.Group{}
 
-	// TODO: Make Sure Query is Correct
-	if err := db.Where("member_id @> ARRAY[?]::uuid[]", userID).Find(&groups).Error; err != nil {
-		response.Message = types.ERROR_INTERNAL_SERVER
+	// PRINT member_id column from groups table
+
+	if err := db.Select("group_id").Where(`? = ANY(string_to_array(member_id, ','))`, userID).Table("groups").Find(&groups).Error; err != nil {
+		response.Message = err.Error() + " PERTAMA"
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
@@ -98,7 +94,6 @@ func UserGroupsController(c echo.Context) error {
 			TotalExpense: 0,
 		})
 	}
-
 	response.Message = types.SUCCESS
 	response.Data = data
 
@@ -110,16 +105,18 @@ func GroupDetailController(c echo.Context) error {
 	response := entities.Response[responses.GroupDetailResponse]{}
 
 	group := entities.Group{}
-	condition := entities.Group{GroupID: uuid.MustParse(c.QueryParam("id"))}
+	groupID, _ := uuid.Parse("fb3313e2-492c-4689-9bd7-f9dfd5fcfb4a")
 
+	condition := entities.Group{GroupID: groupID}
 	if err := db.Where(&condition).Find(&group).Error; err != nil {
-		response.Message = types.ERROR_INTERNAL_SERVER
+		response.Message = err.Error()
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
 	data := responses.GroupDetailResponse{
 		GroupID:    group.GroupID,
 		Name:       group.Name,
+		MemberID:   group.MemberID,
 		StartDate:  group.StartDate,
 		EndDate:    group.EndDate,
 		ListMember: []responses.MemberDetail{},

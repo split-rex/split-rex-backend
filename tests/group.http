@@ -1,19 +1,36 @@
-POST https://localhost:8080/userCreateGroup
+POST http://localhost:8080/userCreateGroup
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc4MDkyOTgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.o2Gbc_7w7zhqRUV3NN4DR2WBYMRp-emGL0XpUJtkpxI
 
 {
-    "name": "DAGORLZ",
-    "member_id": [1,2,3],
-    "start_date" : "2020-12-12",
-    "end_date" : "2020-12-22",
+    "name": "New Group 5",
+    "member_id": ["6251ac85-e43d-4b88-8779-588099df5008","183e04d7-c653-4c7d-aa66-3d751d4d7358"],
+    "start_date": "2023-03-01T16:19:20.968831+07:00",
+    "end_date" : "2023-03-01T19:19:20.968831+07:00"
 }
 
-POST https://localhost:8080/editGroupInfo
+###
+
+POST http://localhost:8080/editGroupInfo
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3ODA1NDgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.pMi0vhgm9DbSEVcp8XtRrgSJHTfUQ1ANNSPQeRNI5JY
 
 {
-    "group_id" : 1,
-    "name": "DABOYZ",
-    "start_date" : "2020-12-15",
-    "end_date" : "2020-12-25",
+    "group_id" : "038e3e7c-77bd-461b-9c8d-15e73c9a4cab",
+    "name": "Edited 3",
+    "start_date": "2023-03-01T23:19:20.968831+07:00",
+    "end_date" : "2023-03-01T20:19:20.968831+07:00"
 }
+
+### USER GROUPS
+
+GET http://localhost:8080/userGroups
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc4MDkyOTgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.o2Gbc_7w7zhqRUV3NN4DR2WBYMRp-emGL0XpUJtkpxI
+
+### GET GROUP DETAIL
+
+GET http://localhost:8080/groupDetail/1c4716df-703f-43e9-bdc6-18dc362900e1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc4MDkyOTgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.o2Gbc_7w7zhqRUV3NN4DR2WBYMRp-emGL0XpUJtkpxI
+
