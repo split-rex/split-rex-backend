@@ -57,6 +57,7 @@ func RegisterController(c echo.Context) error {
 		Email:    registerRequest.Email,
 		Name:     registerRequest.Name,
 		Password: types.EncryptedString(registerRequest.Password),
+		Groups:   types.ArrayOfUUID{},
 	}).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)

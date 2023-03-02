@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"split-rex-backend/configs"
 	"split-rex-backend/configs/database"
@@ -33,7 +32,6 @@ func LoginController(c echo.Context) error {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
-	fmt.Println("pass", user.Password)
 	if user.Username == "" {
 		response.Message = types.ERROR_FAILED_LOGIN
 		return c.JSON(http.StatusBadRequest, response)

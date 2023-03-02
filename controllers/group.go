@@ -53,9 +53,15 @@ func UserCreateGroupController(c echo.Context) error {
 	}
 
 	// adding group uuid to user groups
-	user := entities.User{}
 	for _, memberID := range request.MemberID {
+		user := entities.User{}
 		condition := entities.User{ID: memberID}
+
+		if err := tx.Find(&user, &condition).Error; err != nil {
+			tx.Rollback()
+			response.Message = err.Error()
+			return c.JSON(http.StatusInternalServerError, response)
+		}
 		if err := tx.Model(&user).Where(&condition).Update("groups", append(user.Groups, group.GroupID)).Error; err != nil {
 			tx.Rollback()
 			response.Message = err.Error()
@@ -100,16 +106,16 @@ func UserGroupsController(c echo.Context) error {
 
 	userID := c.Get("id").(uuid.UUID)
 
-	groupIDs := []uuid.UUID{}
+	user := entities.User{}
 	condition := entities.User{ID: userID}
-	if err := db.Model(&entities.User{}).Where(&condition).Pluck("groups", &groupIDs).Error; err != nil {
+	if err := db.Model(&entities.User{}).Where(&condition).Find(&user).Error; err != nil {
 		response.Message = err.Error()
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
 	data := []responses.UserGroupResponse{}
 
-	for _, groupID := range groupIDs {
+	for _, groupID := range user.Groups {
 		group := entities.Group{}
 		condition := entities.Group{GroupID: groupID}
 
@@ -177,8 +183,36 @@ func GroupDetailController(c echo.Context) error {
 }
 
 func GroupTransactionsController(c echo.Context) error {
-	// db := database.DB.GetConnection()
-	// config := configs.Config.GetMetadata()
-	response := entities.Response[string]{}
+	db := database.DB.GetConnection()
+	response := entities.Response[[]responses.GroupTransactionsResponse]{}
+
+	groupID, _ := uuid.Parse(c.Param("id"))
+
+	transactions := []entities.Transaction{}
+	condition := entities.Transaction{GroupID: groupID}
+	if err := db.Where(&condition).Find(&transactions).Error; err != nil {
+		response.Message = err.Error()
+		return c.JSON(http.StatusAccepted, response)
+	}
+
+	data := []responses.GroupTransactionsResponse{}
+
+	// TODO: get all members from consumer field in Item for ListMember
+	listMember := types.ArrayOfUUID{}
+
+	for _, transaction := range transactions {
+		data = append(data, responses.GroupTransactionsResponse{
+			TransactionID: transaction.TransactionID,
+			Name:          transaction.Name,
+			Description:   transaction.Description,
+			Total:         transaction.Total,
+			BillOwner:     transaction.BillOwner,
+			ListMember:    listMember,
+		})
+	}
+
+	response.Message = "SUCCESS"
+	response.Data = data
+
 	return c.JSON(http.StatusAccepted, response)
 }
