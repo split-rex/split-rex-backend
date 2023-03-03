@@ -22,6 +22,15 @@ func UserCreateGroupController(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
+	// check if all corresponding member exist in user table
+	for _, member := range request.MemberID {
+		user := entities.User{}
+		if err := db.Find(&user, member).Error; err != nil {
+			response.Message = types.ERROR_BAD_REQUEST
+			return c.JSON(http.StatusBadRequest, response)
+		}
+	}
+
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -29,39 +38,38 @@ func UserCreateGroupController(c echo.Context) error {
 		}
 	}()
 
-	// please check if user is in member_id or no @patrickamadeus
 	group := &entities.Group{
 		GroupID:   uuid.New(),
 		Name:      request.Name,
+		MemberID:  request.MemberID,
 		StartDate: request.StartDate,
 		EndDate:   request.EndDate,
 	}
+
 	if err := tx.Create(group).Error; err != nil {
 		tx.Rollback()
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
-	// adding group uuid to user's groups (make transaction) @patrickamadeus please check again
-	// get user detail
-	user_id := c.Get("id").(uuid.UUID)
-	user := entities.User{}
-	if err := db.Find(&user, user_id).Error; err != nil {
-		tx.Rollback()
-		response.Message = types.ERROR_INTERNAL_SERVER
-		return c.JSON(http.StatusInternalServerError, response)
+	// adding group uuid to user groups
+	for _, memberID := range request.MemberID {
+		user := entities.User{}
+		condition := entities.User{ID: memberID}
+
+		if err := tx.Find(&user, &condition).Error; err != nil {
+			tx.Rollback()
+			response.Message = err.Error()
+			return c.JSON(http.StatusInternalServerError, response)
+		}
+		if err := tx.Model(&user).Where(&condition).Update("groups", append(user.Groups, group.GroupID)).Error; err != nil {
+			tx.Rollback()
+			response.Message = err.Error()
+			return c.JSON(http.StatusInternalServerError, response)
+		}
 	}
 
-	// add new group to user groups
-	user.Groups = append(user.Groups, group.GroupID)
-
-	// then update
-	if err := db.Save(&user).Error; err != nil {
-		tx.Rollback()
-		response.Message = types.ERROR_INTERNAL_SERVER
-		return c.JSON(http.StatusInternalServerError, response)
-	}
-
+	tx.Commit()
 	response.Message = types.SUCCESS
 	return c.JSON(http.StatusAccepted, response)
 }
@@ -72,23 +80,19 @@ func EditGroupInfoController(c echo.Context) error {
 
 	request := requests.EditGroupInfoRequest{}
 	if err := c.Bind(&request); err != nil {
-		response.Message = types.ERROR_BAD_REQUEST
+		response.Message = err.Error()
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
 	group := entities.Group{}
 	condition := entities.Group{GroupID: request.GroupID}
-	if err := db.Where(&condition).Find(&group).Error; err != nil {
-		response.Message = types.ERROR_INTERNAL_SERVER
-		return c.JSON(http.StatusInternalServerError, response)
-	}
 
-	group.Name = request.Name
-	group.StartDate = request.StartDate
-	group.EndDate = request.EndDate
-
-	if err := db.Save(&group).Error; err != nil {
-		response.Message = types.ERROR_INTERNAL_SERVER
+	if err := db.Model(&group).Where(&condition).Updates(entities.Group{
+		Name:      request.Name,
+		StartDate: request.StartDate,
+		EndDate:   request.EndDate,
+	}).Error; err != nil {
+		response.Message = err.Error()
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
@@ -100,20 +104,26 @@ func UserGroupsController(c echo.Context) error {
 	db := database.DB.GetConnection()
 	response := entities.Response[[]responses.UserGroupResponse]{}
 
-	// TODO: get uuid from jwt token @patrickamadeus
-	userID := 1
+	userID := c.Get("id").(uuid.UUID)
 
-	groups := []entities.Group{}
-
-	// TODO: Make Sure Query is Correct
-	if err := db.Where("member_id @> ARRAY[?]::uuid[]", userID).Find(&groups).Error; err != nil {
-		response.Message = types.ERROR_INTERNAL_SERVER
+	user := entities.User{}
+	condition := entities.User{ID: userID}
+	if err := db.Model(&entities.User{}).Where(&condition).Find(&user).Error; err != nil {
+		response.Message = err.Error()
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
 	data := []responses.UserGroupResponse{}
 
-	for _, group := range groups {
+	for _, groupID := range user.Groups {
+		group := entities.Group{}
+		condition := entities.Group{GroupID: groupID}
+
+		if err := db.Where(&condition).Find(&group).Error; err != nil {
+			response.Message = err.Error()
+			return c.JSON(http.StatusInternalServerError, response)
+		}
+
 		data = append(data, responses.UserGroupResponse{
 			GroupID:   group.GroupID,
 			Name:      group.Name,
@@ -127,7 +137,6 @@ func UserGroupsController(c echo.Context) error {
 			TotalExpense: 0,
 		})
 	}
-
 	response.Message = types.SUCCESS
 	response.Data = data
 
@@ -139,16 +148,18 @@ func GroupDetailController(c echo.Context) error {
 	response := entities.Response[responses.GroupDetailResponse]{}
 
 	group := entities.Group{}
-	condition := entities.Group{GroupID: uuid.MustParse(c.QueryParam("id"))}
+	groupID, _ := uuid.Parse(c.QueryParam("id"))
 
+	condition := entities.Group{GroupID: groupID}
 	if err := db.Where(&condition).Find(&group).Error; err != nil {
-		response.Message = types.ERROR_INTERNAL_SERVER
+		response.Message = err.Error()
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
 	data := responses.GroupDetailResponse{
 		GroupID:    group.GroupID,
 		Name:       group.Name,
+		MemberID:   group.MemberID,
 		StartDate:  group.StartDate,
 		EndDate:    group.EndDate,
 		ListMember: []responses.MemberDetail{},
@@ -172,8 +183,36 @@ func GroupDetailController(c echo.Context) error {
 }
 
 func GroupTransactionsController(c echo.Context) error {
-	// db := database.DB.GetConnection()
-	// config := configs.Config.GetMetadata()
-	response := entities.Response[string]{}
+	db := database.DB.GetConnection()
+	response := entities.Response[[]responses.GroupTransactionsResponse]{}
+
+	groupID, _ := uuid.Parse(c.QueryParam("id"))
+
+	transactions := []entities.Transaction{}
+	condition := entities.Transaction{GroupID: groupID}
+	if err := db.Where(&condition).Find(&transactions).Error; err != nil {
+		response.Message = err.Error()
+		return c.JSON(http.StatusAccepted, response)
+	}
+
+	data := []responses.GroupTransactionsResponse{}
+
+	// TODO: get all members from consumer field in Item for ListMember
+	listMember := types.ArrayOfUUID{}
+
+	for _, transaction := range transactions {
+		data = append(data, responses.GroupTransactionsResponse{
+			TransactionID: transaction.TransactionID,
+			Name:          transaction.Name,
+			Description:   transaction.Description,
+			Total:         transaction.Total,
+			BillOwner:     transaction.BillOwner,
+			ListMember:    listMember,
+		})
+	}
+
+	response.Message = "SUCCESS"
+	response.Data = data
+
 	return c.JSON(http.StatusAccepted, response)
 }

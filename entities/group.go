@@ -8,9 +8,9 @@ import (
 )
 
 type Group struct {
-	GroupID   uuid.UUID         `gorm:"not null;unique"`
+	GroupID   uuid.UUID         `gorm:"primaryKey"`
 	Name      string            `gorm:"not null"`
-	MemberID  types.ArrayOfUUID `gorm:"not null;type:"`
+	MemberID  types.ArrayOfUUID `gorm:"not null"`
 	StartDate time.Time         `gorm:"not null"`
 	EndDate   time.Time         `gorm:"not null"`
 }
