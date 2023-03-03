@@ -38,6 +38,7 @@ func (database *Database) lazyInit() {
 			&entities.User{},
 			&entities.Group{},
 			&entities.Friend{},
+			&entities.Transaction{},
 		)
 
 		database.connection = db

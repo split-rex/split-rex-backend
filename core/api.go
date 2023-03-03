@@ -19,6 +19,8 @@ func Run() {
 
 	/* Routes */
 	routes.AuthRoute(e)
+	routes.GroupRoute(e)
+	routes.TransactionRoute(e)
 	routes.FriendRoute(e)
 
 	port := os.Getenv("PORT")

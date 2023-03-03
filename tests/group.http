@@ -1,19 +1,41 @@
-POST https://localhost:8080/userCreateGroup
+POST http://localhost:8080/userCreateGroup
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc4NjAxMzEsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.hxlsQIJ6bP9ww4A38tUEO99WIF3Wazid7hWSgB6RS6o
 
 {
-    "name": "DAGORLZ",
-    "member_id": [1,2,3],
-    "start_date" : "2020-12-12",
-    "end_date" : "2020-12-22",
+    "name": "New Group Yeay",
+    "member_id": ["6251ac85-e43d-4b88-8779-588099df5008","183e04d7-c653-4c7d-aa66-3d751d4d7358"],
+    "start_date": "2023-03-01T17:19:20.968831+07:00",
+    "end_date" : "2023-03-01T19:19:20.968831+07:00"
 }
 
-POST https://localhost:8080/editGroupInfo
+###
+
+POST http://localhost:8080/editGroupInfo
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc4NjAxMzEsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.hxlsQIJ6bP9ww4A38tUEO99WIF3Wazid7hWSgB6RS6o
 
 {
-    "group_id" : 1,
-    "name": "DABOYZ",
-    "start_date" : "2020-12-15",
-    "end_date" : "2020-12-25",
+    "group_id" : "6e8a496b-0c95-42a3-9bc3-3696d8e131c9",
+    "name": "Edited 3",
+    "start_date": "2023-03-01T23:19:20.968831+07:00",
+    "end_date" : "2023-03-01T20:19:20.968831+07:00"
 }
+
+### USER GROUPS
+
+GET http://localhost:8080/userGroups
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc4NjAxMzEsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.hxlsQIJ6bP9ww4A38tUEO99WIF3Wazid7hWSgB6RS6o
+
+### GET GROUP DETAIL
+
+GET http://localhost:8080/groupDetail?id=0b865d7f-e40e-4440-905e-eccf2caaa6ed
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc4NTg3MzQsImlkIjoiMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIn0.pKATbvAiQy2TzBu9l_h5_uElaR2_9gWjzqEjB2raM68
+
+### GET GROUP TRANSACTIONS
+
+GET http://localhost:8080/groupTransactions?id=0b865d7f-e40e-4440-905e-eccf2caaa6ed
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc4NTg3MzQsImlkIjoiMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIn0.pKATbvAiQy2TzBu9l_h5_uElaR2_9gWjzqEjB2raM68
