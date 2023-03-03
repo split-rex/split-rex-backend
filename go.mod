@@ -3,17 +3,12 @@ module split-rex-backend
 go 1.19
 
 require (
+	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.10.0
 	gorm.io/driver/postgres v1.4.7
 	gorm.io/gorm v1.24.5
-)
 
-require github.com/golang-jwt/jwt/v4 v4.4.3
-
-require (
-	github.com/labstack/echo v3.3.10+incompatible // indirect
-	github.com/lib/pq v1.10.7 // indirect
 )
 
 require (

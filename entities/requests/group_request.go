@@ -7,6 +7,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// @patrickamadeus this time.Time & []uuid.UUID can't be parsed, types must be string
+// then after string, need to be parsed
 type UserCreateGroupRequest struct {
 	Name      string            `json:"name" form:"name" query:"name"`
 	MemberID  types.ArrayOfUUID `json:"member_id" form:"member_id" query:"member_id"`

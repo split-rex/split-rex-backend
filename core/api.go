@@ -22,6 +22,7 @@ func Run() {
 	routes.GroupRoute(e)
 	routes.TransactionRoute(e)
 	routes.FriendRoute(e)
+	routes.GroupRoute(e)
 
 	port := os.Getenv("PORT")
 	e.Logger.Fatal(e.Start(":" + port))
