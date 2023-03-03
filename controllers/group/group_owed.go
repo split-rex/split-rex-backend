@@ -13,7 +13,7 @@ import (
 
 func GroupOwedController(c echo.Context) error {
 	db := database.DB.GetConnection()
-	response := entities.Response[responses.GroupLentResponse]{}
+	response := entities.Response[responses.GroupOwedResponse]{}
 
 	id := c.Get("id").(uuid.UUID)
 	user := entities.User{}
@@ -48,17 +48,41 @@ func GroupOwedController(c echo.Context) error {
 		groupDetail := responses.GroupDetailResponse{
 			GroupID:   group.GroupID,
 			Name:      group.Name,
-			MemberID:  group.MemberID,
 			StartDate: group.StartDate,
 			EndDate:   group.EndDate,
 		}
+
+
+		// then for each groups, iterate through members on user
+		listMember := []responses.MemberDetail{}
+		for _, memberId := range group.MemberID {
+			member := entities.User{}
+			if err := db.Find(&member, memberId).Error; err != nil {
+				response.Message = types.ERROR_INTERNAL_SERVER
+				return c.JSON(http.StatusInternalServerError, response)
+			}
+
+			listMember = append(listMember, responses.MemberDetail{
+				ID:       member.ID,
+				Name:     member.Name,
+				Username: member.Username,
+				Email:    member.Email,
+
+				// TODO: calculate
+				Type:        "HARDCODED",
+				TotalUnpaid: 0,
+			})
+		}
+
+		groupDetail.ListMember = listMember
+
 
 		groups = append(groups, groupDetail)
 	}
 
 	// then return all
 	response.Message = types.SUCCESS
-	response.Data.TotalLent = totalOwed
+	response.Data.TotalOwed = totalOwed
 	response.Data.ListGroup = groups
 
 	return c.JSON(http.StatusOK, response)

@@ -48,6 +48,9 @@ type GroupLentResponse struct {
 
 type MemberDetail struct {
 	ID          uuid.UUID `json:"member_id"`
+	Name        string    `json:"name"`
+	Username    string    `json:"username"`
+	Email       string    `json:"email"`
 	Type        string    `json:"type"`
 	TotalUnpaid float64   `json:"total_unpaid"`
 }
