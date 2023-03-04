@@ -15,6 +15,7 @@ func FriendRoute(e *echo.Echo) {
 	e.GET("/searchUser", controllers.SearchUser, middlewares.AuthMiddleware)
 	e.GET("/searchUserToAdd", controllers.SearchUserToAdd, middlewares.AuthMiddleware)
 
+	// friend request
 	e.POST("/makeFriendRequest", controllers.MakeFriendRequest, middlewares.AuthMiddleware)
 
 	// Accept and reject request received

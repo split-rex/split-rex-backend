@@ -36,8 +36,21 @@ type GroupTransactionsResponse struct {
 	ListMember    types.ArrayOfUUID `json:"list_member"`
 }
 
+type GroupOwedResponse struct {
+	TotalOwed int                   `json:"total_owed"`
+	ListGroup []GroupDetailResponse `json:"list_group"`
+}
+
+type GroupLentResponse struct {
+	TotalLent int                   `json:"total_lent"`
+	ListGroup []GroupDetailResponse `json:"list_group"`
+}
+
 type MemberDetail struct {
 	ID          uuid.UUID `json:"member_id"`
+	Name        string    `json:"name"`
+	Username    string    `json:"username"`
+	Email       string    `json:"email"`
 	Type        string    `json:"type"`
 	TotalUnpaid float64   `json:"total_unpaid"`
 }
