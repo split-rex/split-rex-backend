@@ -25,6 +25,11 @@ func MakeFriendRequest(c echo.Context) error {
 	user_id := c.Get("id").(uuid.UUID)
 	friend_id, _ := uuid.Parse(friendRequest.Friend_id)
 
+	if user_id == friend_id {
+		response.Message = types.ERROR_BAD_REQUEST + ": user_id and friend_id cannot be the same"
+		return c.JSON(http.StatusBadRequest, response)
+	}
+
 	//check if friend_id exist in user table
 	friend := entities.User{}
 	condition := entities.User{ID: friend_id}
