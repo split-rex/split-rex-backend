@@ -38,8 +38,9 @@ func UserCreateGroupController(c echo.Context) error {
 		}
 	}()
 
+	newUUID := uuid.New()
 	group := &entities.Group{
-		GroupID:   uuid.New(),
+		GroupID:   newUUID,
 		Name:      request.Name,
 		MemberID:  request.MemberID,
 		StartDate: request.StartDate,
@@ -71,6 +72,7 @@ func UserCreateGroupController(c echo.Context) error {
 
 	tx.Commit()
 	response.Message = types.SUCCESS
+	response.Data = newUUID.String()
 	return c.JSON(http.StatusAccepted, response)
 }
 
