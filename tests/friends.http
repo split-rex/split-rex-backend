@@ -1,28 +1,26 @@
-POST http://localhost:8080/makeFriendRequest
+POST https://split-rex-backend-7v6i6rndga-et.a.run.app/makeFriendRequest
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3NjA0NzUsImlkIjoiMTgzZTA0ZDctYzY1My00YzdkLWFhNjYtM2Q3NTFkNGQ3MzU4In0.0GmCLwLQyDRjLVOxv20PAAtjj8ESREHZe8un6OrqE-s
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2NzgwMDMxODMsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.5Aq8jPjBjDvd0B1mP6q883OqCLUX16eA_JiNFHaLdF0
 
 {
-    "friend_id": "b74ae4ed-36cb-456c-b1dd-8fede426f244"
+    "friend_id": "183e04d7-c653-4c7d-aa66-3d751d4d7358"
 }
 
 ###
 
-GET http://localhost:8080/friendRequestSent
+GET https://split-rex-backend-7v6i6rndga-et.a.run.app/friendRequestSent
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3MjEzNjgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.cY6c8KlQir0yFApcpgE5-Xfph7hSfCToTQYaC0y8hr0
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc5NTc5NTEsImlkIjoiYjc0YWU0ZWQtMzZjYi00NTZjLWIxZGQtOGZlZGU0MjZmMjQ0In0.GBBIPYSLcivL7Gylj020TINbP3WLyJThLL5lxg2u1PU
 ###
 
-GET http://localhost:8080/friendRequestReceived
+GET https://split-rex-backend-7v6i6rndga-et.a.run.app/friendRequestReceived
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3MjEzNjgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.cY6c8KlQir0yFApcpgE5-Xfph7hSfCToTQYaC0y8hr0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc5NTc5NTEsImlkIjoiYjc0YWU0ZWQtMzZjYi00NTZjLWIxZGQtOGZlZGU0MjZmMjQ0In0.GBBIPYSLcivL7Gylj020TINbP3WLyJThLL5lxg2u1PU
 
 ###
-GET http://localhost:8080/userFriendList
+GET https://split-rex-backend-7v6i6rndga-et.a.run.app/userFriendList
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3NjA0NzUsImlkIjoiMTgzZTA0ZDctYzY1My00YzdkLWFhNjYtM2Q3NTFkNGQ3MzU4In0.0GmCLwLQyDRjLVOxv20PAAtjj8ESREHZe8un6OrqE-s
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc5NDEzMzAsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.RTN3vDXrvYZPG4fHhVeZjWYb0nDsjbfgkekBmnUe-Os
 
 ###
 POST http://localhost:8080/acceptRequest
@@ -45,6 +43,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZ
 
 ###
 
-GET http://localhost:8080/searchUser?username=gc
+GET https://split-rex-backend-7v6i6rndga-et.a.run.app/searchUser?username=ubay
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc4NTg3MzQsImlkIjoiMDAwMDAwMDAtMDAwMC0wMDAwLTAwMDAtMDAwMDAwMDAwMDAwIn0.pKATbvAiQy2TzBu9l_h5_uElaR2_9gWjzqEjB2raM68
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2NzgwMDMxODMsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.5Aq8jPjBjDvd0B1mP6q883OqCLUX16eA_JiNFHaLdF0

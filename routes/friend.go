@@ -13,6 +13,7 @@ func FriendRoute(e *echo.Echo) {
 	e.GET("/friendRequestSent", controllers.FriendRequestSent, middlewares.AuthMiddleware)
 	e.GET("/friendRequestReceived", controllers.FriendRequestReceived, middlewares.AuthMiddleware)
 	e.GET("/searchUser", controllers.SearchUser, middlewares.AuthMiddleware)
+	e.GET("/searchUserToAdd", controllers.SearchUserToAdd, middlewares.AuthMiddleware)
 
 	e.POST("/makeFriendRequest", controllers.MakeFriendRequest, middlewares.AuthMiddleware)
 
