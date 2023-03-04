@@ -58,6 +58,11 @@ func SearchUserToAdd(c echo.Context) error {
 	currentUserId := c.Get("id").(uuid.UUID)
 	if user.ID == currentUserId {
 		response.Message = types.ERROR_CANNOT_ADD_SELF
+		response.Data = responses.ProfileResponse{
+			User_id:  user.ID.String(),
+			Username: user.Username,
+			Fullname: user.Name,
+		}
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
@@ -71,6 +76,11 @@ func SearchUserToAdd(c echo.Context) error {
 	for _, friend_id := range currentUser.Friend_id {
 		if friend_id == user.ID {
 			response.Message = types.ERROR_ALREADY_FRIEND
+			response.Data = responses.ProfileResponse{
+				User_id:  user.ID.String(),
+				Username: user.Username,
+				Fullname: user.Name,
+			}
 			return c.JSON(http.StatusBadRequest, response)
 		}
 	}
