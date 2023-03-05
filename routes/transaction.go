@@ -2,7 +2,7 @@ package routes
 
 import (
 	"split-rex-backend/configs/middlewares"
-	"split-rex-backend/controllers"
+	controllers "split-rex-backend/controllers/transaction"
 
 	"github.com/labstack/echo/v4"
 )

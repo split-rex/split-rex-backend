@@ -1,6 +1,6 @@
-`POST http://localhost:8080/userCreateGroup
+POST http://localhost:8080/userCreateGroup
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc4NjAxMzEsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.hxlsQIJ6bP9ww4A38tUEO99WIF3Wazid7hWSgB6RS6o
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2NzgwMDg2NTcsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.wYh3J7T0UPMLN8FHbEJJGnVTlckKV--UF_5CDqNCwoo
 
 {
     "name": "New Group Yeay",

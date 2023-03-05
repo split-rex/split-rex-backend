@@ -46,3 +46,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZ
 GET https://split-rex-backend-7v6i6rndga-et.a.run.app/searchUser?username=ubay
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2NzgwMDMxODMsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.5Aq8jPjBjDvd0B1mP6q883OqCLUX16eA_JiNFHaLdF0
+
+###
+
+POST http://localhost:8080/makeFriendRequest
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2NzgwMDg2NTcsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.wYh3J7T0UPMLN8FHbEJJGnVTlckKV--UF_5CDqNCwoo
+
+{
+    "friend_id": "6251ac85-e43d-4b88-8779-588099df5008"
+}
