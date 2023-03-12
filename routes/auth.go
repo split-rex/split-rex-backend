@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"split-rex-backend/configs/database"
 	"split-rex-backend/configs/middlewares"
 	controllers "split-rex-backend/controllers/auth"
 
@@ -8,7 +9,9 @@ import (
 )
 
 func AuthRoute(e *echo.Echo) {
-	e.POST("/login", controllers.LoginController)
-	e.POST("/register", controllers.RegisterController)
-	e.GET("/profile", controllers.ProfileController, middlewares.AuthMiddleware)
+	authController := controllers.NewAuthController(database.DB.GetConnection())
+
+	e.POST("/login", authController.LoginController)
+	e.POST("/register", authController.RegisterController)
+	e.GET("/profile", authController.ProfileController, middlewares.AuthMiddleware)
 }

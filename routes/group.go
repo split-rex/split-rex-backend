@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"split-rex-backend/configs/database"
 	"split-rex-backend/configs/middlewares"
 	controllers "split-rex-backend/controllers/group"
 
@@ -8,13 +9,14 @@ import (
 )
 
 func GroupRoute(e *echo.Echo) {
-	e.POST("/userCreateGroup", controllers.UserCreateGroupController, middlewares.AuthMiddleware)
-	e.POST("/editGroupInfo", controllers.EditGroupInfoController, middlewares.AuthMiddleware)
-	e.GET("/userGroups", controllers.UserGroupsController, middlewares.AuthMiddleware)
-	e.GET("/groupDetail/:id", controllers.GroupDetailController, middlewares.AuthMiddleware)
-	e.GET("/groupTransactions/:id", controllers.GroupTransactionsController, middlewares.AuthMiddleware)
+	groupController := controllers.NewGroupController(database.DB.GetConnection())
+	e.POST("/userCreateGroup", groupController.UserCreateGroup, middlewares.AuthMiddleware)
+	e.POST("/editGroupInfo", groupController.EditGroupInfo, middlewares.AuthMiddleware)
+	e.GET("/userGroups", groupController.UserGroups, middlewares.AuthMiddleware)
+	e.GET("/groupDetail/:id", groupController.GroupDetail, middlewares.AuthMiddleware)
+	e.GET("/groupTransactions/:id", groupController.GroupTransactions, middlewares.AuthMiddleware)
 
 	// for home screen
-	e.GET("/userGroupOwed", controllers.GroupOwedController, middlewares.AuthMiddleware)
-	e.GET("/userGroupLent", controllers.GroupLentController, middlewares.AuthMiddleware)
+	e.GET("/userGroupOwed", groupController.GroupOwed, middlewares.AuthMiddleware)
+	e.GET("/userGroupLent", groupController.GroupLent, middlewares.AuthMiddleware)
 }

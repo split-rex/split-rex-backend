@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"split-rex-backend/configs/database"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/responses"
 	"split-rex-backend/types"
@@ -11,8 +10,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func ProfileController(c echo.Context) error {
-	db := database.DB.GetConnection()
+func (con *authController) ProfileController(c echo.Context) error {
+	db := con.db
 	response := entities.Response[responses.ProfileResponse]{}
 
 	user_id := c.Get("id").(uuid.UUID)
@@ -24,7 +23,7 @@ func ProfileController(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 	response.Message = types.SUCCESS
-	
+
 	response.Data.User_id = user.ID.String()
 	response.Data.Username = user.Username
 	response.Data.Fullname = user.Name

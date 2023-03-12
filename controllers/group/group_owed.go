@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"split-rex-backend/configs/database"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/responses"
 	"split-rex-backend/types"
@@ -11,8 +10,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func GroupOwedController(c echo.Context) error {
-	db := database.DB.GetConnection()
+func (con *groupController) GroupOwed(c echo.Context) error {
+	db := con.db
 	response := entities.Response[responses.GroupOwedResponse]{}
 
 	id := c.Get("id").(uuid.UUID)
@@ -52,7 +51,6 @@ func GroupOwedController(c echo.Context) error {
 			EndDate:   group.EndDate,
 		}
 
-
 		// then for each groups, iterate through members on user
 		listMember := []responses.MemberDetail{}
 		for _, memberId := range group.MemberID {
@@ -75,7 +73,6 @@ func GroupOwedController(c echo.Context) error {
 		}
 
 		groupDetail.ListMember = listMember
-
 
 		groups = append(groups, groupDetail)
 	}

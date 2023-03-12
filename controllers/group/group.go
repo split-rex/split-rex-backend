@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"split-rex-backend/configs/database"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
 	"split-rex-backend/entities/responses"
@@ -12,8 +11,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func UserCreateGroupController(c echo.Context) error {
-	db := database.DB.GetConnection()
+func (con *groupController) UserCreateGroup(c echo.Context) error {
+	db := con.db
 	response := entities.Response[string]{}
 
 	request := requests.UserCreateGroupRequest{}
@@ -76,8 +75,8 @@ func UserCreateGroupController(c echo.Context) error {
 	return c.JSON(http.StatusAccepted, response)
 }
 
-func EditGroupInfoController(c echo.Context) error {
-	db := database.DB.GetConnection()
+func (con *groupController) EditGroupInfo(c echo.Context) error {
+	db := con.db
 	response := entities.Response[string]{}
 
 	request := requests.EditGroupInfoRequest{}
@@ -102,8 +101,8 @@ func EditGroupInfoController(c echo.Context) error {
 	return c.JSON(http.StatusAccepted, response)
 }
 
-func UserGroupsController(c echo.Context) error {
-	db := database.DB.GetConnection()
+func (con *groupController) UserGroups(c echo.Context) error {
+	db := con.db
 	response := entities.Response[[]responses.UserGroupResponse]{}
 
 	userID := c.Get("id").(uuid.UUID)
@@ -145,8 +144,8 @@ func UserGroupsController(c echo.Context) error {
 	return c.JSON(http.StatusAccepted, response)
 }
 
-func GroupDetailController(c echo.Context) error {
-	db := database.DB.GetConnection()
+func (h *groupController) GroupDetail(c echo.Context) error {
+	db := h.db
 	response := entities.Response[responses.GroupDetailResponse]{}
 
 	group := entities.Group{}
@@ -184,8 +183,8 @@ func GroupDetailController(c echo.Context) error {
 	return c.JSON(http.StatusAccepted, response)
 }
 
-func GroupTransactionsController(c echo.Context) error {
-	db := database.DB.GetConnection()
+func (h *groupController) GroupTransactions(c echo.Context) error {
+	db := h.db
 	response := entities.Response[[]responses.GroupTransactionsResponse]{}
 
 	groupID, _ := uuid.Parse(c.QueryParam("id"))

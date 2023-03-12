@@ -3,7 +3,6 @@ package controllers
 import (
 	"net/http"
 	"split-rex-backend/configs"
-	"split-rex-backend/configs/database"
 	"split-rex-backend/configs/middlewares"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
@@ -15,8 +14,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func RegisterController(c echo.Context) error {
-	db := database.DB.GetConnection()
+func (con *authController) RegisterController(c echo.Context) error {
+	db := con.db
 	config := configs.Config.GetMetadata()
 	response := entities.Response[string]{}
 
