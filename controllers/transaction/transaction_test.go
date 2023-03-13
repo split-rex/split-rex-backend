@@ -1,12 +1,16 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"split-rex-backend/configs/database"
+	"split-rex-backend/entities"
+	"split-rex-backend/entities/responses"
 	"strings"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 )
@@ -35,39 +39,19 @@ func TestUserCreateTransaction(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
+	transaction := responses.TestResponse[string]{}
 	if assert.NoError(t, testUserController.UserCreateTransaction(c)) {
 		assert.Equal(t, http.StatusCreated, rec.Code)
+
+		if err := json.Unmarshal(rec.Body.Bytes(), &transaction); err != nil {
+			t.Error(err.Error())
+		}
+	}
+
+	db := database.DBTesting.GetConnection()
+	if err := db.Where(&entities.Transaction{
+		TransactionID: uuid.MustParse(transaction.Data),
+	}).Delete(&entities.Transaction{}).Error; err != nil {
+		t.Error(err.Error())
 	}
 }
-
-// func TestUserCreateTransaction(t *testing.T) {
-// 	groupID, _ := uuid.Parse("6251ac85-e43d-4b88-8779-588099df5008")
-// 	billOwnerID, _ := uuid.Parse("6251ac85-e43d-4b88-8779-588099df5008")
-
-// 	date := time.Date(2023, 3, 3, 0, 0, 0, 0, time.UTC)
-
-// transaction := &requests.UserCreateTransactionRequest{
-// 	Name:        "Transaction 1",
-// 	Description: "Transaction 1 Description",
-// 	GroupID:     groupID,
-// 	Date:        date,
-// 	Subtotal:    100,
-// 	Tax:         10,
-// 	Service:     10,
-// 	Total:       120,
-// 	BillOwner:   billOwnerID,
-// 	Items:       types.ArrayOfUUID{},
-// }
-// 	body, _ := json.Marshal(transaction)
-
-// 	res, err := http.Post("http://localhost:8080/userCreateTransaction",
-// 		"application/json", bytes.NewBuffer(body))
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
-// 	defer res.Body.Close()
-
-// 	if res.StatusCode != http.StatusOK {
-// 		t.Error("Expected status code 200, got ", res.StatusCode)
-// 	}
-// }

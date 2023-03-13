@@ -56,5 +56,6 @@ func (h *transactionController) UserCreateTransaction(c echo.Context) error {
 	}
 
 	response.Message = types.SUCCESS
+	response.Data = transaction.TransactionID.String()
 	return c.JSON(http.StatusCreated, response)
 }

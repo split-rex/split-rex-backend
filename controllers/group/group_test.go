@@ -35,44 +35,27 @@ func TestUserCreateGroup(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	groupID := responses.TestResponse[string]{}
+	group := responses.TestResponse[string]{}
 	if assert.NoError(t, testGroupController.UserCreateGroup(c)) {
 		assert.Equal(t, http.StatusCreated, rec.Code)
 
-		if err := json.Unmarshal(rec.Body.Bytes(), &groupID); err != nil {
-			panic(err)
+		if err := json.Unmarshal(rec.Body.Bytes(), &group); err != nil {
+			t.Error(err.Error())
 		}
 	}
 
 	// delete created group
-	group := entities.Group{
-		GroupID: uuid.MustParse(groupID.Data),
+	groupID, err := uuid.Parse(group.Data)
+	if err != nil {
+		t.Error(err.Error())
 	}
-	db.Where(&group).Delete(&group)
+
+	if err := db.Where(&entities.Group{
+		GroupID: groupID,
+	}).Delete(&entities.Group{}).Error; err != nil {
+		t.Error(err.Error())
+	}
 }
-
-// func TestUserCreateGroup(t *testing.T) {
-// 	date := time.Date(2023, 3, 3, 0, 0, 0, 0, time.UTC)
-
-// 	group := &requests.UserCreateGroupRequest{
-// 		Name:      "Group Testing 12345",
-// 		MemberID:  types.ArrayOfUUID{},
-// 		StartDate: date,
-// 		EndDate:   date,
-// 	}
-// 	body, _ := json.Marshal(group)
-
-// 	res, err := http.Post("http://localhost:8080/userCreateGroup",
-// 		"application/json", bytes.NewBuffer(body))
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
-// 	defer res.Body.Close()
-
-// 	if res.StatusCode != http.StatusOK {
-// 		t.Error("Expected status code 200, got ", res.StatusCode)
-// 	}
-// }
 
 // func TestEditGroupInfo(t *testing.T) {
 // 	date := time.Date(2023, 3, 3, 0, 0, 0, 0, time.UTC)
