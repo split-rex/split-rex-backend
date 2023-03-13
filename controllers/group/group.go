@@ -72,7 +72,7 @@ func (con *groupController) UserCreateGroup(c echo.Context) error {
 	tx.Commit()
 	response.Message = types.SUCCESS
 	response.Data = newUUID.String()
-	return c.JSON(http.StatusAccepted, response)
+	return c.JSON(http.StatusCreated, response)
 }
 
 func (con *groupController) EditGroupInfo(c echo.Context) error {

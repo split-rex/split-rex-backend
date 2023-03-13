@@ -56,5 +56,5 @@ func (h *transactionController) UserCreateTransaction(c echo.Context) error {
 	}
 
 	response.Message = types.SUCCESS
-	return c.JSON(http.StatusOK, response)
+	return c.JSON(http.StatusCreated, response)
 }

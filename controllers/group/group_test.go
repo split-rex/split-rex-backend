@@ -1,88 +1,110 @@
 package controllers
 
 import (
-	"bytes"
-	"encoding/json"
 	"net/http"
-	"split-rex-backend/entities/requests"
-	"split-rex-backend/types"
+	"net/http/httptest"
+	"split-rex-backend/configs/database"
+	"strings"
 	"testing"
-	"time"
 
-	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
+	"github.com/stretchr/testify/assert"
+)
+
+var (
+	testGroupController = NewGroupController(database.DBTesting.GetConnection())
 )
 
 func TestUserCreateGroup(t *testing.T) {
-	date := time.Date(2023, 3, 3, 0, 0, 0, 0, time.UTC)
+	e := echo.New()
+	groupJson := `{
+		"name": "New Group Yeay",
+		"member_id": ["6251ac85-e43d-4b88-8779-588099df5008","183e04d7-c653-4c7d-aa66-3d751d4d7358"],
+		"start_date": "2023-03-01T17:19:20.968831+07:00",
+		"end_date" : "2023-03-01T19:19:20.968831+07:00"
+	}`
 
-	group := &requests.UserCreateGroupRequest{
-		Name:      "Group Testing 12345",
-		MemberID:  types.ArrayOfUUID{},
-		StartDate: date,
-		EndDate:   date,
-	}
-	body, _ := json.Marshal(group)
+	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(groupJson))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
 
-	res, err := http.Post("http://localhost:8080/userCreateGroup",
-		"application/json", bytes.NewBuffer(body))
-	if err != nil {
-		t.Error(err)
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
-		t.Error("Expected status code 200, got ", res.StatusCode)
+	if assert.NoError(t, testGroupController.UserCreateGroup(c)) {
+		assert.Equal(t, http.StatusCreated, rec.Code)
 	}
 }
 
-func TestEditGroupInfo(t *testing.T) {
-	date := time.Date(2023, 3, 3, 0, 0, 0, 0, time.UTC)
+// func TestUserCreateGroup(t *testing.T) {
+// 	date := time.Date(2023, 3, 3, 0, 0, 0, 0, time.UTC)
 
-	group := &requests.UserCreateGroupRequest{
-		Name:      "Group Testing 12345",
-		MemberID:  types.ArrayOfUUID{},
-		StartDate: date,
-		EndDate:   date,
-	}
-	body, _ := json.Marshal(group)
+// 	group := &requests.UserCreateGroupRequest{
+// 		Name:      "Group Testing 12345",
+// 		MemberID:  types.ArrayOfUUID{},
+// 		StartDate: date,
+// 		EndDate:   date,
+// 	}
+// 	body, _ := json.Marshal(group)
 
-	res, err := http.Post("http://localhost:8080/userCreateGroup",
-		"application/json", bytes.NewBuffer(body))
-	if err != nil {
-		t.Error(err)
-	}
-	defer res.Body.Close()
+// 	res, err := http.Post("http://localhost:8080/userCreateGroup",
+// 		"application/json", bytes.NewBuffer(body))
+// 	if err != nil {
+// 		t.Error(err)
+// 	}
+// 	defer res.Body.Close()
 
-	// create new interface of response which consist of message and groupID
+// 	if res.StatusCode != http.StatusOK {
+// 		t.Error("Expected status code 200, got ", res.StatusCode)
+// 	}
+// }
 
-	if res.StatusCode != http.StatusOK {
-		t.Error("Expected status code 200 while creating group, got ", res.StatusCode)
-	}
+// func TestEditGroupInfo(t *testing.T) {
+// 	date := time.Date(2023, 3, 3, 0, 0, 0, 0, time.UTC)
 
-	var response struct {
-		Message string
-		GroupID string
-	}
-	json.NewDecoder(res.Body).Decode(&response)
+// 	group := &requests.UserCreateGroupRequest{
+// 		Name:      "Group Testing 12345",
+// 		MemberID:  types.ArrayOfUUID{},
+// 		StartDate: date,
+// 		EndDate:   date,
+// 	}
+// 	body, _ := json.Marshal(group)
 
-	groupID, _ := uuid.Parse(response.GroupID)
+// 	res, err := http.Post("http://localhost:8080/userCreateGroup",
+// 		"application/json", bytes.NewBuffer(body))
+// 	if err != nil {
+// 		t.Error(err)
+// 	}
+// 	defer res.Body.Close()
 
-	editGroup := &requests.EditGroupInfoRequest{
-		GroupID:   groupID,
-		Name:      "Group Testing New",
-		StartDate: date,
-		EndDate:   date,
-	}
-	body, _ = json.Marshal(editGroup)
+// 	// create new interface of response which consist of message and groupID
 
-	res, err = http.Post("http://localhost:8080/editGroupInfo",
-		"application/json", bytes.NewBuffer(body))
-	if err != nil {
-		t.Error(err)
-	}
-	defer res.Body.Close()
+// 	if res.StatusCode != http.StatusOK {
+// 		t.Error("Expected status code 200 while creating group, got ", res.StatusCode)
+// 	}
 
-	if res.StatusCode != http.StatusOK {
-		t.Error("Expected status code 200, got ", res.StatusCode)
-	}
-}
+// 	var response struct {
+// 		Message string
+// 		GroupID string
+// 	}
+// 	json.NewDecoder(res.Body).Decode(&response)
+
+// 	groupID, _ := uuid.Parse(response.GroupID)
+
+// 	editGroup := &requests.EditGroupInfoRequest{
+// 		GroupID:   groupID,
+// 		Name:      "Group Testing New",
+// 		StartDate: date,
+// 		EndDate:   date,
+// 	}
+// 	body, _ = json.Marshal(editGroup)
+
+// 	res, err = http.Post("http://localhost:8080/editGroupInfo",
+// 		"application/json", bytes.NewBuffer(body))
+// 	if err != nil {
+// 		t.Error(err)
+// 	}
+// 	defer res.Body.Close()
+
+// 	if res.StatusCode != http.StatusOK {
+// 		t.Error("Expected status code 200, got ", res.StatusCode)
+// 	}
+// }

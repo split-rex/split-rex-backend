@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"split-rex-backend/configs"
 	"split-rex-backend/configs/middlewares"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
@@ -16,7 +15,7 @@ import (
 
 func (con *authController) LoginController(c echo.Context) error {
 	db := con.db
-	config := configs.Config.GetMetadata()
+	config := con.metadata
 	response := entities.Response[string]{}
 
 	loginRequest := requests.LoginRequest{}

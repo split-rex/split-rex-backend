@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"split-rex-backend/configs"
 	"split-rex-backend/configs/middlewares"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
@@ -16,7 +15,7 @@ import (
 
 func (con *authController) RegisterController(c echo.Context) error {
 	db := con.db
-	config := configs.Config.GetMetadata()
+	config := con.metadata
 	response := entities.Response[string]{}
 
 	registerRequest := requests.RegisterRequest{}
@@ -78,5 +77,5 @@ func (con *authController) RegisterController(c echo.Context) error {
 
 	response.Message = types.SUCCESS
 	response.Data = signedAuthToken
-	return c.JSON(http.StatusAccepted, response)
+	return c.JSON(http.StatusCreated, response)
 }

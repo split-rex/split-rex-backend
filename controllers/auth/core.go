@@ -1,12 +1,15 @@
 package controllers
 
 import (
+	"split-rex-backend/configs"
+
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
 type authController struct {
-	db *gorm.DB
+	db       *gorm.DB
+	metadata configs.Metadata
 }
 
 type AuthController interface {
@@ -15,6 +18,6 @@ type AuthController interface {
 	RegisterController(c echo.Context) error
 }
 
-func NewAuthController(db *gorm.DB) AuthController {
-	return &authController{db: db}
+func NewAuthController(db *gorm.DB, mt configs.Metadata) AuthController {
+	return &authController{db: db, metadata: mt}
 }

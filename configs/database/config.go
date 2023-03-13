@@ -14,6 +14,11 @@ type Database struct {
 	once       sync.Once
 }
 
+type DatabaseTesting struct {
+	connection *gorm.DB
+	once       sync.Once
+}
+
 func (database *Database) lazyInit() {
 	database.once.Do(func() {
 		host := os.Getenv("DB_HOST")
@@ -45,9 +50,47 @@ func (database *Database) lazyInit() {
 	})
 }
 
+// Testing Database
+func (databaseTesting *DatabaseTesting) lazyInit() {
+	databaseTesting.once.Do(func() {
+		host := "34.101.183.3"
+		port := "5432"
+		dbname := "split-rex-db-testing"
+		username := "admin"
+		password := "yzOYPFI_M*{$[$&T"
+
+		dsn := "host=" + host
+		dsn += " user=" + username
+		dsn += " password=" + password
+		dsn += " dbname=" + dbname
+		dsn += " port=" + port
+		dsn += " sslmode=disable"
+
+		db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{SkipDefaultTransaction: true})
+		if err != nil {
+			panic("Cannot connect database")
+		}
+
+		db.AutoMigrate(
+			&entities.User{},
+			&entities.Group{},
+			&entities.Friend{},
+			&entities.Transaction{},
+		)
+
+		databaseTesting.connection = db
+	})
+}
+
 func (database *Database) GetConnection() *gorm.DB {
 	database.lazyInit()
 	return database.connection
 }
 
+func (databaseTesting *DatabaseTesting) GetConnection() *gorm.DB {
+	databaseTesting.lazyInit()
+	return databaseTesting.connection
+}
+
 var DB = &Database{}
+var DBTesting = &DatabaseTesting{}
