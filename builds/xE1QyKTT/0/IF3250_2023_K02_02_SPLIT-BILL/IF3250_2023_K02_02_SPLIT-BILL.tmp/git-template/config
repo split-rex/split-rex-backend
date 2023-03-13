@@ -1,0 +1,6 @@
+[init]
+	defaultBranch = none
+[fetch]
+	recurseSubmodules = false
+[http "https://gitlab.informatika.org"]
+	sslCAInfo = /Users/admin/Documents/uni/sem6/ppl/split-rex-backend/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL.tmp/CI_SERVER_TLS_CA_FILE
