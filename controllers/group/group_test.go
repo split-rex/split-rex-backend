@@ -1,12 +1,16 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"split-rex-backend/configs/database"
+	"split-rex-backend/entities"
+	"split-rex-backend/entities/responses"
 	"strings"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 )
@@ -16,6 +20,8 @@ var (
 )
 
 func TestUserCreateGroup(t *testing.T) {
+	db := database.DBTesting.GetConnection()
+
 	e := echo.New()
 	groupJson := `{
 		"name": "New Group Yeay",
@@ -29,9 +35,20 @@ func TestUserCreateGroup(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
+	groupID := responses.TestResponse[string]{}
 	if assert.NoError(t, testGroupController.UserCreateGroup(c)) {
 		assert.Equal(t, http.StatusCreated, rec.Code)
+
+		if err := json.Unmarshal(rec.Body.Bytes(), &groupID); err != nil {
+			panic(err)
+		}
 	}
+
+	// delete created group
+	group := entities.Group{
+		GroupID: uuid.MustParse(groupID.Data),
+	}
+	db.Where(&group).Delete(&group)
 }
 
 // func TestUserCreateGroup(t *testing.T) {
