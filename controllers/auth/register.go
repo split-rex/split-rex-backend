@@ -2,8 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"split-rex-backend/configs"
-	"split-rex-backend/configs/database"
 	"split-rex-backend/configs/middlewares"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
@@ -15,9 +13,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func RegisterController(c echo.Context) error {
-	db := database.DB.GetConnection()
-	config := configs.Config.GetMetadata()
+func (con *authController) RegisterController(c echo.Context) error {
+	db := con.db
+	config := con.metadata
 	response := entities.Response[string]{}
 
 	registerRequest := requests.RegisterRequest{}
@@ -79,5 +77,5 @@ func RegisterController(c echo.Context) error {
 
 	response.Message = types.SUCCESS
 	response.Data = signedAuthToken
-	return c.JSON(http.StatusAccepted, response)
+	return c.JSON(http.StatusCreated, response)
 }

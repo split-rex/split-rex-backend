@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"split-rex-backend/configs/database"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
 	"split-rex-backend/types"
@@ -11,8 +10,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func UserCreateTransactionController(c echo.Context) error {
-	db := database.DB.GetConnection()
+func (h *transactionController) UserCreateTransaction(c echo.Context) error {
+	db := h.db
 	response := entities.Response[string]{}
 
 	request := requests.UserCreateTransactionRequest{}
@@ -57,5 +56,6 @@ func UserCreateTransactionController(c echo.Context) error {
 	}
 
 	response.Message = types.SUCCESS
-	return c.JSON(http.StatusOK, response)
+	response.Data = transaction.TransactionID.String()
+	return c.JSON(http.StatusCreated, response)
 }

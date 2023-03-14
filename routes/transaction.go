@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"split-rex-backend/configs/database"
 	"split-rex-backend/configs/middlewares"
 	controllers "split-rex-backend/controllers/transaction"
 
@@ -8,5 +9,7 @@ import (
 )
 
 func TransactionRoute(e *echo.Echo) {
-	e.POST("/userCreateTransaction", controllers.UserCreateTransactionController, middlewares.AuthMiddleware)
+	transactionController := controllers.NewTransactionController(database.DB.GetConnection())
+
+	e.POST("/userCreateTransaction", transactionController.UserCreateTransaction, middlewares.AuthMiddleware)
 }

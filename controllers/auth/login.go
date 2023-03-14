@@ -2,8 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"split-rex-backend/configs"
-	"split-rex-backend/configs/database"
 	"split-rex-backend/configs/middlewares"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
@@ -15,9 +13,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func LoginController(c echo.Context) error {
-	db := database.DB.GetConnection()
-	config := configs.Config.GetMetadata()
+func (con *authController) LoginController(c echo.Context) error {
+	db := con.db
+	config := con.metadata
 	response := entities.Response[string]{}
 
 	loginRequest := requests.LoginRequest{}

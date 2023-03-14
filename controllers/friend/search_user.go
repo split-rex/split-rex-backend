@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"split-rex-backend/configs/database"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/responses"
 	"split-rex-backend/types"
@@ -11,9 +10,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func SearchUser(c echo.Context) error {
+func (con *friendController) SearchUser(c echo.Context) error {
 	username := c.QueryParam("username")
-	db := database.DB.GetConnection()
+	db := con.db
 	response := entities.Response[responses.ProfileResponse]{}
 
 	//check if username exist in user table
@@ -37,9 +36,9 @@ func SearchUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
-func SearchUserToAdd(c echo.Context) error {
+func (con *friendController) SearchUserToAdd(c echo.Context) error {
 	username := c.QueryParam("username")
-	db := database.DB.GetConnection()
+	db := con.db
 	response := entities.Response[responses.ProfileResponse]{}
 
 	//check if username exist in user table

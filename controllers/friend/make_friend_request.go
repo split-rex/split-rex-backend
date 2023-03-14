@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"split-rex-backend/configs/database"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
 	"split-rex-backend/types"
@@ -11,9 +10,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func MakeFriendRequest(c echo.Context) error {
-	db := database.DB.GetConnection()
-	// config := configs.Config.GetMetadata()
+func (con *friendController) MakeFriendRequest(c echo.Context) error {
+	db := con.db
 	response := entities.Response[string]{}
 
 	friendRequest := requests.FriendRequest{}

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"split-rex-backend/configs/database"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/responses"
 	"split-rex-backend/types"
@@ -11,8 +10,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func UserFriendList(c echo.Context) error {
-	db := database.DB.GetConnection()
+func (con *friendController) UserFriendList(c echo.Context) error {
+	db := con.db
 
 	// get user id from context, cast to uuid
 	user_id := c.Get("id").(uuid.UUID)

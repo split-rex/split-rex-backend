@@ -39,6 +39,29 @@ func (authConfig *AuthConfig) lazyInit() {
 	})
 }
 
+func (authConfig *AuthConfig) lazyTestInit() {
+	authConfig.once.Do(func() {
+		applicationName := "split-rex-backend-testing"
+		numberOfSeconds, err := strconv.Atoi("86000")
+		if err != nil {
+			panic(err)
+		}
+		loginExpirationDuration := time.Duration(numberOfSeconds) * time.Second
+		jwtSigningMethod := jwt.SigningMethodHS256
+		jwtSignatureKey := []byte("1234")
+
+		authConfig.metadata.ApplicationName = applicationName
+		authConfig.metadata.LoginExpirationDuration = loginExpirationDuration
+		authConfig.metadata.JWTSigningMethod = jwtSigningMethod
+		authConfig.metadata.JWTSignatureKey = jwtSignatureKey
+	})
+}
+
+func (authConfig *AuthConfig) GetTestMetadata() Metadata {
+	authConfig.lazyTestInit()
+	return authConfig.metadata
+}
+
 func (authConfig *AuthConfig) GetMetadata() Metadata {
 	authConfig.lazyInit()
 	return authConfig.metadata
