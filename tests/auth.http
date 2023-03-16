@@ -24,10 +24,10 @@ POST http://localhost:8080/register
 Content-Type: application/json
 
 {
-    "name": "patty",
-    "email": "patty@gmail.com",
-    "username": "patty",
-    "password": "patty"
+    "name": "wikwik",
+    "email": "1@gmail.com",
+    "username": "1",
+    "password": "wikwik"
 }
 
 ###
@@ -38,4 +38,15 @@ Content-Type: application/json
 {
     "email": "patrick@gmail.com",
     "password": "patrick"
+}
+
+###
+POST http://localhost:8080/updateProfile
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2NzkwNTI3NzAsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.mMZyCApDee5YfX569uIN36DALW3n231zjgLYIA8Y-dw
+
+{
+    "name": "patututututuut",
+    "password": "patrick",
+    "color": 3
 }

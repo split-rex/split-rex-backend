@@ -14,5 +14,7 @@ func AuthRoute(e *echo.Echo) {
 
 	e.POST("/login", authController.LoginController)
 	e.POST("/register", authController.RegisterController)
+
 	e.GET("/profile", authController.ProfileController, middlewares.AuthMiddleware)
+	e.POST("/updateProfile", authController.UpdateProfileController, middlewares.AuthMiddleware)
 }
