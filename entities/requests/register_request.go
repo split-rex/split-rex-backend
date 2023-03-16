@@ -5,4 +5,5 @@ type RegisterRequest struct {
 	Email    string `json:"email" form:"email" query:"email"`
 	Username string `json:"username" form:"username" query:"username"`
 	Password string `json:"password" form:"password" query:"password"`
+	Color    uint   `json:"color" form:"color" query:"color"`
 }
