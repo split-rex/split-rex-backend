@@ -28,6 +28,8 @@ func TestAuth(t *testing.T) {
 	e := echo.New()
 
 	user := factories.UserFactory{}
+	user.Init()
+	
 	registerRequest, _ := json.Marshal(requests.RegisterRequest{
 		Name:     user.Name,
 		Email:    user.Email,
@@ -64,5 +66,5 @@ func TestAuth(t *testing.T) {
 		Username: user.Username,
 		Email:    user.Email,
 		Name:     user.Name,
-	}).Delete(&user)
+	}).Delete(&entities.User{})
 }
