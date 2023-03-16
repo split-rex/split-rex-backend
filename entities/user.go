@@ -11,7 +11,7 @@ type User struct {
 	Name     string                `gorm:"not null"`
 	Email    string                `gorm:"not null;unique"`
 	Username string                `gorm:"not null;unique"`
-	Color    float32               `gorm:"not null"`
+	Color    uint                  `gorm:"not null"`
 	Password types.EncryptedString `gorm:"not null"`
 	Groups   types.ArrayOfUUID
 }

@@ -40,11 +40,13 @@ Content-Type: application/json
     "password": "patrick"
 }
 
+###
 POST http://localhost:8080/updateProfile
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2NzkwNTI3NzAsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.mMZyCApDee5YfX569uIN36DALW3n231zjgLYIA8Y-dw
 
 {
+    "name": "patututututuut",
     "password": "patrick",
-    "color": 1,
-    "name": "paturiko",
+    "color": 3
 }

@@ -14,8 +14,12 @@ func (con *authController) UpdateProfileController(c echo.Context) error {
 	db := con.db
 	response := entities.Response[string]{}
 
-	UpdateProfileRequest := requests.UpdateProfileRequest{}
-	if err := c.Bind(&UpdateProfileRequest); err != nil {
+	updateProfileRequest := requests.UpdateProfileRequest{}
+	if err := c.Bind(&updateProfileRequest); err != nil {
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusBadRequest, response)
+	}
+	if updateProfileRequest.Color < 1 || updateProfileRequest.Color > 6 {
 		response.Message = types.ERROR_BAD_REQUEST
 		return c.JSON(http.StatusBadRequest, response)
 	}
@@ -38,9 +42,9 @@ func (con *authController) UpdateProfileController(c echo.Context) error {
 
 	// update user
 	if err := db.Model(&user).Updates(entities.User{
-		Password: types.EncryptedString(UpdateProfileRequest.Password),
-		Name:     UpdateProfileRequest.Name,
-		Color:    UpdateProfileRequest.Color,
+		Password: types.EncryptedString(updateProfileRequest.Password),
+		Name:     updateProfileRequest.Name,
+		Color:    updateProfileRequest.Color,
 	}).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
