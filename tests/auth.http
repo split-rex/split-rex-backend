@@ -39,3 +39,12 @@ Content-Type: application/json
     "email": "patrick@gmail.com",
     "password": "patrick"
 }
+
+POST http://localhost:8080/updateProfile
+Content-Type: application/json
+
+{
+    "password": "patrick",
+    "color": 1,
+    "name": "paturiko",
+}
