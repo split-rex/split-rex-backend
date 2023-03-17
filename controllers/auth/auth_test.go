@@ -10,9 +10,11 @@ import (
 	"split-rex-backend/entities/factories"
 	"split-rex-backend/entities/requests"
 	"split-rex-backend/entities/responses"
+	"split-rex-backend/types"
 	"strings"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/bcrypt"
@@ -22,6 +24,51 @@ var (
 	testMetadata       = configs.Config.GetTestMetadata()
 	testAuthController = NewAuthController(database.DBTesting.GetConnection(), testMetadata)
 )
+
+func CreateTestUser() error {
+	db := database.DBTesting.GetConnection()
+
+	userFac := factories.UserFactory{}
+	userFac.InitAuth()
+	user := entities.User{
+		ID:       uuid.New(),
+		Name:     userFac.Name,
+		Username: userFac.Username,
+		Email:    userFac.Email,
+		Password: userFac.Password,
+		Groups:   types.ArrayOfUUID{},
+	}
+
+	// if user already in db, then no need to create
+	check := entities.User{}
+	if err := db.Where(&entities.User{Username: user.Username}).Find(&check).Error; err != nil {
+		return err
+	}
+	if check.Username != "" {
+		return nil
+	}
+
+	if err := db.FirstOrCreate(&user).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetUserTestID() uuid.UUID {
+	db := database.DBTesting.GetConnection()
+
+	userFac := factories.UserFactory{}
+	userFac.InitAuth()
+	user := entities.User{
+		Username: userFac.Username,
+	}
+
+	userRes := entities.User{}
+	db.Where(&user).Find(&userRes)
+
+	return userRes.ID
+}
 
 func TestAuth(t *testing.T) {
 	db := database.DBTesting.GetConnection()
@@ -63,7 +110,25 @@ func TestAuth(t *testing.T) {
 		assert.Equal(t, http.StatusAccepted, rec.Code)
 	}
 
-	// 3. update profile
+	// 3. Delete registered account for reusability
+	db.Where(&entities.User{
+		Username: user.Username,
+		Email:    user.Email,
+		Name:     user.Name,
+	}).Delete(&entities.User{})
+}
+
+func TestUpdate(t *testing.T) {
+	db := database.DBTesting.GetConnection()
+	e := echo.New()
+
+	// get user id
+	if err := CreateTestUser(); err != nil {
+		t.Error(err)
+	}
+	id := GetUserTestID()
+
+	// 1. update profile
 	updateProfileRequest := requests.UpdateProfileRequest{
 		Name:     "new",
 		Password: string("newpassword"),
@@ -72,53 +137,43 @@ func TestAuth(t *testing.T) {
 
 	updateRequest, _ := json.Marshal(updateProfileRequest)
 
-	req = httptest.NewRequest(http.MethodPost, "/", strings.NewReader(string(updateRequest)))
+	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(string(updateRequest)))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	rec = httptest.NewRecorder()
-	c = e.NewContext(req, rec)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.Set("id", id)
 
 	if assert.NoError(t, testAuthController.UpdateProfileController(c)) {
-		assert.Equal(t, http.StatusAccepted, rec.Code)
+		assert.Equal(t, http.StatusOK, rec.Code)
 	}
 
-	// 4. get profile
-	req = httptest.NewRequest(http.MethodPost, "/", strings.NewReader(string(loginRequest)))
+	// 2. get profile
+	req = httptest.NewRequest(http.MethodGet, "/", nil)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
+	c.Set("id", id)
 
-	profileResponse := responses.TestResponse[string]{}
+	profileResponse := responses.TestResponse[responses.ProfileResponse]{}
 	if assert.NoError(t, testAuthController.ProfileController(c)) {
-		assert.Equal(t, http.StatusCreated, rec.Code)
+		assert.Equal(t, http.StatusOK, rec.Code)
+
 		if err := json.Unmarshal(rec.Body.Bytes(), &profileResponse); err != nil {
 			t.Error(err.Error())
 		}
 	}
 
-	profile := responses.ProfileResponse{}
-	if err := json.Unmarshal([]byte(profileResponse.Data), &profile); err != nil {
-		t.Error(err.Error())
-	}
-
 	// check name and color
-	assert.Equal(t, profile.Fullname, updateProfileRequest.Name)
-	assert.Equal(t, profile.Color, updateProfileRequest.Color)
+	assert.Equal(t, updateProfileRequest.Name, profileResponse.Data.Fullname)
+	assert.Equal(t, updateProfileRequest.Color, profileResponse.Data.Color)
 
 	// check password
 	userDb := entities.User{}
-	conditionUsername := entities.User{Username: user.Username}
-	if err := db.Where(&conditionUsername).Find(&userDb).Error; err != nil {
+	if err := db.Where(&entities.User{ID: id}).Find(&userDb).Error; err != nil {
 		t.Error(err.Error())
 	}
 
 	if err := bcrypt.CompareHashAndPassword(userDb.Password, []byte(updateProfileRequest.Password)); err != nil {
 		t.Error(err.Error())
 	}
-
-	// 3. Delete registered account for reusability
-	db.Where(&entities.User{
-		Username: user.Username,
-		Email:    user.Email,
-		Name:     user.Name,
-	}).Delete(&entities.User{})
 }
