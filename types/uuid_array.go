@@ -21,3 +21,7 @@ func (arrayOfUUID ArrayOfUUID) Value() (driver.Value, error) {
 func (ArrayOfUUID) GormDataType() string {
 	return "string"
 }
+
+func (arrayOfUUID ArrayOfUUID) Count() int{
+	return arrayOfUUID.Count()
+}

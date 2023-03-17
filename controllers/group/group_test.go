@@ -6,9 +6,12 @@ import (
 	"net/http/httptest"
 	"split-rex-backend/configs/database"
 	"split-rex-backend/entities"
+	"split-rex-backend/entities/factories"
+	"split-rex-backend/entities/requests"
 	"split-rex-backend/entities/responses"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -23,17 +26,36 @@ func TestUserCreateGroup(t *testing.T) {
 	db := database.DBTesting.GetConnection()
 
 	e := echo.New()
-	groupJson := `{
-		"name": "New Group Yeay",
-		"member_id": ["6251ac85-e43d-4b88-8779-588099df5008","183e04d7-c653-4c7d-aa66-3d751d4d7358"],
-		"start_date": "2023-03-01T17:19:20.968831+07:00",
-		"end_date" : "2023-03-01T19:19:20.968831+07:00"
-	}`
 
-	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(groupJson))
+	userA := factories.UserFactory{}
+	userA.UserA()
+
+	userB := factories.UserFactory{}
+	userB.UserB()
+
+	userC := factories.UserFactory{}
+	userC.UserC()
+
+	newGroup := factories.GroupFactory{}
+	newGroup.Init()
+
+	id := userA.ID
+
+	newGroup.MemberID = append(newGroup.MemberID, userB.ID)
+	newGroup.MemberID = append(newGroup.MemberID, userC.ID)
+
+	userCreateGroupRequest, _ := json.Marshal(requests.UserCreateGroupRequest{
+		Name:      newGroup.Name,
+		MemberID:  newGroup.MemberID,
+		StartDate: newGroup.StartDate,
+		EndDate:   newGroup.EndDate,
+	})
+
+	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(string(userCreateGroupRequest)))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
+	c.Set("id", id)
 
 	group := responses.TestResponse[string]{}
 	if assert.NoError(t, testGroupController.UserCreateGroup(c)) {
@@ -57,54 +79,49 @@ func TestUserCreateGroup(t *testing.T) {
 	}
 }
 
-// func TestEditGroupInfo(t *testing.T) {
-// 	date := time.Date(2023, 3, 3, 0, 0, 0, 0, time.UTC)
+func TestEditGroupInfo(t *testing.T) {
+	db := database.DBTesting.GetConnection()
+	e := echo.New()
 
-// 	group := &requests.UserCreateGroupRequest{
-// 		Name:      "Group Testing 12345",
-// 		MemberID:  types.ArrayOfUUID{},
-// 		StartDate: date,
-// 		EndDate:   date,
-// 	}
-// 	body, _ := json.Marshal(group)
+	userA := factories.UserFactory{}
+	id := userA.ID
 
-// 	res, err := http.Post("http://localhost:8080/userCreateGroup",
-// 		"application/json", bytes.NewBuffer(body))
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
-// 	defer res.Body.Close()
+	groupB := factories.GroupFactory{}
+	groupB.GroupB()
 
-// 	// create new interface of response which consist of message and groupID
+	newStartDate := time.Now()
+	newEndDate := time.Now().Add(time.Hour * 24)
 
-// 	if res.StatusCode != http.StatusOK {
-// 		t.Error("Expected status code 200 while creating group, got ", res.StatusCode)
-// 	}
+	request := requests.EditGroupInfoRequest{
+		GroupID:   groupB.GroupID,
+		Name:      "new group b",
+		StartDate: newStartDate,
+		EndDate:   newEndDate,
+	}
 
-// 	var response struct {
-// 		Message string
-// 		GroupID string
-// 	}
-// 	json.NewDecoder(res.Body).Decode(&response)
+	userEditGroupInfoReq, _ := json.Marshal(request)
 
-// 	groupID, _ := uuid.Parse(response.GroupID)
+	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(string(userEditGroupInfoReq)))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.Set("id", id)
 
-// 	editGroup := &requests.EditGroupInfoRequest{
-// 		GroupID:   groupID,
-// 		Name:      "Group Testing New",
-// 		StartDate: date,
-// 		EndDate:   date,
-// 	}
-// 	body, _ = json.Marshal(editGroup)
+	group := responses.TestResponse[string]{}
+	if assert.NoError(t, testGroupController.EditGroupInfo(c)) {
+		assert.Equal(t, http.StatusAccepted, rec.Code)
+		if err := json.Unmarshal(rec.Body.Bytes(), &group); err != nil {
+			t.Error(err.Error())
+		}
+	}
 
-// 	res, err = http.Post("http://localhost:8080/editGroupInfo",
-// 		"application/json", bytes.NewBuffer(body))
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
-// 	defer res.Body.Close()
+	// check from db
+	groupDb := entities.Group{}
+	if err := db.Where(&entities.Group{GroupID: groupB.GroupID}).Find(&groupDb).Error; err != nil {
+		t.Error(err.Error())
+	}
 
-// 	if res.StatusCode != http.StatusOK {
-// 		t.Error("Expected status code 200, got ", res.StatusCode)
-// 	}
-// }
+	assert.Equal(t, request.Name, groupDb.Name)
+	// assert.Equal(t, request.StartDate, groupDb.StartDate)
+	// assert.Equal(t, request.EndDate, groupDb.EndDate)
+}

@@ -21,6 +21,7 @@ var (
 
 func TestUserCreateTransaction(t *testing.T) {
 	e := echo.New()
+	
 	transactionJson := `{
 		"name": "New Transaction",
 		"description": "New Transaction Description",
