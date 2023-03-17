@@ -86,15 +86,15 @@ func TestEditGroupInfo(t *testing.T) {
 	userA := factories.UserFactory{}
 	id := userA.ID
 
-	groupB := factories.GroupFactory{}
-	groupB.GroupB()
+	group := factories.GroupFactory{}
+	group.GroupA()
 
 	newStartDate := time.Now()
 	newEndDate := time.Now().Add(time.Hour * 24)
 
 	request := requests.EditGroupInfoRequest{
-		GroupID:   groupB.GroupID,
-		Name:      "new group b",
+		GroupID:   group.GroupID,
+		Name:      "groupA",
 		StartDate: newStartDate,
 		EndDate:   newEndDate,
 	}
@@ -107,17 +107,17 @@ func TestEditGroupInfo(t *testing.T) {
 	c := e.NewContext(req, rec)
 	c.Set("id", id)
 
-	group := responses.TestResponse[string]{}
+	groupRes := responses.TestResponse[string]{}
 	if assert.NoError(t, testGroupController.EditGroupInfo(c)) {
 		assert.Equal(t, http.StatusAccepted, rec.Code)
-		if err := json.Unmarshal(rec.Body.Bytes(), &group); err != nil {
+		if err := json.Unmarshal(rec.Body.Bytes(), &groupRes); err != nil {
 			t.Error(err.Error())
 		}
 	}
 
 	// check from db
 	groupDb := entities.Group{}
-	if err := db.Where(&entities.Group{GroupID: groupB.GroupID}).Find(&groupDb).Error; err != nil {
+	if err := db.Where(&entities.Group{GroupID: group.GroupID}).Find(&groupDb).Error; err != nil {
 		t.Error(err.Error())
 	}
 

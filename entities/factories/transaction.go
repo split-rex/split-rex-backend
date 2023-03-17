@@ -4,6 +4,7 @@ import (
 	"split-rex-backend/types"
 	"time"
 
+	"github.com/bxcodec/faker/v4"
 	"github.com/google/uuid"
 )
 
@@ -21,18 +22,14 @@ type TransactionFactory struct {
 	Items         types.ArrayOfUUID `gorm:"not null"`
 }
 
-func (tf *TransactionFactory) Init(){
+func (tf *TransactionFactory) Init() {
 	if tf.Name == "" {
-		tf.Name = "New Transaction"
+		tf.Name = faker.Word()
 	}
 	if tf.Description == "" {
-		tf.Description = "New Transaction Description"
+		tf.Description = faker.Sentence()
 	}
-	
-	// if tf.GroupID == uuid.Nil {
-	// 	tf.GroupID = "0b865d7f-e40e-4440-905e-eccf2caaa6ed"
-	// }
-	
+
 	if tf.Date.IsZero() {
 		tf.Date = time.Now()
 	}
@@ -48,15 +45,4 @@ func (tf *TransactionFactory) Init(){
 	if tf.Total == 0 {
 		tf.Total = 1200.0
 	}
-
-	// if tf.BillOwner == 0 {
-	// 	tf.BillOwner = types.EncryptedString("testing")
-	// }
-
-	// if tf.Items.Count() == 0 {
-	// 	item, _ := uuid.Parse("6251ac85-e43d-4b88-8779-588099df5008")
-	// 	tf.Items = append(tf.Items,item)
-	// }
 }
-
-
