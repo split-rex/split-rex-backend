@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"split-rex-backend/configs/database"
+	"split-rex-backend/entities"
 	"split-rex-backend/entities/factories"
 	"split-rex-backend/entities/requests"
 	"split-rex-backend/entities/responses"
@@ -73,10 +74,12 @@ func TestUserCreateTransaction(t *testing.T) {
 		}
 	}
 
-	// db := database.DBTesting.GetConnection()
-	// if err := db.Where(&entities.Transaction{
-	// 	TransactionID: uuid.MustParse(transactionResp.Data),
-	// }).Delete(&entities.Transaction{}).Error; err != nil {
-	// 	t.Error(err.Error())
-	// }
+	db := database.DBTesting.GetConnection()
+	if err := db.Where(&entities.Transaction{
+		TransactionID: uuid.MustParse(transactionResp.Data),
+	}).Delete(&entities.Transaction{}).Error; err != nil {
+		t.Error(err.Error())
+	}
+
+	// TODO: delete created item
 }

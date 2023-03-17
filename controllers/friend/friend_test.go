@@ -10,7 +10,9 @@ import (
 )
 
 func makeFriendRequest(t *testing.T, user_id uuid.UUID, friend_id uuid.UUID) {
+	// cari username dulu
 
+	// search user to add
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
@@ -20,7 +22,8 @@ func makeFriendRequest(t *testing.T, user_id uuid.UUID, friend_id uuid.UUID) {
 	c.SetParamNames("username")
 	c.SetParamValues("lalallaa")
 
-	
+	// make friend request
+
 }
 
 // buat request dari user a ke d --> /searchUserToAdd, /makeFriendRequest
