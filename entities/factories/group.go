@@ -14,3 +14,8 @@ type GroupFactory struct {
 	StartDate time.Time         `gorm:"not null"`
 	EndDate   time.Time         `gorm:"not null"`
 }
+
+func (gf *GroupFactory) Init(){
+	
+}
+

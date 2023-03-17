@@ -20,3 +20,9 @@ type TransactionFactory struct {
 	BillOwner     uuid.UUID         `gorm:"not null"`
 	Items         types.ArrayOfUUID `gorm:"not null"`
 }
+
+func (tf *TransactionFactory) Init(){
+	
+}
+
+

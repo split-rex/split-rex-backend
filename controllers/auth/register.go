@@ -54,7 +54,7 @@ func (con *authController) RegisterController(c echo.Context) error {
 		Username: registerRequest.Username,
 		Email:    registerRequest.Email,
 		Name:     registerRequest.Name,
-		Color: registerRequest.Color,
+		Color:    registerRequest.Color,
 		Password: types.EncryptedString(registerRequest.Password),
 		Groups:   types.ArrayOfUUID{},
 	}).Error; err != nil {

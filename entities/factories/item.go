@@ -14,3 +14,7 @@ type ItemFactory struct {
 	Price         float64           `gorm:"not null"`
 	Consumer      types.ArrayOfUUID `gorm:"not null"`
 }
+
+func (itf *ItemFactory) Init(){
+	
+}

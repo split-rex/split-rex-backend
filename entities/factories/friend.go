@@ -12,3 +12,7 @@ type FriendFactory struct {
 	Req_received types.ArrayOfUUID
 	Req_sent     types.ArrayOfUUID
 }
+
+func (ff *FriendFactory) Init(){
+	
+}
