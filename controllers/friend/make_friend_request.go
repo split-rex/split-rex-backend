@@ -87,14 +87,14 @@ func (con *friendController) MakeFriendRequest(c echo.Context) error {
 		// check if friend_id already in Req_received
 		for _, friend := range userFriend.Req_received {
 			if friend == friend_id {
-				response.Message = types.ERROR_ALREADY_REQUESTED
+				response.Message = types.ERROR_ALREADY_REQUESTED_RECEIVED
 				return c.JSON(http.StatusConflict, response)
 			}
 		}
 		// check if friend_id already in Req_sent
 		for _, friend := range userFriend.Req_sent {
 			if friend == friend_id {
-				response.Message = types.ERROR_ALREADY_REQUESTED
+				response.Message = types.ERROR_ALREADY_REQUESTED_SENT
 				return c.JSON(http.StatusConflict, response)
 			}
 		}

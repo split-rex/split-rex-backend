@@ -77,7 +77,7 @@ func TestAuth(t *testing.T) {
 	e := echo.New()
 
 	user := factories.UserFactory{}
-	user.Init()
+	user.Init(uuid.New())
 
 	registerRequest, _ := json.Marshal(requests.RegisterRequest{
 		Name:     user.Name,
