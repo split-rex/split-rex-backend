@@ -14,3 +14,25 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZ
     "bill_owner" : "6251ac85-e43d-4b88-8779-588099df5008",
     "items" : ["6251ac85-e43d-4b88-8779-588099df5008"]
 }
+
+###
+
+POST http://localhost:8080/updatePayment
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzk0MDE4MTEsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.UiXmOaDGEI3VnOm_8NaKrZ8nX_9Jyyfg5D26bCb6Hrs
+
+{
+    "group_id" : "0b865d7f-e40e-4440-905e-eccf2caaa6ed",
+    "list_payment" : [
+        {
+            "user_id" : "183e04d7-c653-4c7d-aa66-3d751d4d7358",
+            "total_unpaid" : 10000
+        }
+    ]
+}
+
+###
+
+GET http://localhost:8080/getUnsettledTransaction?group_id=0b865d7f-e40e-4440-905e-eccf2caaa6ed
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzk0MDE4MTEsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.UiXmOaDGEI3VnOm_8NaKrZ8nX_9Jyyfg5D26bCb6Hrs

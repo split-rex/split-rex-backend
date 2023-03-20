@@ -19,3 +19,13 @@ type UserCreateTransactionRequest struct {
 	BillOwner   uuid.UUID         `json:"bill_owner" form:"bill_owner" query:"bill_owner"`
 	Items       types.ArrayOfUUID `json:"items" form:"items" query:"items"`
 }
+
+type UpdatePaymentRequest struct {
+	GroupID     uuid.UUID        `json:"group_id" form:"group_id" query:"group_id"`
+	ListPayment []PaymentRequest `json:"list_payment" form:"list_payment" query:"list_payment"`
+}
+
+type PaymentRequest struct {
+	UserID      uuid.UUID `json:"user_id" form:"user_id" query:"user_id"`
+	TotalUnpaid float64   `json:"total_unpaid" form:"total_unpaid" query:"total_unpaid"`
+}
