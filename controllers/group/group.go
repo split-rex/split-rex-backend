@@ -125,7 +125,7 @@ func (con *groupController) UserGroups(c echo.Context) error {
 		condition := entities.Group{GroupID: groupID}
 
 		if err := db.Where(&condition).Find(&group).Error; err != nil {
-			response.Message = err.Error()
+			response.Message = types.ERROR_INTERNAL_SERVER
 			return c.JSON(http.StatusInternalServerError, response)
 		}
 
@@ -195,7 +195,7 @@ func (h *groupController) GroupDetail(c echo.Context) error {
 
 	condition := entities.Group{GroupID: groupID}
 	if err := db.Where(&condition).Find(&group).Error; err != nil {
-		response.Message = err.Error()
+		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
@@ -251,7 +251,7 @@ func (h *groupController) GroupDetail(c echo.Context) error {
 		user := entities.User{}
 		condition := entities.User{ID: memberID}
 		if err := db.Where(&condition).Find(&user).Error; err != nil {
-			response.Message = err.Error()
+			response.Message = types.ERROR_INTERNAL_SERVER
 			return c.JSON(http.StatusInternalServerError, response)
 		}
 		data.ListMember = append(data.ListMember,

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
@@ -68,18 +67,28 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 
 	request := requests.UpdatePaymentRequest{}
 	if err := c.Bind(&request); err != nil {
-		response.Message = err.Error()
-		fmt.Println(1)
+		response.Message = types.ERROR_BAD_REQUEST
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
 	// check if group exist
 	group := entities.Group{}
 	if err := db.Find(&group, request.GroupID).Error; err != nil {
-		response.Message = err.Error()
-		fmt.Println(2)
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+	if group.GroupID == uuid.Nil {
+		response.Message = types.ERROR_GROUP_NOT_FOUND
 		return c.JSON(http.StatusBadRequest, response)
 	}
+
+	// TRANSACTION
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
 
 	// insert into payment table
 	for _, payment := range request.ListPayment {
@@ -93,7 +102,6 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 		}
 		if !memberExist {
 			response.Message = types.ERROR_BAD_REQUEST
-			fmt.Println(3)
 			return c.JSON(http.StatusBadRequest, response)
 		}
 
@@ -101,9 +109,8 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 		tempPayment := entities.Payment{}
 		conditionPayment := entities.Payment{UserID1: userID, UserID2: payment.UserID, GroupID: request.GroupID}
 		if err := db.Where(&conditionPayment).Find(&tempPayment).Error; err != nil {
-			response.Message = err.Error()
-			fmt.Println(4)
-			return c.JSON(http.StatusBadRequest, response)
+			response.Message = types.ERROR_INTERNAL_SERVER
+			return c.JSON(http.StatusInternalServerError, response)
 		}
 		// if payment not exist, create new payment
 		if tempPayment.PaymentID == uuid.Nil {
@@ -116,9 +123,8 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 				TotalPaid:   0,
 				Status:      "UNPAID",
 			}
-			if err := db.Create(&newPayment).Error; err != nil {
-				response.Message = err.Error()
-				fmt.Println(5)
+			if err := tx.Create(&newPayment).Error; err != nil {
+				response.Message = types.ERROR_INTERNAL_SERVER
 				return c.JSON(http.StatusInternalServerError, response)
 			}
 		} else {
@@ -127,9 +133,8 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 			if tempPayment.Status == "PAID" {
 				tempPayment.Status = "UNPAID"
 			}
-			if err := db.Save(&tempPayment).Error; err != nil {
-				response.Message = err.Error()
-				fmt.Println(6)
+			if err := tx.Save(&tempPayment).Error; err != nil {
+				response.Message = types.ERROR_INTERNAL_SERVER
 				return c.JSON(http.StatusInternalServerError, response)
 			}
 		}
@@ -138,9 +143,8 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 		tempPayment = entities.Payment{}
 		conditionPayment = entities.Payment{UserID1: payment.UserID, UserID2: userID, GroupID: request.GroupID}
 		if err := db.Where(&conditionPayment).Find(&tempPayment).Error; err != nil {
-			response.Message = err.Error()
-			fmt.Println(7)
-			return c.JSON(http.StatusBadRequest, response)
+			response.Message = types.ERROR_INTERNAL_SERVER
+			return c.JSON(http.StatusInternalServerError, response)
 		}
 		// if payment not exist, create new payment
 		if tempPayment.PaymentID == uuid.Nil {
@@ -153,9 +157,8 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 				TotalPaid:   0,
 				Status:      "UNPAID",
 			}
-			if err := db.Create(&newPayment).Error; err != nil {
-				response.Message = err.Error()
-				fmt.Println(8)
+			if err := tx.Create(&newPayment).Error; err != nil {
+				response.Message = types.ERROR_INTERNAL_SERVER
 				return c.JSON(http.StatusInternalServerError, response)
 			}
 		} else {
@@ -164,12 +167,17 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 			if tempPayment.Status == "PAID" {
 				tempPayment.Status = "UNPAID"
 			}
-			if err := db.Save(&tempPayment).Error; err != nil {
-				response.Message = err.Error()
-				fmt.Println(9)
+			if err := tx.Save(&tempPayment).Error; err != nil {
+				response.Message = types.ERROR_INTERNAL_SERVER
 				return c.JSON(http.StatusInternalServerError, response)
 			}
 		}
+	}
+
+	// commit transaction
+	if err := tx.Commit().Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
 	}
 
 	response.Message = types.SUCCESS
@@ -181,20 +189,21 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 func (h *transactionController) ResolveTransaction(c echo.Context) error {
 	db := h.db
 	response := entities.Response[string]{}
-	// userID := c.Get("id").(uuid.UUID)
 
 	request := requests.ResolveTransactionRequest{}
 	if err := c.Bind(&request); err != nil {
-		response.Message = err.Error()
-		fmt.Println(1)
+		response.Message = types.ERROR_BAD_REQUEST
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
 	// check if group exist
 	group := entities.Group{}
 	if err := db.Find(&group, request.GroupID).Error; err != nil {
-		response.Message = err.Error()
-		fmt.Println(2)
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+	if group.GroupID == uuid.Nil {
+		response.Message = types.ERROR_GROUP_NOT_FOUND
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
@@ -202,9 +211,8 @@ func (h *transactionController) ResolveTransaction(c echo.Context) error {
 	payments := []entities.Payment{}
 	conditionPayment := entities.Payment{GroupID: request.GroupID, Status: "UNPAID"}
 	if err := db.Where(&conditionPayment).Find(&payments).Error; err != nil {
-		response.Message = err.Error()
-		fmt.Println(3)
-		return c.JSON(http.StatusBadRequest, response)
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
 	}
 
 	// init map to store net balance of each user
@@ -242,9 +250,8 @@ func (h *transactionController) ResolveTransaction(c echo.Context) error {
 			tempPayment := entities.Payment{}
 			conditionPayment := entities.Payment{UserID1: group.MemberID[i], UserID2: group.MemberID[j], GroupID: request.GroupID}
 			if err := db.Where(&conditionPayment).Find(&tempPayment).Error; err != nil {
-				response.Message = err.Error()
-				fmt.Println(4)
-				return c.JSON(http.StatusBadRequest, response)
+				response.Message = types.ERROR_INTERNAL_SERVER
+				return c.JSON(http.StatusInternalServerError, response)
 			}
 			if tempPayment.PaymentID == uuid.Nil {
 				newPayment := entities.Payment{
@@ -268,9 +275,8 @@ func (h *transactionController) ResolveTransaction(c echo.Context) error {
 			tempPayment = entities.Payment{}
 			conditionPayment = entities.Payment{UserID1: group.MemberID[j], UserID2: group.MemberID[i], GroupID: request.GroupID}
 			if err := db.Where(&conditionPayment).Find(&tempPayment).Error; err != nil {
-				response.Message = err.Error()
-				fmt.Println(6)
-				return c.JSON(http.StatusBadRequest, response)
+				response.Message = types.ERROR_INTERNAL_SERVER
+				return c.JSON(http.StatusInternalServerError, response)
 			}
 			if tempPayment.PaymentID == uuid.Nil {
 				newPayment := entities.Payment{
@@ -291,25 +297,39 @@ func (h *transactionController) ResolveTransaction(c echo.Context) error {
 			}
 		}
 	}
+	// TRANSACTION
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
 	// update payment table totalUnpaid = 0 and totalPaid = 0 and status = "Paid" for all payment with groupID
 	for _, payment := range payments {
 		payment.TotalUnpaid = 0
 		payment.TotalPaid = 0
 		payment.Status = "PAID"
-		if err := db.Save(&payment).Error; err != nil {
-			response.Message = err.Error()
-			fmt.Println(8)
+		if err := tx.Save(&payment).Error; err != nil {
+			response.Message = types.ERROR_INTERNAL_SERVER
 			return c.JSON(http.StatusInternalServerError, response)
 		}
 	}
+
 	// update payment table from updatePayment
 	for _, payment := range updatePayment {
-		if err := db.Save(&payment).Error; err != nil {
-			response.Message = err.Error()
-			fmt.Println(9)
+		if err := tx.Save(&payment).Error; err != nil {
+			response.Message = types.ERROR_INTERNAL_SERVER
 			return c.JSON(http.StatusInternalServerError, response)
 		}
 	}
+
+	// commit transaction
+	if err := tx.Commit().Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
 	response.Message = types.SUCCESS
 	response.Data = "success"
 	return c.JSON(http.StatusOK, response)

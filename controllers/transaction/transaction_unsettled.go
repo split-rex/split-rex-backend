@@ -21,16 +21,16 @@ func (h *transactionController) GetUnsettledTransaction(c echo.Context) error {
 	// check if group id present
 	group := entities.Group{}
 	if err := db.Find(&group, groupID).Error; err != nil {
-		response.Message = err.Error()
-		return c.JSON(http.StatusBadRequest, response)
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
 	}
 
 	// get from payment table where GroupID = groupID and UserID1 = userID
 	payments := []entities.Payment{}
 	conditionPayment := entities.Payment{GroupID: groupID, UserID1: userID}
 	if err := db.Where(conditionPayment).Find(&payments).Error; err != nil {
-		response.Message = err.Error()
-		return c.JSON(http.StatusBadRequest, response)
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
 	}
 
 	// move payments to response data
@@ -38,8 +38,8 @@ func (h *transactionController) GetUnsettledTransaction(c echo.Context) error {
 	for _, payment := range payments {
 		user := entities.User{}
 		if err := db.Find(&user, payment.UserID2).Error; err != nil {
-			response.Message = err.Error()
-			return c.JSON(http.StatusBadRequest, response)
+			response.Message = types.ERROR_INTERNAL_SERVER
+			return c.JSON(http.StatusInternalServerError, response)
 		}
 		unsettledTransaction = append(unsettledTransaction, responses.UnsettledTransactionResponse{
 			UserID:      payment.UserID2,
