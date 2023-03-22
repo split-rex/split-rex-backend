@@ -19,12 +19,15 @@ type UserGroupResponse struct {
 }
 
 type GroupDetailResponse struct {
-	GroupID    uuid.UUID         `json:"group_id"`
-	Name       string            `json:"name"`
-	MemberID   types.ArrayOfUUID `json:"member_id"`
-	StartDate  time.Time         `json:"start_date"`
-	EndDate    time.Time         `json:"end_date"`
-	ListMember []MemberDetail    `json:"list_member"`
+	GroupID      uuid.UUID         `json:"group_id"`
+	Name         string            `json:"name"`
+	MemberID     types.ArrayOfUUID `json:"member_id"`
+	StartDate    time.Time         `json:"start_date"`
+	EndDate      time.Time         `json:"end_date"`
+	ListMember   []MemberDetail    `json:"list_member"`
+	Type         string            `json:"type"`
+	TotalUnpaid  float64           `json:"total_unpaid"`
+	TotalExpense float64           `json:"total_expense"`
 }
 
 type GroupTransactionsResponse struct {
@@ -37,20 +40,18 @@ type GroupTransactionsResponse struct {
 }
 
 type GroupOwedResponse struct {
-	TotalOwed int                   `json:"total_owed"`
-	ListGroup []GroupDetailResponse `json:"list_group"`
+	TotalOwed float64             `json:"total_owed"`
+	ListGroup []UserGroupResponse `json:"list_group"`
 }
 
 type GroupLentResponse struct {
-	TotalLent int                   `json:"total_lent"`
-	ListGroup []GroupDetailResponse `json:"list_group"`
+	TotalLent float64             `json:"total_lent"`
+	ListGroup []UserGroupResponse `json:"list_group"`
 }
 
 type MemberDetail struct {
-	ID          uuid.UUID `json:"member_id"`
-	Name        string    `json:"name"`
-	Username    string    `json:"username"`
-	Email       string    `json:"email"`
-	Type        string    `json:"type"`
-	TotalUnpaid float64   `json:"total_unpaid"`
+	ID       uuid.UUID `json:"member_id"`
+	Name     string    `json:"name"`
+	Username string    `json:"username"`
+	Email    string    `json:"email"`
 }

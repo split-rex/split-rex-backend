@@ -117,6 +117,10 @@ func (con *groupController) UserGroups(c echo.Context) error {
 	data := []responses.UserGroupResponse{}
 
 	for _, groupID := range user.Groups {
+		totalUnpaid := 0.0
+		totalExpense := 0.0
+		groupType := "EQUAL"
+
 		group := entities.Group{}
 		condition := entities.Group{GroupID: groupID}
 
@@ -125,17 +129,50 @@ func (con *groupController) UserGroups(c echo.Context) error {
 			return c.JSON(http.StatusInternalServerError, response)
 		}
 
-		data = append(data, responses.UserGroupResponse{
-			GroupID:   group.GroupID,
-			Name:      group.Name,
-			MemberID:  group.MemberID,
-			StartDate: group.StartDate,
-			EndDate:   group.EndDate,
+		// then for each group, search for transactions existed in group id
+		transactions := []entities.Transaction{}
+		conditionTransaction := entities.Transaction{GroupID: groupID}
+		if err := db.Where(&conditionTransaction).Find(&transactions).Error; err != nil {
+			response.Message = types.ERROR_INTERNAL_SERVER
+			return c.JSON(http.StatusInternalServerError, response)
+		}
 
-			// TODO: Calculate Things & Determine Types
-			Type:         "HARDCODED",
-			TotalUnpaid:  0,
-			TotalExpense: 0,
+		// compute totalExpense from transactions
+		for _, transaction := range transactions {
+			totalExpense = totalExpense + transaction.Total
+		}
+
+		// then for each group, search for payments existed in group id
+		payments := []entities.Payment{}
+		conditionPayment := entities.Payment{GroupID: groupID, UserID1: userID}
+		if err := db.Where(&conditionPayment).Find(&payments).Error; err != nil {
+			response.Message = types.ERROR_INTERNAL_SERVER
+			return c.JSON(http.StatusInternalServerError, response)
+		}
+
+		// compute totalOwed from payments
+		for _, payment := range payments {
+			totalUnpaid = totalUnpaid + payment.TotalUnpaid
+		}
+
+		// if totalOwed is negative then not in groupOwed
+		if totalUnpaid > 0 {
+			groupType = "OWED"
+		} else if totalUnpaid < 0 {
+			groupType = "LENT"
+		} else {
+			groupType = "EQUAL"
+		}
+
+		data = append(data, responses.UserGroupResponse{
+			GroupID:      group.GroupID,
+			Name:         group.Name,
+			MemberID:     group.MemberID,
+			StartDate:    group.StartDate,
+			EndDate:      group.EndDate,
+			Type:         groupType,
+			TotalUnpaid:  totalUnpaid,
+			TotalExpense: totalExpense,
 		})
 	}
 	response.Message = types.SUCCESS
@@ -148,8 +185,13 @@ func (h *groupController) GroupDetail(c echo.Context) error {
 	db := h.db
 	response := entities.Response[responses.GroupDetailResponse]{}
 
+	totalUnpaid := 0.0
+	totalExpense := 0.0
+	groupType := "EQUAL"
+
 	group := entities.Group{}
 	groupID, _ := uuid.Parse(c.QueryParam("id"))
+	userID := c.Get("id").(uuid.UUID)
 
 	condition := entities.Group{GroupID: groupID}
 	if err := db.Where(&condition).Find(&group).Error; err != nil {
@@ -157,23 +199,67 @@ func (h *groupController) GroupDetail(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
+	// then for each group, search for transactions existed in group id
+	transactions := []entities.Transaction{}
+	conditionTransaction := entities.Transaction{GroupID: groupID}
+	if err := db.Where(&conditionTransaction).Find(&transactions).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// compute totalExpense from transactions
+	for _, transaction := range transactions {
+		totalExpense = totalExpense + transaction.Total
+	}
+
+	// then for each group, search for payments existed in group id
+	payments := []entities.Payment{}
+	conditionPayment := entities.Payment{GroupID: groupID, UserID1: userID}
+	if err := db.Where(&conditionPayment).Find(&payments).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// compute totalOwed from payments
+	for _, payment := range payments {
+		totalUnpaid = totalUnpaid + payment.TotalUnpaid
+	}
+
+	// if totalOwed is negative then not in groupOwed
+	if totalUnpaid > 0 {
+		groupType = "OWED"
+	} else if totalUnpaid < 0 {
+		groupType = "LENT"
+	} else {
+		groupType = "EQUAL"
+	}
+
 	data := responses.GroupDetailResponse{
-		GroupID:    group.GroupID,
-		Name:       group.Name,
-		MemberID:   group.MemberID,
-		StartDate:  group.StartDate,
-		EndDate:    group.EndDate,
-		ListMember: []responses.MemberDetail{},
+		GroupID:      group.GroupID,
+		Name:         group.Name,
+		MemberID:     group.MemberID,
+		StartDate:    group.StartDate,
+		EndDate:      group.EndDate,
+		ListMember:   []responses.MemberDetail{},
+		Type:         groupType,
+		TotalUnpaid:  totalUnpaid,
+		TotalExpense: totalExpense,
 	}
 
 	for _, memberID := range group.MemberID {
+		// get member detail
+		user := entities.User{}
+		condition := entities.User{ID: memberID}
+		if err := db.Where(&condition).Find(&user).Error; err != nil {
+			response.Message = err.Error()
+			return c.JSON(http.StatusInternalServerError, response)
+		}
 		data.ListMember = append(data.ListMember,
 			responses.MemberDetail{
-				ID: memberID,
-
-				// TODO: Calculate Things & Determine Types
-				Type:        "hardcoded",
-				TotalUnpaid: 0,
+				ID:       memberID,
+				Name:     user.Name,
+				Username: user.Username,
+				Email:    user.Email,
 			})
 	}
 
