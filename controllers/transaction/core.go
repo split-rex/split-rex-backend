@@ -13,6 +13,7 @@ type TransactionController interface {
 	UserCreateTransaction(c echo.Context) error
 	UpdatePayment(c echo.Context) error
 	GetUnsettledTransaction(c echo.Context) error
+	ResolveTransaction(c echo.Context) error
 }
 
 func NewTransactionController(db *gorm.DB) TransactionController {

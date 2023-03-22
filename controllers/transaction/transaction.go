@@ -112,7 +112,7 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 				GroupID:     request.GroupID,
 				UserID1:     userID,
 				UserID2:     payment.UserID,
-				TotalUnpaid: payment.TotalUnpaid,
+				TotalUnpaid: -payment.TotalUnpaid,
 				TotalPaid:   0,
 				Status:      "UNPAID",
 			}
@@ -123,7 +123,7 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 			}
 		} else {
 			// if payment exist, update payment
-			tempPayment.TotalUnpaid = tempPayment.TotalUnpaid + payment.TotalUnpaid
+			tempPayment.TotalUnpaid = tempPayment.TotalUnpaid - payment.TotalUnpaid
 			if tempPayment.Status == "PAID" {
 				tempPayment.Status = "UNPAID"
 			}
@@ -149,7 +149,7 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 				GroupID:     request.GroupID,
 				UserID1:     payment.UserID,
 				UserID2:     userID,
-				TotalUnpaid: -payment.TotalUnpaid,
+				TotalUnpaid: payment.TotalUnpaid,
 				TotalPaid:   0,
 				Status:      "UNPAID",
 			}
@@ -160,7 +160,7 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 			}
 		} else {
 			// if payment exist, update payment
-			tempPayment.TotalUnpaid = tempPayment.TotalUnpaid - payment.TotalUnpaid
+			tempPayment.TotalUnpaid = tempPayment.TotalUnpaid + payment.TotalUnpaid
 			if tempPayment.Status == "PAID" {
 				tempPayment.Status = "UNPAID"
 			}
@@ -176,4 +176,141 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 	response.Data = "success"
 	return c.JSON(http.StatusOK, response)
 
+}
+
+func (h *transactionController) ResolveTransaction(c echo.Context) error {
+	db := h.db
+	response := entities.Response[string]{}
+	// userID := c.Get("id").(uuid.UUID)
+
+	request := requests.ResolveTransactionRequest{}
+	if err := c.Bind(&request); err != nil {
+		response.Message = err.Error()
+		fmt.Println(1)
+		return c.JSON(http.StatusBadRequest, response)
+	}
+
+	// check if group exist
+	group := entities.Group{}
+	if err := db.Find(&group, request.GroupID).Error; err != nil {
+		response.Message = err.Error()
+		fmt.Println(2)
+		return c.JSON(http.StatusBadRequest, response)
+	}
+
+	// get payment with groupID
+	payments := []entities.Payment{}
+	conditionPayment := entities.Payment{GroupID: request.GroupID, Status: "UNPAID"}
+	if err := db.Where(&conditionPayment).Find(&payments).Error; err != nil {
+		response.Message = err.Error()
+		fmt.Println(3)
+		return c.JSON(http.StatusBadRequest, response)
+	}
+
+	// init map to store net balance of each user
+	balance := make(map[uuid.UUID]float64)
+	for _, member := range group.MemberID {
+		balance[member] = 0
+	}
+	for _, payment := range payments {
+		if payment.TotalUnpaid > 0 {
+			balance[payment.UserID1] = balance[payment.UserID1] + payment.TotalUnpaid
+			balance[payment.UserID2] = balance[payment.UserID2] - payment.TotalUnpaid
+		}
+	}
+
+	// resolve payment
+	i := 0
+	j := 0
+	updatePayment := []entities.Payment{}
+	for i < len(group.MemberID) && j < len(group.MemberID) {
+		if balance[group.MemberID[i]] <= 0 {
+			i = i + 1
+		} else if balance[group.MemberID[j]] >= 0 {
+			j = j + 1
+		} else {
+			m := 0.0
+			if balance[group.MemberID[i]] < -balance[group.MemberID[j]] {
+				m = balance[group.MemberID[i]]
+			} else {
+				m = -balance[group.MemberID[j]]
+			}
+			balance[group.MemberID[i]] = balance[group.MemberID[i]] - m
+			balance[group.MemberID[j]] = balance[group.MemberID[j]] + m
+
+			// append updatePayment, where userID1 = group.MemberID[i] and userID2 = group.MemberID[j]
+			tempPayment := entities.Payment{}
+			conditionPayment := entities.Payment{UserID1: group.MemberID[i], UserID2: group.MemberID[j], GroupID: request.GroupID}
+			if err := db.Where(&conditionPayment).Find(&tempPayment).Error; err != nil {
+				response.Message = err.Error()
+				fmt.Println(4)
+				return c.JSON(http.StatusBadRequest, response)
+			}
+			if tempPayment.PaymentID == uuid.Nil {
+				newPayment := entities.Payment{
+					PaymentID:   uuid.New(),
+					GroupID:     request.GroupID,
+					UserID1:     group.MemberID[i],
+					UserID2:     group.MemberID[j],
+					TotalUnpaid: m,
+					TotalPaid:   0,
+					Status:      "UNPAID",
+				}
+				updatePayment = append(updatePayment, newPayment)
+			} else {
+				tempPayment.TotalUnpaid = m
+				tempPayment.TotalPaid = 0
+				tempPayment.Status = "UNPAID"
+				updatePayment = append(updatePayment, tempPayment)
+			}
+
+			// append updatePayment, where userID1 = group.MemberID[j] and userID2 = group.MemberID[i]
+			tempPayment = entities.Payment{}
+			conditionPayment = entities.Payment{UserID1: group.MemberID[j], UserID2: group.MemberID[i], GroupID: request.GroupID}
+			if err := db.Where(&conditionPayment).Find(&tempPayment).Error; err != nil {
+				response.Message = err.Error()
+				fmt.Println(6)
+				return c.JSON(http.StatusBadRequest, response)
+			}
+			if tempPayment.PaymentID == uuid.Nil {
+				newPayment := entities.Payment{
+					PaymentID:   uuid.New(),
+					GroupID:     request.GroupID,
+					UserID1:     group.MemberID[j],
+					UserID2:     group.MemberID[i],
+					TotalUnpaid: -m,
+					TotalPaid:   0,
+					Status:      "UNPAID",
+				}
+				updatePayment = append(updatePayment, newPayment)
+			} else {
+				tempPayment.TotalUnpaid = -m
+				tempPayment.TotalPaid = 0
+				tempPayment.Status = "UNPAID"
+				updatePayment = append(updatePayment, tempPayment)
+			}
+		}
+	}
+	// update payment table totalUnpaid = 0 and totalPaid = 0 and status = "Paid" for all payment with groupID
+	for _, payment := range payments {
+		payment.TotalUnpaid = 0
+		payment.TotalPaid = 0
+		payment.Status = "PAID"
+		if err := db.Save(&payment).Error; err != nil {
+			response.Message = err.Error()
+			fmt.Println(8)
+			return c.JSON(http.StatusInternalServerError, response)
+		}
+	}
+	// update payment table from updatePayment
+	for _, payment := range updatePayment {
+		if err := db.Save(&payment).Error; err != nil {
+			response.Message = err.Error()
+			fmt.Println(9)
+			return c.JSON(http.StatusInternalServerError, response)
+		}
+	}
+	response.Message = types.SUCCESS
+	response.Data = "success"
+	return c.JSON(http.StatusOK, response)
 }

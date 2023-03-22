@@ -5,7 +5,7 @@ import (
 )
 
 type Payment struct {
-	PaymentID   uuid.UUID `gorm:"not null;unique"`
+	PaymentID   uuid.UUID `gorm:"primaryKey;not null;unique"`
 	GroupID     uuid.UUID `gorm:"not null"`
 	UserID1     uuid.UUID `gorm:"not null"`
 	UserID2     uuid.UUID `gorm:"not null"`
