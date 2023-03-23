@@ -24,8 +24,8 @@ func (con *friendController) MakeFriendRequest(c echo.Context) error {
 	friend_id, _ := uuid.Parse(friendRequest.Friend_id)
 
 	if user_id == friend_id {
-		response.Message = types.ERROR_BAD_REQUEST + ": user_id and friend_id cannot be the same"
-		return c.JSON(http.StatusBadRequest, response)
+		response.Message = types.ERROR_CANNOT_ADD_SELF
+		return c.JSON(http.StatusConflict, response)
 	}
 
 	//check if friend_id exist in user table
@@ -103,7 +103,7 @@ func (con *friendController) MakeFriendRequest(c echo.Context) error {
 		if err := tx.Save(&userFriend).Error; err != nil {
 			tx.Rollback()
 			response.Message = types.ERROR_INTERNAL_SERVER
-			return c.JSON(http.StatusInternalServerError, response)
+			return c.JSON(http.StatusConflict, response)
 		}
 	} else {
 		//insert user_id and friend_id to friend table

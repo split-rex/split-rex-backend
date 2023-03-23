@@ -19,7 +19,7 @@ type UserFactory struct {
 
 // init -> random + going to be deleted
 func (uf *UserFactory) Init(id uuid.UUID) {
-	uf.ID = id;
+	uf.ID = uuid.New()
 	
 	if uf.Name == "" {
 		uf.Name = faker.Name()

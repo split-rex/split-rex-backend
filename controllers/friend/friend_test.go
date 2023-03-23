@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"split-rex-backend/configs"
 	"split-rex-backend/configs/database"
 	"split-rex-backend/entities"
@@ -25,23 +27,34 @@ var (
 )
 
 func searchAndMakeRequest(t *testing.T, user_id uuid.UUID, friendUsername string) {
-	// search friend to add
 	e := echo.New()
 
+	q := make(url.Values)
+	q.Set("username", friendUsername)
+	req := httptest.NewRequest(http.MethodGet, "/?"+q.Encode(), nil)
+
 	// search user to add
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.Set("id", user_id)
-	c.SetParamNames("username")
-	c.SetParamValues(friendUsername)
 
 	searchUserToAddResp := responses.TestResponse[responses.ProfileResponse]{}
 	if assert.NoError(t, testFriendController.SearchUserToAdd(c)) {
-		assert.Equal(t, http.StatusOK, rec.Code)
 		if err := json.Unmarshal(rec.Body.Bytes(), &searchUserToAddResp); err != nil {
 			t.Error(err.Error())
+		}
+		if searchUserToAddResp.Message == types.ERROR_ALREADY_FRIEND ||
+			searchUserToAddResp.Message == types.ERROR_ALREADY_REQUESTED_RECEIVED ||
+			searchUserToAddResp.Message == types.ERROR_ALREADY_REQUESTED_SENT ||
+			searchUserToAddResp.Message == types.ERROR_CANNOT_ADD_SELF {
+
+			assert.Equal(t, http.StatusConflict, rec.Code)
+		} else {
+			assert.Equal(t, http.StatusOK, rec.Code)
+			if err := json.Unmarshal(rec.Body.Bytes(), &searchUserToAddResp); err != nil {
+				t.Error(err.Error())
+			}
 		}
 	}
 
@@ -57,8 +70,20 @@ func searchAndMakeRequest(t *testing.T, user_id uuid.UUID, friendUsername string
 	c = e.NewContext(req, rec)
 	c.Set("id", user_id)
 
+	response := responses.TestResponse[string]{}
+
 	if assert.NoError(t, testFriendController.MakeFriendRequest(c)) {
-		assert.Equal(t, http.StatusOK, rec.Code)
+		if err := json.Unmarshal(rec.Body.Bytes(), &response); err != nil {
+			t.Error(err.Error())
+		}
+		if searchUserToAddResp.Message == types.ERROR_ALREADY_FRIEND ||
+			searchUserToAddResp.Message == types.ERROR_ALREADY_REQUESTED_RECEIVED ||
+			searchUserToAddResp.Message == types.ERROR_ALREADY_REQUESTED_SENT ||
+			searchUserToAddResp.Message == types.ERROR_CANNOT_ADD_SELF {
+			assert.Equal(t, http.StatusConflict, rec.Code)
+		} else {
+			assert.Equal(t, http.StatusOK, rec.Code)
+		}
 	}
 }
 
@@ -125,9 +150,10 @@ func rejectRequest(t *testing.T, user_id uuid.UUID, friend_id uuid.UUID) {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
+	c.Set("id", user_id)
 
 	if assert.NoError(t, testFriendController.RejectRequest(c)) {
-		assert.Equal(t, http.StatusAccepted, rec.Code)
+		assert.Equal(t, http.StatusOK, rec.Code)
 	}
 
 }
@@ -143,9 +169,10 @@ func acceptRequest(t *testing.T, user_id uuid.UUID, friend_id uuid.UUID) {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
+	c.Set("id", user_id)
 
 	if assert.NoError(t, testFriendController.AcceptRequest(c)) {
-		assert.Equal(t, http.StatusAccepted, rec.Code)
+		assert.Equal(t, http.StatusOK, rec.Code)
 	}
 }
 
@@ -175,33 +202,30 @@ func getUserFriendList(t *testing.T, user_id uuid.UUID) types.ArrayOfUUID {
 	return friendList
 }
 
-// TODO
-func searchToAddSelfUsername(t *testing.T, user_id uuid.UUID, user_username string) {
-	// search friend to add
-	e := echo.New()
-
-	// search user to add
-	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
-	c.Set("id", user_id)
-	c.SetParamNames("username")
-	c.SetParamValues(user_username)
-
-	// cara ngetes error bad req lah pokoknya
-	// searchUserToAddResp := responses.TestResponse[responses.ProfileResponse]{}
+func addUserToDb(t *testing.T, uf factories.UserFactory) {
+	db := database.DBTesting.GetConnection()
+	user := entities.User{
+		ID:       uf.ID,
+		Name:     uf.Name,
+		Username: uf.Username,
+		Email:    uf.Email,
+		Password: uf.Password,
+		Groups:   types.ArrayOfUUID{},
+	}
+	if err := db.Create(&user).Error; err != nil {
+		t.Error(err.Error())
+	}
 }
 
 func TestFriendMain(t *testing.T) {
 	/*
-	TEST FLOW:
-	1. A add D
-	2. B add A
-	3. C add A
-	4. A reject B
-	5. A approve C
-	6. D approve A
+		TEST FLOW:
+		1. A add D
+		2. B add A
+		3. C add A
+		4. A reject B
+		5. A approve C
+		6. D approve A
 	*/
 	db := database.DBTesting.GetConnection()
 
@@ -210,18 +234,26 @@ func TestFriendMain(t *testing.T) {
 	userA := factories.UserFactory{}
 	userA.Init(uuid.New())
 	usersDB = append(usersDB, entities.User(userA))
+	addUserToDb(t, userA)
+	fmt.Println("userA", userA.ID)
 
 	userB := factories.UserFactory{}
 	userB.Init(uuid.New())
 	usersDB = append(usersDB, entities.User(userB))
+	addUserToDb(t, userB)
+	fmt.Println("userB", userB.ID)
 
 	userC := factories.UserFactory{}
 	userC.Init(uuid.New())
 	usersDB = append(usersDB, entities.User(userC))
+	addUserToDb(t, userC)
+	fmt.Println("userC", userC.ID)
 
 	userD := factories.UserFactory{}
 	userD.Init(uuid.New())
 	usersDB = append(usersDB, entities.User(userD))
+	addUserToDb(t, userD)
+	fmt.Println("userD", userD.ID)
 
 	// a -> d
 	searchAndMakeRequest(t, userA.ID, userD.Username)
@@ -239,7 +271,7 @@ func TestFriendMain(t *testing.T) {
 	}
 
 	// check should be 2 (from b and c)
-	assert.Equal(t, 2, friendRequestReceivedA.Count())
+	assert.Equal(t, 2, len(friendRequestReceivedA))
 
 	// check req recv for b -> a
 	if !friendRequestReceivedA.Contains(userB.ID) {
@@ -251,16 +283,18 @@ func TestFriendMain(t *testing.T) {
 		t.Error()
 	}
 
-	// TODO: add a to d ERROR_ALREADY_REQUESTED_SENT
+	// add a to d ERROR_ALREADY_REQUESTED_SENT
+	searchAndMakeRequest(t, userA.ID, userD.Username)
 
-	// TODO: add a to b ERROR_ALREADY_REQUESTED_RECEIVED
+	// add a to b ERROR_ALREADY_REQUESTED_RECEIVED
+	searchAndMakeRequest(t, userA.ID, userB.Username)
 
 	// a reject request for b -> a
 	rejectRequest(t, userA.ID, userB.ID)
 
 	// check friend req recv a should be only c left
 	friendRequestReceivedA = getFriendRequestReceived(t, userA.ID)
-	assert.Equal(t, 1, friendRequestReceivedA.Count())
+	assert.Equal(t, 1, len(friendRequestReceivedA))
 	if !friendRequestReceivedA.Contains(userC.ID) {
 		t.Error()
 	}
@@ -269,31 +303,34 @@ func TestFriendMain(t *testing.T) {
 	acceptRequest(t, userA.ID, userC.ID)
 
 	// check friend req recv a should be null
-	assert.Equal(t, 0, friendRequestReceivedA.Count())
+	friendRequestReceivedA = getFriendRequestReceived(t, userA.ID)
+	assert.Equal(t, 0, len(friendRequestReceivedA))
 
 	// d acc a
 	acceptRequest(t, userD.ID, userA.ID)
 	friendRequestSentA = getFriendRequestSent(t, userA.ID)
-	assert.Equal(t, 0, friendRequestSentA.Count())
+	assert.Equal(t, 0, len(friendRequestSentA))
 
 	// check friend a
 	userAFriendList := getUserFriendList(t, userA.ID)
 	// check should be 2 (c, d)
-	assert.Equal(t, 2, userAFriendList.Count())
+	assert.Equal(t, 2, len(userAFriendList))
 	// check c
-	if (!userAFriendList.Contains(userC.ID)){
+	if !userAFriendList.Contains(userC.ID) {
 		t.Error()
 	}
 	// check d
-	if (!userAFriendList.Contains(userD.ID)){
+	if !userAFriendList.Contains(userD.ID) {
 		t.Error()
 	}
-	// TODO: add a to c should be error ERROR_ALREADY_FRIEND
+	// add a to c should be error ERROR_ALREADY_FRIEND
+	searchAndMakeRequest(t, userA.ID, userC.Username)
 
-	// TODO: add self should be error ERROR_CANNOT_ADD_SELF
+	// add self should be error ERROR_CANNOT_ADD_SELF
+	searchAndMakeRequest(t, userA.ID, userA.Username)
 
 	// delete user a b c d in user and friends
-	for _, user := range usersDB{
+	for _, user := range usersDB {
 		// delete from user
 		db.Where(&entities.User{
 			Username: user.Username,
