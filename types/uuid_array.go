@@ -21,3 +21,16 @@ func (arrayOfUUID ArrayOfUUID) Value() (driver.Value, error) {
 func (ArrayOfUUID) GormDataType() string {
 	return "string"
 }
+
+func (arrayOfUUID ArrayOfUUID) Count() int {
+	return arrayOfUUID.Count()
+}
+
+func (arrayOfUUID ArrayOfUUID) Contains(id uuid.UUID) bool {
+	for _, uuid := range arrayOfUUID {
+		if uuid == id {
+			return true
+		}
+	}
+	return false
+}

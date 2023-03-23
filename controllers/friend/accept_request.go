@@ -41,7 +41,6 @@ func (con *friendController) AcceptRequest(c echo.Context) error {
 
 	// check if requester_id exist in req received[] user's friend table
 	found := false
-	// user_new_req_received := []uuid.UUID{}
 	for i, id := range userInFriend.Req_received {
 		if id.String() == requester_id {
 			found = true

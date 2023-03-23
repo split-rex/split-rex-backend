@@ -29,7 +29,7 @@ func CreateTestUser() error {
 	db := database.DBTesting.GetConnection()
 
 	userFac := factories.UserFactory{}
-	userFac.InitAuth()
+	userFac.UserB()
 	user := entities.User{
 		ID:       uuid.New(),
 		Name:     userFac.Name,
@@ -77,7 +77,7 @@ func TestAuth(t *testing.T) {
 	e := echo.New()
 
 	user := factories.UserFactory{}
-	user.Init()
+	user.Init(uuid.New())
 
 	registerRequest, _ := json.Marshal(requests.RegisterRequest{
 		Name:     user.Name,
