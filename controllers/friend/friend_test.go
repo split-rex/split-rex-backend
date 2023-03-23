@@ -235,25 +235,21 @@ func TestFriendMain(t *testing.T) {
 	userA.Init(uuid.New())
 	usersDB = append(usersDB, entities.User(userA))
 	addUserToDb(t, userA)
-	fmt.Println("userA", userA.ID)
 
 	userB := factories.UserFactory{}
 	userB.Init(uuid.New())
 	usersDB = append(usersDB, entities.User(userB))
 	addUserToDb(t, userB)
-	fmt.Println("userB", userB.ID)
 
 	userC := factories.UserFactory{}
 	userC.Init(uuid.New())
 	usersDB = append(usersDB, entities.User(userC))
 	addUserToDb(t, userC)
-	fmt.Println("userC", userC.ID)
 
 	userD := factories.UserFactory{}
 	userD.Init(uuid.New())
 	usersDB = append(usersDB, entities.User(userD))
 	addUserToDb(t, userD)
-	fmt.Println("userD", userD.ID)
 
 	// a -> d
 	searchAndMakeRequest(t, userA.ID, userD.Username)
