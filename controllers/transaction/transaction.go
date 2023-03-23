@@ -121,7 +121,7 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 				UserID2:     payment.UserID,
 				TotalUnpaid: -payment.TotalUnpaid,
 				TotalPaid:   0,
-				Status:      "UNPAID",
+				Status:      types.STATUS_PAYMENT_UNPAID,
 			}
 			if err := tx.Create(&newPayment).Error; err != nil {
 				response.Message = types.ERROR_INTERNAL_SERVER
@@ -130,8 +130,8 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 		} else {
 			// if payment exist, update payment
 			tempPayment.TotalUnpaid = tempPayment.TotalUnpaid - payment.TotalUnpaid
-			if tempPayment.Status == "PAID" {
-				tempPayment.Status = "UNPAID"
+			if tempPayment.Status == types.STATUS_PAYMENT_PAID {
+				tempPayment.Status = types.STATUS_PAYMENT_UNPAID
 			}
 			if err := tx.Save(&tempPayment).Error; err != nil {
 				response.Message = types.ERROR_INTERNAL_SERVER
@@ -155,7 +155,7 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 				UserID2:     userID,
 				TotalUnpaid: payment.TotalUnpaid,
 				TotalPaid:   0,
-				Status:      "UNPAID",
+				Status:      types.STATUS_PAYMENT_UNPAID,
 			}
 			if err := tx.Create(&newPayment).Error; err != nil {
 				response.Message = types.ERROR_INTERNAL_SERVER
@@ -164,8 +164,8 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 		} else {
 			// if payment exist, update payment
 			tempPayment.TotalUnpaid = tempPayment.TotalUnpaid + payment.TotalUnpaid
-			if tempPayment.Status == "PAID" {
-				tempPayment.Status = "UNPAID"
+			if tempPayment.Status == types.STATUS_PAYMENT_PAID{
+				tempPayment.Status = types.STATUS_PAYMENT_UNPAID
 			}
 			if err := tx.Save(&tempPayment).Error; err != nil {
 				response.Message = types.ERROR_INTERNAL_SERVER
@@ -181,7 +181,6 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 	}
 
 	response.Message = types.SUCCESS
-	response.Data = "success"
 	return c.JSON(http.StatusOK, response)
 
 }
@@ -209,7 +208,7 @@ func (h *transactionController) ResolveTransaction(c echo.Context) error {
 
 	// get payment with groupID
 	payments := []entities.Payment{}
-	conditionPayment := entities.Payment{GroupID: request.GroupID, Status: "UNPAID"}
+	conditionPayment := entities.Payment{GroupID: request.GroupID, Status: types.STATUS_PAYMENT_UNPAID}
 	if err := db.Where(&conditionPayment).Find(&payments).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
@@ -261,13 +260,13 @@ func (h *transactionController) ResolveTransaction(c echo.Context) error {
 					UserID2:     group.MemberID[j],
 					TotalUnpaid: m,
 					TotalPaid:   0,
-					Status:      "UNPAID",
+					Status:      types.STATUS_PAYMENT_UNPAID,
 				}
 				updatePayment = append(updatePayment, newPayment)
 			} else {
 				tempPayment.TotalUnpaid = m
 				tempPayment.TotalPaid = 0
-				tempPayment.Status = "UNPAID"
+				tempPayment.Status = types.STATUS_PAYMENT_UNPAID
 				updatePayment = append(updatePayment, tempPayment)
 			}
 
@@ -286,13 +285,13 @@ func (h *transactionController) ResolveTransaction(c echo.Context) error {
 					UserID2:     group.MemberID[i],
 					TotalUnpaid: -m,
 					TotalPaid:   0,
-					Status:      "UNPAID",
+					Status:      types.STATUS_PAYMENT_UNPAID,
 				}
 				updatePayment = append(updatePayment, newPayment)
 			} else {
 				tempPayment.TotalUnpaid = -m
 				tempPayment.TotalPaid = 0
-				tempPayment.Status = "UNPAID"
+				tempPayment.Status = types.STATUS_PAYMENT_UNPAID
 				updatePayment = append(updatePayment, tempPayment)
 			}
 		}
@@ -309,7 +308,7 @@ func (h *transactionController) ResolveTransaction(c echo.Context) error {
 	for _, payment := range payments {
 		payment.TotalUnpaid = 0
 		payment.TotalPaid = 0
-		payment.Status = "PAID"
+		payment.Status = types.STATUS_PAYMENT_PAID
 		if err := tx.Save(&payment).Error; err != nil {
 			response.Message = types.ERROR_INTERNAL_SERVER
 			return c.JSON(http.StatusInternalServerError, response)
@@ -331,6 +330,5 @@ func (h *transactionController) ResolveTransaction(c echo.Context) error {
 	}
 
 	response.Message = types.SUCCESS
-	response.Data = "success"
 	return c.JSON(http.StatusOK, response)
 }

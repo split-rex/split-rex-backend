@@ -119,7 +119,7 @@ func (con *groupController) UserGroups(c echo.Context) error {
 	for _, groupID := range user.Groups {
 		totalUnpaid := 0.0
 		totalExpense := 0.0
-		groupType := "EQUAL"
+		groupType := types.TYPE_GROUP_EQUAL
 
 		group := entities.Group{}
 		condition := entities.Group{GroupID: groupID}
@@ -157,11 +157,11 @@ func (con *groupController) UserGroups(c echo.Context) error {
 
 		// if totalOwed is negative then not in groupOwed
 		if totalUnpaid > 0 {
-			groupType = "OWED"
+			groupType = types.TYPE_GROUP_OWED
 		} else if totalUnpaid < 0 {
-			groupType = "LENT"
+			groupType = types.TYPE_GROUP_LENT
 		} else {
-			groupType = "EQUAL"
+			groupType = types.TYPE_GROUP_EQUAL
 		}
 
 		data = append(data, responses.UserGroupResponse{
@@ -187,7 +187,7 @@ func (h *groupController) GroupDetail(c echo.Context) error {
 
 	totalUnpaid := 0.0
 	totalExpense := 0.0
-	groupType := "EQUAL"
+	groupType := types.TYPE_GROUP_EQUAL
 
 	group := entities.Group{}
 	groupID, _ := uuid.Parse(c.QueryParam("id"))
@@ -227,11 +227,11 @@ func (h *groupController) GroupDetail(c echo.Context) error {
 
 	// if totalOwed is negative then not in groupOwed
 	if totalUnpaid > 0 {
-		groupType = "OWED"
+		groupType = types.TYPE_GROUP_OWED
 	} else if totalUnpaid < 0 {
-		groupType = "LENT"
+		groupType = types.TYPE_GROUP_LENT
 	} else {
-		groupType = "EQUAL"
+		groupType = types.TYPE_GROUP_EQUAL
 	}
 
 	data := responses.GroupDetailResponse{
@@ -298,7 +298,7 @@ func (h *groupController) GroupTransactions(c echo.Context) error {
 		})
 	}
 
-	response.Message = "SUCCESS"
+	response.Message = types.SUCCESS
 	response.Data = data
 
 	return c.JSON(http.StatusAccepted, response)

@@ -73,7 +73,7 @@ func (con *groupController) GroupOwed(c echo.Context) error {
 				MemberID:     group.MemberID,
 				StartDate:    group.StartDate,
 				EndDate:      group.EndDate,
-				Type:         "OWED",
+				Type:         types.TYPE_GROUP_OWED,
 				TotalUnpaid:  totalOwed,
 				TotalExpense: totalExpense})
 	}

@@ -73,7 +73,7 @@ func (con *groupController) GroupLent(c echo.Context) error {
 				MemberID:     group.MemberID,
 				StartDate:    group.StartDate,
 				EndDate:      group.EndDate,
-				Type:         "LENT",
+				Type:         types.TYPE_GROUP_LENT,
 				TotalUnpaid:  totalLent,
 				TotalExpense: totalExpense})
 	}
