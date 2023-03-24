@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"split-rex-backend/configs/database"
@@ -24,26 +25,33 @@ var (
 func TestUserCreateTransaction(t *testing.T) {
 	e := echo.New()
 
+	// init new group
 	group := factories.GroupFactory{}
 	group.GroupA()
 
-	transactionID := uuid.New()
-
-	item := factories.ItemFactory{
-		ItemID:        uuid.New(),
-		TransactionID: transactionID,
-	}
-	item.Consumer = append(item.Consumer, group.MemberID...)
-	item.Init()
-
+	// make new transaction factory
 	transaction := factories.TransactionFactory{
-		TransactionID: transactionID,
+		TransactionID: uuid.New(),
 		GroupID:       group.GroupID,
 		BillOwner:     group.MemberID[0],
 	}
 	transaction.Init()
 
-	transaction.Items = append(transaction.Items, item.ItemID)
+	// create new item with consumer from members in group
+	item := factories.ItemFactory{}
+	item.Consumer = append(item.Consumer, group.MemberID...)
+	item.Init()
+
+	// change into item requests
+	itemRequest := requests.ItemRequest{
+		Name:     item.Name,
+		Quantity: item.Quantity,
+		Price:    item.Price,
+		Consumer: item.Consumer,
+	}
+
+	// then append item to transaction
+	transaction.Items = append(transaction.Items, itemRequest)
 
 	requestsNewTransaction := requests.UserCreateTransactionRequest{
 		Name:        transaction.Name,
@@ -67,6 +75,7 @@ func TestUserCreateTransaction(t *testing.T) {
 
 	transactionResp := responses.TestResponse[string]{}
 	if assert.NoError(t, testUserController.UserCreateTransaction(c)) {
+		fmt.Println(rec.Body.String())
 		assert.Equal(t, http.StatusCreated, rec.Code)
 
 		if err := json.Unmarshal(rec.Body.Bytes(), &transactionResp); err != nil {

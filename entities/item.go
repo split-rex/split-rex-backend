@@ -7,10 +7,9 @@ import (
 )
 
 type Item struct {
-	ItemID        uuid.UUID         `gorm:"not null;unique"`
-	TransactionID uuid.UUID         `gorm:"not null"`
-	Name          string            `gorm:"not null"`
-	Quantity      int               `gorm:"not null"`
-	Price         float64           `gorm:"not null"`
-	Consumer      types.ArrayOfUUID `gorm:"not null"`
+	ItemID   uuid.UUID         `gorm:"not null;unique"`
+	Name     string            `gorm:"not null"`
+	Quantity int               `gorm:"not null"`
+	Price    float64           `gorm:"not null"`
+	Consumer types.ArrayOfUUID `gorm:"not null"`
 }
