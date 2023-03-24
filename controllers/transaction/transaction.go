@@ -269,9 +269,12 @@ func (h *transactionController) ResolveTransaction(c echo.Context) error {
 				}
 				updatePayment = append(updatePayment, newPayment)
 			} else {
-				tempPayment.TotalUnpaid = m
-				tempPayment.TotalPaid = 0
-				tempPayment.Status = types.STATUS_PAYMENT_UNPAID
+				if (tempPayment.TotalPaid==0){
+					tempPayment.Status = types.STATUS_PAYMENT_UNPAID
+				}else {
+					tempPayment.Status = types.STATUS_PAYMENT_PENDING
+				}
+				tempPayment.TotalUnpaid+= m
 				updatePayment = append(updatePayment, tempPayment)
 			}
 
@@ -294,9 +297,12 @@ func (h *transactionController) ResolveTransaction(c echo.Context) error {
 				}
 				updatePayment = append(updatePayment, newPayment)
 			} else {
-				tempPayment.TotalUnpaid = -m
-				tempPayment.TotalPaid = 0
-				tempPayment.Status = types.STATUS_PAYMENT_UNPAID
+				if (tempPayment.TotalPaid==0){
+					tempPayment.Status = types.STATUS_PAYMENT_UNPAID
+				}else {
+					tempPayment.Status = types.STATUS_PAYMENT_PENDING
+				}
+				tempPayment.TotalUnpaid -= m
 				updatePayment = append(updatePayment, tempPayment)
 			}
 		}
