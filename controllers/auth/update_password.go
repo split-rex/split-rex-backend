@@ -8,18 +8,15 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/bcrypt"
 )
 
-func (con *authController) UpdateProfileController(c echo.Context) error {
+func (con *authController) UpdatePasswordController(c echo.Context) error {
 	db := con.db
 	response := entities.Response[string]{}
 
-	updateProfileRequest := requests.UpdateProfileRequest{}
-	if err := c.Bind(&updateProfileRequest); err != nil {
-		response.Message = types.ERROR_BAD_REQUEST
-		return c.JSON(http.StatusBadRequest, response)
-	}
-	if updateProfileRequest.Color > 8 {
+	updatePasswordRequest := requests.UpdatePasswordRequest{}
+	if err := c.Bind(&updatePasswordRequest); err != nil {
 		response.Message = types.ERROR_BAD_REQUEST
 		return c.JSON(http.StatusBadRequest, response)
 	}
@@ -39,11 +36,15 @@ func (con *authController) UpdateProfileController(c echo.Context) error {
 		response.Message = types.ERROR_BAD_REQUEST
 		return c.JSON(http.StatusInternalServerError, response)
 	}
+	// check the password of user
+	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(updatePasswordRequest.OldPassword)); err != nil {
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
+	}
 
 	// update user
 	if err := db.Model(&user).Updates(entities.User{
-		Name:     updateProfileRequest.Name,
-		Color:    updateProfileRequest.Color,
+		Password: types.EncryptedString(updatePasswordRequest.NewPassword),
 	}).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
