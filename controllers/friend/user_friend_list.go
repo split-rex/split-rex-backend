@@ -48,6 +48,7 @@ func (con *friendController) UserFriendList(c echo.Context) error {
 		friend.User_id = user.ID.String()
 		friend.Username = user.Username
 		friend.Fullname = user.Name
+		friend.Color = user.Color
 		friends = append(friends, friend)
 	}
 
@@ -56,7 +57,7 @@ func (con *friendController) UserFriendList(c echo.Context) error {
 		response.Message = types.DATA_NOT_FOUND
 		return c.JSON(http.StatusOK, response)
 	}
-	
+
 	response.Data = friends
 	response.Message = types.SUCCESS
 	return c.JSON(http.StatusOK, response)
