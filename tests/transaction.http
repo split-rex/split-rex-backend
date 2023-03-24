@@ -12,7 +12,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZ
     "service" : 100.0,
     "total" : 1200.0,
     "bill_owner" : "6251ac85-e43d-4b88-8779-588099df5008",
-    "items" : ["6251ac85-e43d-4b88-8779-588099df5008"]
 }
 
 ###

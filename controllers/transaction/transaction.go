@@ -34,7 +34,12 @@ func (h *transactionController) UserCreateTransaction(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
-	// TODO: check if item exist in item table
+	// create items
+	items, err := createItems(db, request.Items)
+	if err != nil {
+		response.Message = err.Error()
+		return c.JSON(http.StatusInternalServerError, response)
+	}
 
 	transaction := entities.Transaction{
 		TransactionID: uuid.New(),
@@ -47,7 +52,7 @@ func (h *transactionController) UserCreateTransaction(c echo.Context) error {
 		Service:       request.Service,
 		Total:         request.Total,
 		BillOwner:     request.BillOwner,
-		Items:         request.Items,
+		Items:         items,
 	}
 
 	if err := db.Create(&transaction).Error; err != nil {
@@ -164,7 +169,7 @@ func (h *transactionController) UpdatePayment(c echo.Context) error {
 		} else {
 			// if payment exist, update payment
 			tempPayment.TotalUnpaid = tempPayment.TotalUnpaid + payment.TotalUnpaid
-			if tempPayment.Status == types.STATUS_PAYMENT_PAID{
+			if tempPayment.Status == types.STATUS_PAYMENT_PAID {
 				tempPayment.Status = types.STATUS_PAYMENT_UNPAID
 			}
 			if err := tx.Save(&tempPayment).Error; err != nil {
