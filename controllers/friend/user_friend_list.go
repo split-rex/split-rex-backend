@@ -41,7 +41,7 @@ func (con *friendController) UserFriendList(c echo.Context) error {
 		friend := responses.ProfileResponse{}
 		condition := entities.User{ID: id}
 		// get id, username, and name from user table
-		if err := db.Where(&condition).Select("id", "username", "name").Find(&user).Error; err != nil {
+		if err := db.Where(&condition).Select("id", "username", "name", "color").Find(&user).Error; err != nil {
 			response.Message = types.ERROR_INTERNAL_SERVER
 			return c.JSON(http.StatusInternalServerError, response)
 		}
