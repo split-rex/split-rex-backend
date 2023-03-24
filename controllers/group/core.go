@@ -17,6 +17,7 @@ type GroupController interface {
 	GroupTransactions(c echo.Context) error
 	GroupLent(c echo.Context) error
 	GroupOwed(c echo.Context) error
+	AddGroupMember(c echo.Context) error
 }
 
 func NewGroupController(db *gorm.DB) GroupController {
