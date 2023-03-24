@@ -14,8 +14,8 @@ POST http://localhost:8080/login
 Content-Type: application/json
 
 {
-    "email": "patrick@gmail.com",
-    "password": "patrick"
+    "email": "wok@gmail.com",
+    "password": "wokwok"
 }
 
 ###
@@ -24,10 +24,10 @@ POST http://localhost:8080/register
 Content-Type: application/json
 
 {
-    "name": "wikwik",
-    "email": "1@gmail.com",
-    "username": "1",
-    "password": "wikwik"
+    "name": "wokwok",
+    "email": "wok@gmail.com",
+    "username": "wok",
+    "password": "wokwok"
 }
 
 ###
@@ -43,10 +43,18 @@ Content-Type: application/json
 ###
 POST http://localhost:8080/updateProfile
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2NzkwNTI3NzAsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.mMZyCApDee5YfX569uIN36DALW3n231zjgLYIA8Y-dw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzk3MjYxODMsImlkIjoiNmMzNWE1MmYtNTQxZC00NTkxLTkxMGMtNmYxNjM4ZjMwODQyIn0.2Se_jS2zQSmjZb4XZl-8niOfSAQojlrId6-pjZO9_WI
 
 {
     "name": "patututututuut",
-    "password": "patrick",
-    "color": 3
+    "color": 8
+}
+###
+POST http://localhost:8080/updatePassword
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzk3MjYxODMsImlkIjoiNmMzNWE1MmYtNTQxZC00NTkxLTkxMGMtNmYxNjM4ZjMwODQyIn0.2Se_jS2zQSmjZb4XZl-8niOfSAQojlrId6-pjZO9_WI
+
+{
+    "old_password": "wokwok",
+    "new_password": "sarah"
 }

@@ -49,7 +49,7 @@ func (con *authController) RegisterController(c echo.Context) error {
 	}
 
 	// insert user
-	if err := db.Create(&entities.User{
+	user = entities.User{
 		ID:       uuid.New(),
 		Username: registerRequest.Username,
 		Email:    registerRequest.Email,
@@ -57,7 +57,8 @@ func (con *authController) RegisterController(c echo.Context) error {
 		Color:    registerRequest.Color,
 		Password: types.EncryptedString(registerRequest.Password),
 		Groups:   types.ArrayOfUUID{},
-	}).Error; err != nil {
+	}
+	if err := db.Create(&user).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}

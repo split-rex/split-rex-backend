@@ -20,7 +20,7 @@ func createItems(db *gorm.DB, items []requests.ItemRequest) (types.ArrayOfUUID, 
 			Consumer: item.Consumer,
 		}
 
-		if err := db.Save(&newItem).Error; err != nil {
+		if err := db.Create(&newItem).Error; err != nil {
 			return arrayOfItemUUID, err
 		}
 

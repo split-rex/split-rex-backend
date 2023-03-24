@@ -17,7 +17,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
-	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -29,7 +28,7 @@ func CreateTestUser() error {
 	db := database.DBTesting.GetConnection()
 
 	userFac := factories.UserFactory{}
-	userFac.InitAuth()
+	userFac.UserB()
 	user := entities.User{
 		ID:       uuid.New(),
 		Name:     userFac.Name,
@@ -77,7 +76,7 @@ func TestAuth(t *testing.T) {
 	e := echo.New()
 
 	user := factories.UserFactory{}
-	user.Init()
+	user.Init(uuid.New())
 
 	registerRequest, _ := json.Marshal(requests.RegisterRequest{
 		Name:     user.Name,
@@ -119,7 +118,6 @@ func TestAuth(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
-	db := database.DBTesting.GetConnection()
 	e := echo.New()
 
 	// get user id
@@ -130,9 +128,8 @@ func TestUpdate(t *testing.T) {
 
 	// 1. update profile
 	updateProfileRequest := requests.UpdateProfileRequest{
-		Name:     "new",
-		Password: string("newpassword"),
-		Color:    3,
+		Name:  "new",
+		Color: 3,
 	}
 
 	updateRequest, _ := json.Marshal(updateProfileRequest)
@@ -167,13 +164,4 @@ func TestUpdate(t *testing.T) {
 	assert.Equal(t, updateProfileRequest.Name, profileResponse.Data.Fullname)
 	assert.Equal(t, updateProfileRequest.Color, profileResponse.Data.Color)
 
-	// check password
-	userDb := entities.User{}
-	if err := db.Where(&entities.User{ID: id}).Find(&userDb).Error; err != nil {
-		t.Error(err.Error())
-	}
-
-	if err := bcrypt.CompareHashAndPassword(userDb.Password, []byte(updateProfileRequest.Password)); err != nil {
-		t.Error(err.Error())
-	}
 }
