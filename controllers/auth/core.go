@@ -17,6 +17,7 @@ type AuthController interface {
 	ProfileController(c echo.Context) error
 	RegisterController(c echo.Context) error
 	UpdateProfileController(c echo.Context) error
+	UpdatePasswordController(c echo.Context) error
 }
 
 func NewAuthController(db *gorm.DB, mt configs.Metadata) AuthController {
