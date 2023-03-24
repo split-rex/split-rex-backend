@@ -62,7 +62,7 @@ func (con *friendController) SearchUserToAdd(c echo.Context) error {
 			Username: user.Username,
 			Fullname: user.Name,
 		}
-		return c.JSON(http.StatusBadRequest, response)
+		return c.JSON(http.StatusConflict, response)
 	}
 
 	// check if user_id in current user friends
@@ -72,6 +72,7 @@ func (con *friendController) SearchUserToAdd(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
+	// check if friend_id already in friend
 	for _, friend_id := range currentUser.Friend_id {
 		if friend_id == user.ID {
 			response.Message = types.ERROR_ALREADY_FRIEND
@@ -80,7 +81,32 @@ func (con *friendController) SearchUserToAdd(c echo.Context) error {
 				Username: user.Username,
 				Fullname: user.Name,
 			}
-			return c.JSON(http.StatusBadRequest, response)
+			return c.JSON(http.StatusConflict, response)
+		}
+
+	}
+	// check if friend_id already in Req_received
+	for _, friend := range currentUser.Req_received {
+		if friend == user.ID {
+			response.Message = types.ERROR_ALREADY_REQUESTED_RECEIVED
+			response.Data = responses.ProfileResponse{
+				User_id:  user.ID.String(),
+				Username: user.Username,
+				Fullname: user.Name,
+			}
+			return c.JSON(http.StatusConflict, response)
+		}
+	}
+	// check if friend_id already in Req_sent
+	for _, friend := range currentUser.Req_sent {
+		if friend == user.ID {
+			response.Message = types.ERROR_ALREADY_REQUESTED_SENT
+			response.Data = responses.ProfileResponse{
+				User_id:  user.ID.String(),
+				Username: user.Username,
+				Fullname: user.Name,
+			}
+			return c.JSON(http.StatusConflict, response)
 		}
 	}
 
@@ -90,5 +116,7 @@ func (con *friendController) SearchUserToAdd(c echo.Context) error {
 		Username: user.Username,
 		Fullname: user.Name,
 	}
+
 	return c.JSON(http.StatusOK, response)
 }
+   

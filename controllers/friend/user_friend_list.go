@@ -51,14 +51,13 @@ func (con *friendController) UserFriendList(c echo.Context) error {
 		friends = append(friends, friend)
 	}
 
-	response.Data = friends
-
 	// if no friends, data not found but status success
 	if len(friends) <= 0 {
 		response.Message = types.DATA_NOT_FOUND
 		return c.JSON(http.StatusOK, response)
 	}
-
+	
+	response.Data = friends
 	response.Message = types.SUCCESS
 	return c.JSON(http.StatusOK, response)
 

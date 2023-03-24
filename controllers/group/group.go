@@ -21,10 +21,17 @@ func (con *groupController) UserCreateGroup(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
+	user_id := c.Get("id").(uuid.UUID)
+	request.MemberID = append(request.MemberID, user_id)
+
 	// check if all corresponding member exist in user table
 	for _, member := range request.MemberID {
 		user := entities.User{}
 		if err := db.Find(&user, member).Error; err != nil {
+			response.Message = types.ERROR_BAD_REQUEST
+			return c.JSON(http.StatusBadRequest, response)
+		}
+		if user.Name == ""{
 			response.Message = types.ERROR_BAD_REQUEST
 			return c.JSON(http.StatusBadRequest, response)
 		}
