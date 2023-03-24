@@ -66,16 +66,36 @@ func (con *groupController) GroupOwed(c echo.Context) error {
 		}
 		totalOwedGlobal = totalOwedGlobal + totalOwed
 
-		groups = append(groups,
-			responses.UserGroupResponse{
-				GroupID:      group.GroupID,
-				Name:         group.Name,
-				MemberID:     group.MemberID,
-				StartDate:    group.StartDate,
-				EndDate:      group.EndDate,
-				Type:         types.TYPE_GROUP_OWED,
-				TotalUnpaid:  totalOwed,
-				TotalExpense: totalExpense})
+		groupResponse := responses.UserGroupResponse{
+			GroupID:      group.GroupID,
+			Name:         group.Name,
+			MemberID:     group.MemberID,
+			StartDate:    group.StartDate,
+			EndDate:      group.EndDate,
+			Type:         types.TYPE_GROUP_OWED,
+			TotalUnpaid:  totalOwed,
+			TotalExpense: totalExpense}
+
+		for _, memberID := range group.MemberID {
+			// get member detail
+			user := entities.User{}
+			condition := entities.User{ID: memberID}
+			if err := db.Where(&condition).Find(&user).Error; err != nil {
+				response.Message = types.ERROR_INTERNAL_SERVER
+				return c.JSON(http.StatusInternalServerError, response)
+			}
+			groupResponse.ListMember = append(groupResponse.ListMember,
+				responses.MemberDetail{
+					ID:       memberID,
+					Name:     user.Name,
+					Username: user.Username,
+					Email:    user.Email,
+					Color:    user.Color,
+				})
+
+		}
+
+		groups = append(groups, groupResponse)
 	}
 
 	// then return all

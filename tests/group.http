@@ -26,7 +26,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZ
 
 GET http://localhost:8080/userGroups
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzk1NzIwMDgsImlkIjoiMTgzZTA0ZDctYzY1My00YzdkLWFhNjYtM2Q3NTFkNGQ3MzU4In0.rtMiDCiYm_cCiejZqIdGYg8k0KShMt8sn0dCkQv8R6g
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzk3NjYzMzQsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.SHxxjgPxJ6Z3Aq2Hk3f9FS602KyysRaHch9yFfj2-W0
+
 ### GET GROUP DETAIL
 
 GET http://localhost:8080/groupDetail?id=0b865d7f-e40e-4440-905e-eccf2caaa6ed

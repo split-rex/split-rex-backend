@@ -31,7 +31,7 @@ func (con *groupController) UserCreateGroup(c echo.Context) error {
 			response.Message = types.ERROR_BAD_REQUEST
 			return c.JSON(http.StatusBadRequest, response)
 		}
-		if user.Name == ""{
+		if user.Name == "" {
 			response.Message = types.ERROR_BAD_REQUEST
 			return c.JSON(http.StatusBadRequest, response)
 		}
@@ -171,7 +171,7 @@ func (con *groupController) UserGroups(c echo.Context) error {
 			groupType = types.TYPE_GROUP_EQUAL
 		}
 
-		data = append(data, responses.UserGroupResponse{
+		groupResponse := responses.UserGroupResponse{
 			GroupID:      group.GroupID,
 			Name:         group.Name,
 			MemberID:     group.MemberID,
@@ -179,8 +179,27 @@ func (con *groupController) UserGroups(c echo.Context) error {
 			EndDate:      group.EndDate,
 			Type:         groupType,
 			TotalUnpaid:  totalUnpaid,
-			TotalExpense: totalExpense,
-		})
+			TotalExpense: totalExpense}
+
+		for _, memberID := range group.MemberID {
+			// get member detail
+			user := entities.User{}
+			condition := entities.User{ID: memberID}
+			if err := db.Where(&condition).Find(&user).Error; err != nil {
+				response.Message = types.ERROR_INTERNAL_SERVER
+				return c.JSON(http.StatusInternalServerError, response)
+			}
+			groupResponse.ListMember = append(groupResponse.ListMember,
+				responses.MemberDetail{
+					ID:       memberID,
+					Name:     user.Name,
+					Username: user.Username,
+					Email:    user.Email,
+					Color:    user.Color,
+				})
+		}
+
+		data = append(data, groupResponse)
 	}
 	response.Message = types.SUCCESS
 	response.Data = data
@@ -190,7 +209,7 @@ func (con *groupController) UserGroups(c echo.Context) error {
 
 func (h *groupController) GroupDetail(c echo.Context) error {
 	db := h.db
-	response := entities.Response[responses.GroupDetailResponse]{}
+	response := entities.Response[responses.UserGroupResponse]{}
 
 	totalUnpaid := 0.0
 	totalExpense := 0.0
@@ -241,7 +260,7 @@ func (h *groupController) GroupDetail(c echo.Context) error {
 		groupType = types.TYPE_GROUP_EQUAL
 	}
 
-	data := responses.GroupDetailResponse{
+	data := responses.UserGroupResponse{
 		GroupID:      group.GroupID,
 		Name:         group.Name,
 		MemberID:     group.MemberID,
@@ -267,6 +286,7 @@ func (h *groupController) GroupDetail(c echo.Context) error {
 				Name:     user.Name,
 				Username: user.Username,
 				Email:    user.Email,
+				Color:    user.Color,
 			})
 	}
 
