@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"split-rex-backend/configs/database"
@@ -31,7 +32,14 @@ func TestUserCreateTransaction(t *testing.T) {
 		"service" : 100.0,
 		"total" : 1200.0,
 		"bill_owner" : "6251ac85-e43d-4b88-8779-588099df5008",
-		"items" : ["6251ac85-e43d-4b88-8779-588099df5008"]
+		"items" : [
+			{
+				"name" : "item A",
+				"quantity" : 1,
+				"price"  : 100.0,
+				"Consumer" : ["6251ac85-e43d-4b88-8779-588099df5008"]
+			}
+		]
 	}`
 
 	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(transactionJson))
@@ -41,6 +49,7 @@ func TestUserCreateTransaction(t *testing.T) {
 
 	transaction := responses.TestResponse[string]{}
 	if assert.NoError(t, testUserController.UserCreateTransaction(c)) {
+		fmt.Println(rec.Body.String())
 		assert.Equal(t, http.StatusCreated, rec.Code)
 
 		if err := json.Unmarshal(rec.Body.Bytes(), &transaction); err != nil {
