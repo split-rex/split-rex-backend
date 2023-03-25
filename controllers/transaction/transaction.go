@@ -225,7 +225,7 @@ func (h *transactionController) ResolveTransaction(c echo.Context) error {
 		balance[member] = 0
 	}
 	for _, payment := range payments {
-		if payment.TotalUnpaid > 0 {
+		if payment.TotalUnpaid > 0 && payment.Status == types.STATUS_PAYMENT_UNPAID {
 			balance[payment.UserID1] = balance[payment.UserID1] + payment.TotalUnpaid
 			balance[payment.UserID2] = balance[payment.UserID2] - payment.TotalUnpaid
 		}
@@ -269,12 +269,13 @@ func (h *transactionController) ResolveTransaction(c echo.Context) error {
 				}
 				updatePayment = append(updatePayment, newPayment)
 			} else {
-				if (tempPayment.TotalPaid==0){
+				if tempPayment.TotalPaid == 0 {
 					tempPayment.Status = types.STATUS_PAYMENT_UNPAID
-				}else {
+					tempPayment.TotalUnpaid = m
+				} else {
 					tempPayment.Status = types.STATUS_PAYMENT_PENDING
+					tempPayment.TotalUnpaid += m
 				}
-				tempPayment.TotalUnpaid+= m
 				updatePayment = append(updatePayment, tempPayment)
 			}
 
@@ -297,12 +298,13 @@ func (h *transactionController) ResolveTransaction(c echo.Context) error {
 				}
 				updatePayment = append(updatePayment, newPayment)
 			} else {
-				if (tempPayment.TotalPaid==0){
+				if tempPayment.TotalPaid == 0 {
 					tempPayment.Status = types.STATUS_PAYMENT_UNPAID
-				}else {
+					tempPayment.TotalUnpaid = -m
+				} else {
 					tempPayment.Status = types.STATUS_PAYMENT_PENDING
+					tempPayment.TotalUnpaid -= m
 				}
-				tempPayment.TotalUnpaid -= m
 				updatePayment = append(updatePayment, tempPayment)
 			}
 		}
