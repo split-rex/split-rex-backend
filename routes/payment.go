@@ -9,12 +9,14 @@ import (
 )
 
 func PaymentRoute(e *echo.Echo) {
-	transactionController := controllers.NewPaymentController(database.DB.GetConnection())
+	paymentController := controllers.NewPaymentController(database.DB.GetConnection())
 
-	e.POST("/updatePayment", transactionController.UpdatePayment, middlewares.AuthMiddleware)
-	e.POST("/resolveTransaction", transactionController.ResolveTransaction, middlewares.AuthMiddleware)
-	e.GET("/getUnsettledPayment", transactionController.GetUnsettledPayment, middlewares.AuthMiddleware)
-	e.GET("/getUnconfirmedPayment", transactionController.GetUnconfirmedPayment, middlewares.AuthMiddleware)
-	e.POST("/settlePaymentOwed", transactionController.SettlePaymentOwed, middlewares.AuthMiddleware)
-	e.POST("/settlePaymentLent", transactionController.SettlePaymentLent, middlewares.AuthMiddleware)
+	e.POST("/updatePayment", paymentController.UpdatePayment, middlewares.AuthMiddleware)
+	e.POST("/resolveTransaction", paymentController.ResolveTransaction, middlewares.AuthMiddleware)
+	e.GET("/getUnsettledPayment", paymentController.GetUnsettledPayment, middlewares.AuthMiddleware)
+	e.GET("/getUnconfirmedPayment", paymentController.GetUnconfirmedPayment, middlewares.AuthMiddleware)
+	e.POST("/settlePaymentOwed", paymentController.SettlePaymentOwed, middlewares.AuthMiddleware)
+	e.POST("/settlePaymentLent", paymentController.SettlePaymentLent, middlewares.AuthMiddleware)
+	e.POST("/confirmSettle", paymentController.ConfirmSettle, middlewares.AuthMiddleware)
+	e.POST("/denySettle", paymentController.DenySettle, middlewares.AuthMiddleware)
 }

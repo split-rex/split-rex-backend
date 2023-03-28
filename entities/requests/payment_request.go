@@ -22,3 +22,7 @@ type SettleRequest struct {
 	PaymentID uuid.UUID `json:"payment_id" form:"payment_id" query:"payment_id"`
 	TotalPaid float64   `json:"total_paid" form:"total_paid" query:"total_paid"`
 }
+
+type ConfirmRequest struct {
+	PaymentID uuid.UUID `json:"payment_id" form:"payment_id" query:"payment_id"`
+}

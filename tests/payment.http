@@ -60,3 +60,23 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZ
     "total_paid" : 20000
 }
 
+###
+
+POST http://localhost:8080/confirmSettle
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODAwNzg3MDEsImlkIjoiMTgzZTA0ZDctYzY1My00YzdkLWFhNjYtM2Q3NTFkNGQ3MzU4In0.E5RJhtKUv9vFFln_H7CT3Uyph-p11aAQSvYLZ3OQ8-U
+
+{
+    "payment_id" : "2dba3be9-0ba9-476b-b98b-8f2ddbc79068"
+}
+
+###
+
+POST http://localhost:8080/denySettle
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODAwNzg3MDEsImlkIjoiMTgzZTA0ZDctYzY1My00YzdkLWFhNjYtM2Q3NTFkNGQ3MzU4In0.E5RJhtKUv9vFFln_H7CT3Uyph-p11aAQSvYLZ3OQ8-U
+
+{
+    "payment_id" : "c0137a75-cb65-41e1-8208-cb87b9490a06"
+}
+
