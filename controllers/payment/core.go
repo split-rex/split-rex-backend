@@ -11,7 +11,7 @@ type paymentController struct {
 
 type PaymentController interface {
 	UpdatePayment(c echo.Context) error
-	GetUnsettledTransaction(c echo.Context) error
+	GetUnsettledPayment(c echo.Context) error
 	ResolveTransaction(c echo.Context) error
 }
 
