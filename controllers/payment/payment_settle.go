@@ -10,7 +10,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (h *transactionController) GetUnsettledTransaction(c echo.Context) error {
+func (h *paymentController) GetUnsettledTransaction(c echo.Context) error {
 	db := h.db
 	response := entities.Response[[]responses.UnsettledTransactionResponse]{}
 
