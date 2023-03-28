@@ -15,4 +15,6 @@ func PaymentRoute(e *echo.Echo) {
 	e.POST("/resolveTransaction", transactionController.ResolveTransaction, middlewares.AuthMiddleware)
 	e.GET("/getUnsettledPayment", transactionController.GetUnsettledPayment, middlewares.AuthMiddleware)
 	e.GET("/getUnconfirmedPayment", transactionController.GetUnconfirmedPayment, middlewares.AuthMiddleware)
+	e.POST("/settlePaymentOwed", transactionController.SettlePaymentOwed, middlewares.AuthMiddleware)
+	e.POST("/settlePaymentLent", transactionController.SettlePaymentLent, middlewares.AuthMiddleware)
 }

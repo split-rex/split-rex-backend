@@ -14,6 +14,8 @@ type PaymentController interface {
 	GetUnsettledPayment(c echo.Context) error
 	ResolveTransaction(c echo.Context) error
 	GetUnconfirmedPayment(c echo.Context) error
+	SettlePaymentOwed(c echo.Context) error
+	SettlePaymentLent(c echo.Context) error
 }
 
 func NewPaymentController(db *gorm.DB) PaymentController {
