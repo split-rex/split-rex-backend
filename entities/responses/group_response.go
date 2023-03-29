@@ -20,12 +20,10 @@ type UserGroupResponse struct {
 }
 
 type GroupTransactionsResponse struct {
-	TransactionID uuid.UUID         `json:"group_id"`
-	Name          string            `json:"name"`
-	Description   string            `json:"description"`
-	Total         float64           `json:"total"`
-	BillOwner     uuid.UUID         `json:"bill_owner"`
-	ListMember    types.ArrayOfUUID `json:"list_member"`
+	TransactionID uuid.UUID `json:"transaction_id"`
+	Name          string    `json:"name"`
+	Date          time.Time `json:"date"`
+	BillOwner     uuid.UUID `json:"bill_owner"`
 }
 
 type GroupOwedResponse struct {
