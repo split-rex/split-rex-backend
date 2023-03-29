@@ -21,6 +21,7 @@ func Run() {
 	routes.AuthRoute(e)
 	routes.GroupRoute(e)
 	routes.TransactionRoute(e)
+	routes.PaymentRoute(e)
 	routes.FriendRoute(e)
 	routes.GroupRoute(e)
 
