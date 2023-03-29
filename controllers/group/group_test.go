@@ -9,6 +9,7 @@ import (
 	"split-rex-backend/entities/factories"
 	"split-rex-backend/entities/requests"
 	"split-rex-backend/entities/responses"
+	"split-rex-backend/types"
 	"strings"
 	"testing"
 	"time"
@@ -124,4 +125,84 @@ func TestEditGroupInfo(t *testing.T) {
 	assert.Equal(t, request.Name, groupDb.Name)
 	// assert.Equal(t, request.StartDate, groupDb.StartDate)
 	// assert.Equal(t, request.EndDate, groupDb.EndDate)
+}
+
+func TestAddNewMemberToGroup(t *testing.T) {
+	db := database.DBTesting.GetConnection()
+	e := echo.New()
+
+	userAuth := factories.UserFactory{}
+	userAuth.InitAuth()
+	id := userAuth.ID
+
+	// add user init to db
+	userInit := factories.UserFactory{}
+	userInit.Init(uuid.New())
+	if err := db.Create(&entities.User{
+		ID:       userInit.ID,
+		Name:     userInit.Name,
+		Email:    userInit.Email,
+		Username: userInit.Username,
+		Password: userInit.Password,
+		Groups:   types.ArrayOfUUID{},
+	}).Error; err != nil {
+		t.Error(err.Error())
+	}
+
+	// add userAuth and userInit as a friend
+	userAuthFriend := entities.Friend{
+		ID:        id,
+		Friend_id: types.ArrayOfUUID{},
+	}
+	userAuthFriend.Friend_id = append(userAuthFriend.Friend_id, userInit.ID)
+	if err := db.Create(&userAuthFriend).Error; err != nil {
+		t.Error(err.Error())
+	}
+
+	// then add userInit to group A
+	group := factories.GroupFactory{}
+	group.GroupA()
+	request := requests.AddGroupMemberRequest{
+		Group_id:   group.GroupID,
+		Friends_id: types.ArrayOfUUID{},
+	}
+	request.Friends_id = append(request.Friends_id, userInit.ID)
+
+	// create new request
+	addGroupMemberReq, _ := json.Marshal(request)
+	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(string(addGroupMemberReq)))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.Set("id", id)
+
+	groupRes := responses.TestResponse[string]{}
+	if assert.NoError(t, testGroupController.AddGroupMember(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+		if err := json.Unmarshal(rec.Body.Bytes(), &groupRes); err != nil {
+			t.Error(err.Error())
+		}
+	}
+
+	// check db if groupA already added in userInit
+	userInitInDB := entities.User{}
+	if err := db.Find(&userInitInDB, userInit.ID).Error; err != nil {
+		t.Error(err.Error())
+	}
+	assert.Equal(t, userInitInDB.Groups.Contains(group.GroupID), true)
+
+	// post condition update groupA, remove userAuth friend, remove user init
+	group.MemberID = types.ArrayOfUUID{}
+	group.MemberID = append(group.MemberID, userAuth.ID)
+	if err := db.Model(&entities.Group{}).Where(&entities.Group{GroupID: group.GroupID}).Update("member_id", group.MemberID).Error; err != nil {
+		t.Error(err.Error())
+	}
+
+	if err := db.Where(&entities.Friend{ID: id}).Delete(&entities.Friend{}).Error; err != nil {
+		t.Error(err.Error())
+	}
+
+	if err := db.Where(&entities.User{ID: userInit.ID}).Delete(&entities.User{}).Error; err != nil {
+		t.Error(err.Error())
+	}
 }

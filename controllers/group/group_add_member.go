@@ -6,6 +6,7 @@ import (
 	"split-rex-backend/entities/requests"
 	"split-rex-backend/types"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -19,6 +20,8 @@ func (con *groupController) AddGroupMember(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
+	// get all new members
+	newMembers := []entities.User{}
 	for _, member := range request.Friends_id {
 		user := entities.User{}
 		if err := db.Find(&user, member).Error; err != nil {
@@ -29,7 +32,27 @@ func (con *groupController) AddGroupMember(c echo.Context) error {
 			response.Message = types.ERROR_BAD_REQUEST
 			return c.JSON(http.StatusBadRequest, response)
 		}
+
+		newMembers = append(newMembers, user)
 	}
+
+	// get user friend to check later
+	id := c.Get("id").(uuid.UUID)
+	currUserFriends := entities.Friend{}
+	if err := db.Find(&currUserFriends, id).Error; err != nil {
+		response.Message = err.Error()
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// if new member friend is not friend with current user, then error bad request
+	for _, userFriendId := range request.Friends_id {
+		if !currUserFriends.Friend_id.Contains(userFriendId) {
+			response.Message = types.ERROR_BAD_REQUEST
+			return c.JSON(http.StatusBadRequest, response)
+		}
+	}
+
+	// begin transaction
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -37,16 +60,26 @@ func (con *groupController) AddGroupMember(c echo.Context) error {
 		}
 	}()
 
-	// add group member uuid to group
+	// get group
 	group := entities.Group{}
-	condition := entities.Group{GroupID: request.Group_id}
-
-	if err := db.Model(&group).Where(&condition).Error; err != nil {
+	if err := db.Find(&group, request.Group_id).Error; err != nil {
 		tx.Rollback()
 		response.Message = err.Error()
 		return c.JSON(http.StatusInternalServerError, response)
 	}
-	newGroupMembers := append(group.MemberID, request.Friends_id...)
+
+	// check if member already exist in group, then exclude
+	newMemberIDs := types.ArrayOfUUID{}
+	for _, newMemberId := range request.Friends_id {
+		if (!group.MemberID.Contains(newMemberId)) {
+			newMemberIDs = append(newMemberIDs, newMemberId)
+		}
+	}
+	// add group member uuid to group
+	newGroupMembers := append(group.MemberID, newMemberIDs...)
+
+	// then update groups memberid
+	condition := entities.Group{GroupID: request.Group_id}
 	if err := db.Model(&group).Where(&condition).Updates(entities.Group{
 		MemberID: newGroupMembers,
 	}).Error; err != nil {
@@ -55,16 +88,11 @@ func (con *groupController) AddGroupMember(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
-	// adding group uuid to user groups
-	for _, memberID := range request.Friends_id {
+	// adding group uuid to new member's groups
+	for _, member := range newMembers {
 		user := entities.User{}
-		condition := entities.User{ID: memberID}
+		condition := entities.User{ID: member.ID}
 
-		if err := tx.Find(&user, &condition).Error; err != nil {
-			tx.Rollback()
-			response.Message = err.Error()
-			return c.JSON(http.StatusInternalServerError, response)
-		}
 		if err := tx.Model(&user).Where(&condition).Update("groups", append(user.Groups, request.Group_id)).Error; err != nil {
 			tx.Rollback()
 			response.Message = err.Error()
@@ -74,7 +102,5 @@ func (con *groupController) AddGroupMember(c echo.Context) error {
 
 	tx.Commit()
 	response.Message = types.SUCCESS
-
 	return c.JSON(http.StatusOK, response)
-
 }

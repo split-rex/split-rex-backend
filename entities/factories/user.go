@@ -19,7 +19,7 @@ type UserFactory struct {
 
 // init -> random + going to be deleted
 func (uf *UserFactory) Init(id uuid.UUID) {
-	uf.ID = uuid.New()
+	uf.ID = id
 	
 	if uf.Name == "" {
 		uf.Name = faker.Name()
@@ -40,6 +40,7 @@ func (uf *UserFactory) Init(id uuid.UUID) {
 
 // userAuth (is on DB, not going to be deleted)
 func (uf *UserFactory) InitAuth() {
+	uf.ID = uuid.MustParse("82405519-d6ca-45ce-b7d6-eeba1a66df59")
 
 	if uf.Name == "" {
 		uf.Name = "auth_testing"
