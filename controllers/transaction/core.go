@@ -11,6 +11,7 @@ type transactionController struct {
 
 type TransactionController interface {
 	UserCreateTransaction(c echo.Context) error
+	GetTransactionDetail(c echo.Context) error
 }
 
 func NewTransactionController(db *gorm.DB) TransactionController {

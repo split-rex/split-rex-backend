@@ -12,4 +12,5 @@ func TransactionRoute(e *echo.Echo) {
 	transactionController := controllers.NewTransactionController(database.DB.GetConnection())
 
 	e.POST("/userCreateTransaction", transactionController.UserCreateTransaction, middlewares.AuthMiddleware)
+	e.GET("/getTransactionDetail", transactionController.GetTransactionDetail, middlewares.AuthMiddleware)
 }
