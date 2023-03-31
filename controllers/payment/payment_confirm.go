@@ -151,6 +151,20 @@ func (h *paymentController) ConfirmSettle(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
+	// insert to group activity table
+	groupActivity := entities.GroupActivity{
+		ActivityID: uuid.New(),
+		GroupID:    payment.GroupID,
+		UserID1:    payment.UserID2,
+		UserID2:    payment.UserID1,
+		Amount:     paid,
+		Date:       time.Now(),
+	}
+	if err := db.Create(&groupActivity).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
 	response.Message = types.SUCCESS
 	return c.JSON(http.StatusOK, response)
 

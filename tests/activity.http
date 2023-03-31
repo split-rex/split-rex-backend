@@ -13,3 +13,15 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZ
 GET http://localhost:8080/getUserActivity
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODAzMzQxMTUsImlkIjoiMTgzZTA0ZDctYzY1My00YzdkLWFhNjYtM2Q3NTFkNGQ3MzU4In0.Qn-OTJpMZLgnQ6bAZsuT0s7n7iJ3BIMRHrONWtbE1nA
+
+###
+
+GET http://localhost:8080/getGroupActivity?group_id=0b865d7f-e40e-4440-905e-eccf2caaa6ed
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODAzMzQyMzcsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.kBwbE29k0h5HygnYpZZYPr2XgWBxysPPZ3ZO4eBTVd4
+
+###
+
+GET http://localhost:8080/getGroupActivity?group_id=0b865d7f-e40e-4440-905e-eccf2caaa6ed
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODAzMzQ1MTAsImlkIjoiYjc0YWU0ZWQtMzZjYi00NTZjLWIxZGQtOGZlZGU0MjZmMjQ0In0.1hS3ivmj3jZNpyVgnb7OhBqyErcyuf8DFEXzMALQBm8

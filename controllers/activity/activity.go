@@ -126,24 +126,33 @@ func (h *activityController) GetGroupActivity(c echo.Context) error {
 	// get name of user1 and user2
 	activityResponse := []responses.GroupActivityResponse{}
 	for _, groupActivity := range groupActivities {
-		user1 := entities.User{}
-		if err := db.Find(&user1, groupActivity.UserID1).Error; err != nil {
-			response.Message = types.ERROR_INTERNAL_SERVER
-			return c.JSON(http.StatusInternalServerError, response)
+		if groupActivity.UserID1 == userID {
+			user2 := entities.User{}
+			if err := db.Find(&user2, groupActivity.UserID2).Error; err != nil {
+				response.Message = types.ERROR_INTERNAL_SERVER
+				return c.JSON(http.StatusInternalServerError, response)
+			}
+			activityResponse = append(activityResponse, responses.GroupActivityResponse{
+				ActivityID: groupActivity.ActivityID,
+				Date:       groupActivity.Date,
+				Name1:      "You",
+				Name2:      user2.Name,
+				Amount:     groupActivity.Amount,
+			})
+		} else {
+			user1 := entities.User{}
+			if err := db.Find(&user1, groupActivity.UserID1).Error; err != nil {
+				response.Message = types.ERROR_INTERNAL_SERVER
+				return c.JSON(http.StatusInternalServerError, response)
+			}
+			activityResponse = append(activityResponse, responses.GroupActivityResponse{
+				ActivityID: groupActivity.ActivityID,
+				Date:       groupActivity.Date,
+				Name1:      user1.Name,
+				Name2:      "You",
+				Amount:     groupActivity.Amount,
+			})
 		}
-		user2 := entities.User{}
-		if err := db.Find(&user2, groupActivity.UserID2).Error; err != nil {
-			response.Message = types.ERROR_INTERNAL_SERVER
-			return c.JSON(http.StatusInternalServerError, response)
-		}
-
-		activityResponse = append(activityResponse, responses.GroupActivityResponse{
-			ActivityID: groupActivity.ActivityID,
-			Date:       groupActivity.Date,
-			Name1:      user1.Name,
-			Name2:      user2.Name,
-			Amount:     groupActivity.Amount,
-		})
 	}
 
 	response.Message = types.SUCCESS
