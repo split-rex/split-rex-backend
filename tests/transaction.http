@@ -1,12 +1,12 @@
 POST http://localhost:8080/userCreateTransaction
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODAxNTM0NDYsImlkIjoiMTgzZTA0ZDctYzY1My00YzdkLWFhNjYtM2Q3NTFkNGQ3MzU4In0._nNuwSyM2zg1rY4NkUd_yT6G8sMbDl0v0mNgGMzBmlM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODAzMzQxMTUsImlkIjoiMTgzZTA0ZDctYzY1My00YzdkLWFhNjYtM2Q3NTFkNGQ3MzU4In0.Qn-OTJpMZLgnQ6bAZsuT0s7n7iJ3BIMRHrONWtbE1nA
 
 {
-    "name": "Transaction 1",
+    "name": "Transaction 2",
     "description": "lorem ipsum",
     "group_id" : "0b865d7f-e40e-4440-905e-eccf2caaa6ed",
-    "date" : "2023-02-07T17:19:20.968831+07:00",
+    "date" : "2023-03-31T17:19:20.968831+07:00",
     "subtotal" : 20000.0,
     "tax" : 2000.0,
     "service" : 2000.0,
@@ -14,13 +14,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZ
     "bill_owner" : "183e04d7-c653-4c7d-aa66-3d751d4d7358",
     "items" : [
         {
-            "name" : "Item 1",
+            "name" : "Item 3",
             "quantity" : 1,
             "price" : 10000.0,
             "consumer" : ["b74ae4ed-36cb-456c-b1dd-8fede426f244"]
         },
         {
-            "name" : "Item 2",
+            "name" : "Item 4",
             "quantity" : 1,
             "price" : 10000.0,
             "consumer" : ["6251ac85-e43d-4b88-8779-588099df5008"]

@@ -1,12 +1,12 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
 	"split-rex-backend/entities/responses"
 	"split-rex-backend/types"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -106,6 +106,46 @@ func (h *paymentController) SettlePaymentOwed(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
+	//get user from payment.UserID1
+	user := entities.User{}
+	if err := db.Find(&user, payment.UserID1).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+	// get group from payment.GroupID
+	group := entities.Group{}
+	if err := db.Find(&group, payment.GroupID).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// insert to activity and payment activity table
+	newID := uuid.New()
+	paymentActivity := entities.PaymentActivity{
+		PaymentActivityID: newID,
+		Name:              user.Name,
+		Status:            "UNCONFIRMED",
+		Amount:            request.TotalPaid,
+		GroupName:         group.Name,
+	}
+	if err := db.Create(&paymentActivity).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	activity := entities.Activity{
+		ActivityID:   uuid.New(),
+		ActivityType: "PAYMENT",
+		UserID:       payment.UserID2,
+		Date:         time.Now(),
+		RedirectID:   payment.GroupID,
+		DetailID:     newID,
+	}
+	if err := db.Create(&activity).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
 	response.Message = types.SUCCESS
 	return c.JSON(http.StatusOK, response)
 }
@@ -135,9 +175,7 @@ func (h *paymentController) SettlePaymentLent(c echo.Context) error {
 	}
 
 	//update payment table
-	fmt.Println(request.TotalPaid)
 	payment.TotalPaid = payment.TotalPaid - request.TotalPaid
-	fmt.Println(payment.TotalPaid)
 	payment.Status = types.STATUS_PAYMENT_PENDING
 	if err := db.Save(&payment).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
@@ -151,12 +189,50 @@ func (h *paymentController) SettlePaymentLent(c echo.Context) error {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
-	fmt.Println(payment2)
 	payment2.TotalPaid = payment2.TotalPaid + request.TotalPaid
-	fmt.Println(payment2.TotalPaid)
 	payment2.Status = types.STATUS_PAYMENT_PENDING
 
 	if err := db.Save(&payment2).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	//get user from payment.UserID1
+	user := entities.User{}
+	if err := db.Find(&user, payment.UserID1).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+	// get group from payment.GroupID
+	group := entities.Group{}
+	if err := db.Find(&group, payment.GroupID).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// insert to activity and payment activity table
+	newID := uuid.New()
+	paymentActivity := entities.PaymentActivity{
+		PaymentActivityID: newID,
+		Name:              user.Name,
+		Status:            "UNCONFIRMED",
+		Amount:            request.TotalPaid,
+		GroupName:         group.Name,
+	}
+	if err := db.Create(&paymentActivity).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	activity := entities.Activity{
+		ActivityID:   uuid.New(),
+		ActivityType: "PAYMENT",
+		UserID:       payment.UserID2,
+		Date:         time.Now(),
+		RedirectID:   payment.GroupID,
+		DetailID:     newID,
+	}
+	if err := db.Create(&activity).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
