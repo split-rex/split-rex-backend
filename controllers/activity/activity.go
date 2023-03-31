@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"sort"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/responses"
 	"split-rex-backend/types"
@@ -24,6 +25,11 @@ func (h *activityController) GetUserActivity(c echo.Context) error {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
+
+	// sort activities by date
+	sort.Slice(activities, func(i, j int) bool {
+		return activities[i].Date.After(activities[j].Date)
+	})
 
 	// move activities to response data
 	activityResponse := []interface{}{}
@@ -154,6 +160,11 @@ func (h *activityController) GetGroupActivity(c echo.Context) error {
 			})
 		}
 	}
+
+	// sort activityResponse by date
+	sort.Slice(activityResponse, func(i, j int) bool {
+		return activityResponse[i].Date.After(activityResponse[j].Date)
+	})
 
 	response.Message = types.SUCCESS
 	response.Data = activityResponse
