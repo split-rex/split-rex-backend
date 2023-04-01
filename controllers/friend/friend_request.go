@@ -35,13 +35,14 @@ func (con *friendController) FriendRequestSent(c echo.Context) error {
 			user := entities.User{}
 			friend := responses.ProfileResponse{}
 			condition := entities.User{ID: id}
-			if err := db.Where(&condition).Select("id", "username", "name").Find(&user).Error; err != nil {
+			if err := db.Where(&condition).Select("id", "username", "name", "color").Find(&user).Error; err != nil {
 				response.Message = types.ERROR_INTERNAL_SERVER
 				return c.JSON(http.StatusInternalServerError, response)
 			}
 			friend.User_id = user.ID.String()
 			friend.Username = user.Username
 			friend.Fullname = user.Name
+			friend.Color = user.Color
 			users = append(users, friend)
 		}
 		response.Message = types.SUCCESS
@@ -84,13 +85,15 @@ func (con *friendController) FriendRequestReceived(c echo.Context) error {
 			user := entities.User{}
 			friend := responses.ProfileResponse{}
 			condition := entities.User{ID: id}
-			if err := db.Where(&condition).Select("id", "username", "name").Find(&user).Error; err != nil {
+			if err := db.Where(&condition).Select("id", "username", "name", "color").Find(&user).Error; err != nil {
 				response.Message = types.ERROR_INTERNAL_SERVER
 				return c.JSON(http.StatusInternalServerError, response)
 			}
 			friend.User_id = user.ID.String()
 			friend.Username = user.Username
 			friend.Fullname = user.Name
+			friend.Color = user.Color
+
 			users = append(users, friend)
 		}
 		response.Message = types.SUCCESS
