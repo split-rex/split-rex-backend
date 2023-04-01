@@ -192,11 +192,12 @@ func (con *groupController) UserGroups(c echo.Context) error {
 			}
 			groupResponse.ListMember = append(groupResponse.ListMember,
 				responses.MemberDetail{
-					ID:       memberID,
-					Name:     user.Name,
-					Username: user.Username,
-					Email:    user.Email,
-					Color:    user.Color,
+					ID:          memberID,
+					Name:        user.Name,
+					Username:    user.Username,
+					Email:       user.Email,
+					Color:       user.Color,
+					PaymentInfo: user.PaymentInfo,
 				})
 		}
 
@@ -283,11 +284,12 @@ func (h *groupController) GroupDetail(c echo.Context) error {
 		}
 		data.ListMember = append(data.ListMember,
 			responses.MemberDetail{
-				ID:       memberID,
-				Name:     user.Name,
-				Username: user.Username,
-				Email:    user.Email,
-				Color:    user.Color,
+				ID:          memberID,
+				Name:        user.Name,
+				Username:    user.Username,
+				Email:       user.Email,
+				Color:       user.Color,
+				PaymentInfo: user.PaymentInfo,
 			})
 	}
 

@@ -86,11 +86,12 @@ func (con *groupController) GroupLent(c echo.Context) error {
 			}
 			groupResponse.ListMember = append(groupResponse.ListMember,
 				responses.MemberDetail{
-					ID:       memberID,
-					Name:     user.Name,
-					Username: user.Username,
-					Email:    user.Email,
-					Color:    user.Color,
+					ID:          memberID,
+					Name:        user.Name,
+					Username:    user.Username,
+					Email:       user.Email,
+					Color:       user.Color,
+					PaymentInfo: user.PaymentInfo,
 				})
 		}
 
