@@ -14,4 +14,5 @@ type User struct {
 	Color    uint                  `gorm:"not null;default:1"`
 	Password types.EncryptedString `gorm:"not null"`
 	Groups   types.ArrayOfUUID
+	PaymentInfo map[string]map[int]string
 }
