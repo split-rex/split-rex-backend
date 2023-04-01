@@ -15,7 +15,7 @@ type UserFactory struct {
 	Color       uint
 	Password    types.EncryptedString
 	Groups      types.ArrayOfUUID
-	PaymentInfo map[string][]map[int]string
+	PaymentInfo types.PaymentInfo
 }
 
 // init -> random + going to be deleted
