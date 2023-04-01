@@ -15,7 +15,7 @@ Content-Type: application/json
 
 {
     "email": "patrick@gmail.com",
-    "password": "patrick "
+    "password": "patrick"
 }
 
 ###
@@ -24,10 +24,10 @@ POST http://localhost:8080/register
 Content-Type: application/json
 
 {
-    "name": "wokwok",
-    "email": "wok@gmail.com",
-    "username": "wok",
-    "password": "wokwok"
+    "name": "wikwok",
+    "email": "wikwok@gmail.com",
+    "username": "wikwok",
+    "password": "wikwok"
 }
 
 ###
@@ -62,10 +62,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZ
 ###
 POST http://localhost:8080/addPaymentInfo
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzk3MjYxODMsImlkIjoiNmMzNWE1MmYtNTQxZC00NTkxLTkxMGMtNmYxNjM4ZjMwODQyIn0.2Se_jS2zQSmjZb4XZl-8niOfSAQojlrId6-pjZO9_WI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODA0NjE0MDYsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.L533FY_VIHk9t9DhAgPfuefOKUEJJL_bjmMFuOByC1w
 
 {
-    "payment_method": "wokwok",
-    "account_number": 0000000,
-    "account_name": "awikwok"
+    "payment_method": "bni",
+    "account_number": 321,
+    "account_name": "se"
 }

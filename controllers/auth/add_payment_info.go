@@ -16,7 +16,7 @@ func (con *authController) AddPaymentInfo(c echo.Context) error {
 
 	addPaymentInfoRequest := requests.AddPaymentInfoRequest{}
 	if err := c.Bind(&addPaymentInfoRequest); err != nil {
-		response.Message = types.ERROR_BAD_REQUEST
+		response.Message = types.ERROR_ALREADY_FRIEND
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
@@ -25,12 +25,11 @@ func (con *authController) AddPaymentInfo(c echo.Context) error {
 
 	// search the id of the user
 	user := entities.User{}
-	conditionUser := entities.User{ID: user_id}
-	if err := db.Where(&conditionUser).Find(&user).Error; err != nil {
+	if err := db.Find(&user, user_id).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
-	
+
 	// error if user not found
 	if user.ID == uuid.Nil {
 		response.Message = types.ERROR_BAD_REQUEST
@@ -38,20 +37,17 @@ func (con *authController) AddPaymentInfo(c echo.Context) error {
 	}
 
 	// get all the user's payment info
-	userPaymentInfo := user.PaymentInfo
+	userPaymentInfo := types.PaymentInfo{}
+	if len(user.PaymentInfo) > 0 {
+		userPaymentInfo = user.PaymentInfo
+	}
 
-	numberAndNameInfo := map[int]string{
-		int(addPaymentInfoRequest.Account_number): addPaymentInfoRequest.Account_name,
-	}
 	// val is the value of "addPaymentInfoRequest.Payment_method" from the map if it exists, or a "zero value" if it doesn't.
-	val, ok := userPaymentInfo[addPaymentInfoRequest.Payment_method]
-	if ok {
-		val = append(val, numberAndNameInfo)
-		userPaymentInfo[addPaymentInfoRequest.Payment_method] = val
-	} else {
-		paymentInfo := []map[int]string{numberAndNameInfo}
-		userPaymentInfo[addPaymentInfoRequest.Payment_method] = paymentInfo
+	_, ok := userPaymentInfo[addPaymentInfoRequest.Payment_method]
+	if !ok {
+		userPaymentInfo[addPaymentInfoRequest.Payment_method] = make(map[int]string)
 	}
+	userPaymentInfo[addPaymentInfoRequest.Payment_method][int(addPaymentInfoRequest.Account_number)] = addPaymentInfoRequest.Account_name
 
 	// update user
 	if err := db.Model(&user).Updates(entities.User{
