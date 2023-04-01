@@ -30,13 +30,36 @@ func (con *authController) AddPaymentInfo(c echo.Context) error {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
+	
 	// error if user not found
 	if user.ID == uuid.Nil {
 		response.Message = types.ERROR_BAD_REQUEST
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
-	
+	// get all the user's payment info
+	userPaymentInfo := user.PaymentInfo
+
+	numberAndNameInfo := map[int]string{
+		int(addPaymentInfoRequest.Account_number): addPaymentInfoRequest.Account_name,
+	}
+	// val is the value of "addPaymentInfoRequest.Payment_method" from the map if it exists, or a "zero value" if it doesn't.
+	val, ok := userPaymentInfo[addPaymentInfoRequest.Payment_method]
+	if ok {
+		val = append(val, numberAndNameInfo)
+		userPaymentInfo[addPaymentInfoRequest.Payment_method] = val
+	} else {
+		paymentInfo := []map[int]string{numberAndNameInfo}
+		userPaymentInfo[addPaymentInfoRequest.Payment_method] = paymentInfo
+	}
+
+	// update user
+	if err := db.Model(&user).Updates(entities.User{
+		PaymentInfo: userPaymentInfo,
+	}).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
 
 	response.Message = types.SUCCESS
 	return c.JSON(http.StatusOK, response)

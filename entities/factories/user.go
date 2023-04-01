@@ -8,19 +8,20 @@ import (
 )
 
 type UserFactory struct {
-	ID       uuid.UUID
-	Name     string
-	Email    string
-	Username string
-	Color    uint
-	Password types.EncryptedString
-	Groups   types.ArrayOfUUID
+	ID          uuid.UUID
+	Name        string
+	Email       string
+	Username    string
+	Color       uint
+	Password    types.EncryptedString
+	Groups      types.ArrayOfUUID
+	PaymentInfo map[string][]map[int]string
 }
 
 // init -> random + going to be deleted
 func (uf *UserFactory) Init(id uuid.UUID) {
 	uf.ID = uuid.New()
-	
+
 	if uf.Name == "" {
 		uf.Name = faker.Name()
 	}

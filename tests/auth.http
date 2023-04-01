@@ -14,8 +14,8 @@ POST http://localhost:8080/login
 Content-Type: application/json
 
 {
-    "email": "ubay@gmail.com",
-    "password": "ubay"
+    "email": "patrick@gmail.com",
+    "password": "patrick "
 }
 
 ###
@@ -57,4 +57,15 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZ
 {
     "old_password": "wokwok",
     "new_password": "sarah"
+}
+
+###
+POST http://localhost:8080/addPaymentInfo
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzk3MjYxODMsImlkIjoiNmMzNWE1MmYtNTQxZC00NTkxLTkxMGMtNmYxNjM4ZjMwODQyIn0.2Se_jS2zQSmjZb4XZl-8niOfSAQojlrId6-pjZO9_WI
+
+{
+    "payment_method": "wokwok",
+    "account_number": 0000000,
+    "account_name": "awikwok"
 }
