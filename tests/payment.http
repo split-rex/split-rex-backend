@@ -1,0 +1,82 @@
+POST http://localhost:8080/updatePayment
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzk4NDA5MzUsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.68oLmsldMVC2-he8A76ierkeTb4uHrFiL7LVzIgRsoM
+
+{
+    "group_id" : "0b865d7f-e40e-4440-905e-eccf2caaa6ed",
+    "list_payment" : [
+        {
+            "user_id" : "b74ae4ed-36cb-456c-b1dd-8fede426f244",
+            "total_unpaid" : 10000
+        },
+        {
+            "user_id" : "183e04d7-c653-4c7d-aa66-3d751d4d7358",
+            "total_unpaid" : 20000
+        }
+    ]
+}
+
+###
+
+GET http://localhost:8080/getUnsettledPayment?group_id=0b865d7f-e40e-4440-905e-eccf2caaa6ed
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODAwNzg3MDEsImlkIjoiMTgzZTA0ZDctYzY1My00YzdkLWFhNjYtM2Q3NTFkNGQ3MzU4In0.E5RJhtKUv9vFFln_H7CT3Uyph-p11aAQSvYLZ3OQ8-U
+
+###
+
+POST http://localhost:8080/resolveTransaction
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODAwNzg3MDEsImlkIjoiMTgzZTA0ZDctYzY1My00YzdkLWFhNjYtM2Q3NTFkNGQ3MzU4In0.E5RJhtKUv9vFFln_H7CT3Uyph-p11aAQSvYLZ3OQ8-U
+
+{
+    "group_id" : "0b865d7f-e40e-4440-905e-eccf2caaa6ed"
+}
+
+###
+
+GET http://localhost:8080/getUnconfirmedPayment?group_id=0b865d7f-e40e-4440-905e-eccf2caaa6ed
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODAwNzg3MDEsImlkIjoiMTgzZTA0ZDctYzY1My00YzdkLWFhNjYtM2Q3NTFkNGQ3MzU4In0.E5RJhtKUv9vFFln_H7CT3Uyph-p11aAQSvYLZ3OQ8-U
+
+###
+
+POST http://localhost:8080/settlePaymentOwed
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODAzMzQ1MTAsImlkIjoiYjc0YWU0ZWQtMzZjYi00NTZjLWIxZGQtOGZlZGU0MjZmMjQ0In0.1hS3ivmj3jZNpyVgnb7OhBqyErcyuf8DFEXzMALQBm8
+
+{
+    "payment_id" : "7f7efdcc-7d1a-4015-ad54-65bb750327c2",
+    "total_paid" : 10000
+}
+
+###
+
+POST http://localhost:8080/settlePaymentLent
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODAwNzg3MDEsImlkIjoiMTgzZTA0ZDctYzY1My00YzdkLWFhNjYtM2Q3NTFkNGQ3MzU4In0.E5RJhtKUv9vFFln_H7CT3Uyph-p11aAQSvYLZ3OQ8-U
+
+{
+    "payment_id" : "c0137a75-cb65-41e1-8208-cb87b9490a06",
+    "total_paid" : 20000
+}
+
+###
+
+POST http://localhost:8080/confirmSettle
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODAzMzQyMzcsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.kBwbE29k0h5HygnYpZZYPr2XgWBxysPPZ3ZO4eBTVd4
+
+{
+    "payment_id" : "660ed32c-5060-4c8e-8c48-0a3bf21b4ba5"
+}
+
+###
+
+POST http://localhost:8080/denySettle
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODAwNzg3MDEsImlkIjoiMTgzZTA0ZDctYzY1My00YzdkLWFhNjYtM2Q3NTFkNGQ3MzU4In0.E5RJhtKUv9vFFln_H7CT3Uyph-p11aAQSvYLZ3OQ8-U
+
+{
+    "payment_id" : "c0137a75-cb65-41e1-8208-cb87b9490a06"
+}
+

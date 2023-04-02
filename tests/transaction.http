@@ -1,47 +1,35 @@
 POST http://localhost:8080/userCreateTransaction
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzc3ODA1NDgsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.pMi0vhgm9DbSEVcp8XtRrgSJHTfUQ1ANNSPQeRNI5JY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODAzMzQxMTUsImlkIjoiMTgzZTA0ZDctYzY1My00YzdkLWFhNjYtM2Q3NTFkNGQ3MzU4In0.Qn-OTJpMZLgnQ6bAZsuT0s7n7iJ3BIMRHrONWtbE1nA
 
 {
-    "name": "New Transaction",
-    "description": "New Transaction Description",
+    "name": "Transaction 2",
+    "description": "lorem ipsum",
     "group_id" : "0b865d7f-e40e-4440-905e-eccf2caaa6ed",
-    "date" : "2023-02-07T17:19:20.968831+07:00",
-    "subtotal" : 1000.0,
-    "tax" : 100.0,
-    "service" : 100.0,
-    "total" : 1200.0,
-    "bill_owner" : "6251ac85-e43d-4b88-8779-588099df5008",
-}
-
-###
-
-POST http://localhost:8080/updatePayment
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzk1Njc5MjcsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.gMnJnaGvYMZwEZX_7qpLd_2AS8OEj7phcPZ310SHEGE
-
-{
-    "group_id" : "0b865d7f-e40e-4440-905e-eccf2caaa6ed",
-    "list_payment" : [
+    "date" : "2023-03-31T17:19:20.968831+07:00",
+    "subtotal" : 20000.0,
+    "tax" : 2000.0,
+    "service" : 2000.0,
+    "total" : 22000.0,
+    "bill_owner" : "183e04d7-c653-4c7d-aa66-3d751d4d7358",
+    "items" : [
         {
-            "user_id" : "b74ae4ed-36cb-456c-b1dd-8fede426f244",
-            "total_unpaid" : 10000
+            "name" : "Item 3",
+            "quantity" : 1,
+            "price" : 10000.0,
+            "consumer" : ["b74ae4ed-36cb-456c-b1dd-8fede426f244"]
+        },
+        {
+            "name" : "Item 4",
+            "quantity" : 1,
+            "price" : 10000.0,
+            "consumer" : ["6251ac85-e43d-4b88-8779-588099df5008"]
         }
     ]
 }
 
 ###
 
-GET http://localhost:8080/getUnsettledTransaction?group_id=0b865d7f-e40e-4440-905e-eccf2caaa6ed
+GET http://localhost:8080/getTransactionDetail?transaction_id=bec3b277-d375-46b4-bb87-30b98e7cb2cd
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzk0MDE4MTEsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.UiXmOaDGEI3VnOm_8NaKrZ8nX_9Jyyfg5D26bCb6Hrs
-
-###
-
-POST http://localhost:8080/resolveTransaction
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2Nzk1NjUxMjYsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.X4M1W6_XsHvmio7zZzAYl668KyYIo1w7PVIZF50lzhY
-
-{
-    "group_id" : "0b865d7f-e40e-4440-905e-eccf2caaa6ed"
-}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODAxNTM0NDYsImlkIjoiMTgzZTA0ZDctYzY1My00YzdkLWFhNjYtM2Q3NTFkNGQ3MzU4In0._nNuwSyM2zg1rY4NkUd_yT6G8sMbDl0v0mNgGMzBmlM

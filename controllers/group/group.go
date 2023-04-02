@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"sort"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
 	"split-rex-backend/entities/responses"
@@ -191,11 +192,12 @@ func (con *groupController) UserGroups(c echo.Context) error {
 			}
 			groupResponse.ListMember = append(groupResponse.ListMember,
 				responses.MemberDetail{
-					ID:       memberID,
-					Name:     user.Name,
-					Username: user.Username,
-					Email:    user.Email,
-					Color:    user.Color,
+					ID:          memberID,
+					Name:        user.Name,
+					Username:    user.Username,
+					Email:       user.Email,
+					Color:       user.Color,
+					PaymentInfo: user.PaymentInfo,
 				})
 		}
 
@@ -282,11 +284,12 @@ func (h *groupController) GroupDetail(c echo.Context) error {
 		}
 		data.ListMember = append(data.ListMember,
 			responses.MemberDetail{
-				ID:       memberID,
-				Name:     user.Name,
-				Username: user.Username,
-				Email:    user.Email,
-				Color:    user.Color,
+				ID:          memberID,
+				Name:        user.Name,
+				Username:    user.Username,
+				Email:       user.Email,
+				Color:       user.Color,
+				PaymentInfo: user.PaymentInfo,
 			})
 	}
 
@@ -311,19 +314,19 @@ func (h *groupController) GroupTransactions(c echo.Context) error {
 
 	data := []responses.GroupTransactionsResponse{}
 
-	// TODO: get all members from consumer field in Item for ListMember
-	listMember := types.ArrayOfUUID{}
-
 	for _, transaction := range transactions {
 		data = append(data, responses.GroupTransactionsResponse{
 			TransactionID: transaction.TransactionID,
 			Name:          transaction.Name,
-			Description:   transaction.Description,
-			Total:         transaction.Total,
+			Date:          transaction.Date,
 			BillOwner:     transaction.BillOwner,
-			ListMember:    listMember,
 		})
 	}
+
+	// sort data by date
+	sort.Slice(data, func(i, j int) bool {
+		return data[i].Date.Before(data[j].Date)
+	})
 
 	response.Message = types.SUCCESS
 	response.Data = data

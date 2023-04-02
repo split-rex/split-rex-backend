@@ -29,6 +29,8 @@ func (con *friendController) SearchUser(c echo.Context) error {
 		friend.User_id = user[0].ID.String()
 		friend.Username = user[0].Username
 		friend.Fullname = user[0].Name
+		friend.Color = user[0].Color
+
 		response.Data = friend
 	} else {
 		response.Message = types.DATA_NOT_FOUND
@@ -61,6 +63,7 @@ func (con *friendController) SearchUserToAdd(c echo.Context) error {
 			User_id:  user.ID.String(),
 			Username: user.Username,
 			Fullname: user.Name,
+			Color:    user.Color,
 		}
 		return c.JSON(http.StatusConflict, response)
 	}
@@ -80,6 +83,7 @@ func (con *friendController) SearchUserToAdd(c echo.Context) error {
 				User_id:  user.ID.String(),
 				Username: user.Username,
 				Fullname: user.Name,
+				Color:    user.Color,
 			}
 			return c.JSON(http.StatusConflict, response)
 		}
@@ -93,6 +97,7 @@ func (con *friendController) SearchUserToAdd(c echo.Context) error {
 				User_id:  user.ID.String(),
 				Username: user.Username,
 				Fullname: user.Name,
+				Color:    user.Color,
 			}
 			return c.JSON(http.StatusConflict, response)
 		}
@@ -105,6 +110,7 @@ func (con *friendController) SearchUserToAdd(c echo.Context) error {
 				User_id:  user.ID.String(),
 				Username: user.Username,
 				Fullname: user.Name,
+				Color:    user.Color,
 			}
 			return c.JSON(http.StatusConflict, response)
 		}
@@ -115,8 +121,8 @@ func (con *friendController) SearchUserToAdd(c echo.Context) error {
 		User_id:  user.ID.String(),
 		Username: user.Username,
 		Fullname: user.Name,
+		Color:    user.Color,
 	}
 
 	return c.JSON(http.StatusOK, response)
 }
-   

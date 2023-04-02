@@ -26,17 +26,3 @@ type ItemRequest struct {
 	Price    float64           `json:"price" form:"price" query:"price"`
 	Consumer types.ArrayOfUUID `json:"consumer" form:"consumer" query:"consumer"`
 }
-
-type UpdatePaymentRequest struct {
-	GroupID     uuid.UUID        `json:"group_id" form:"group_id" query:"group_id"`
-	ListPayment []PaymentRequest `json:"list_payment" form:"list_payment" query:"list_payment"`
-}
-
-type PaymentRequest struct {
-	UserID      uuid.UUID `json:"user_id" form:"user_id" query:"user_id"`
-	TotalUnpaid float64   `json:"total_unpaid" form:"total_unpaid" query:"total_unpaid"`
-}
-
-type ResolveTransactionRequest struct {
-	GroupID uuid.UUID `json:"group_id" form:"group_id" query:"group_id"`
-}
