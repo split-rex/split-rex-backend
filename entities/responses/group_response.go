@@ -16,7 +16,7 @@ type UserGroupResponse struct {
 	Type         string            `json:"type"`
 	TotalUnpaid  float64           `json:"total_unpaid"`
 	TotalExpense float64           `json:"total_expense"`
-	ListMember   []MemberDetail    `json:"list_memberr"`
+	ListMember   []MemberDetail    `json:"list_memberr"` // DONT CHANGE RR!!! LEAVE IT ALONE!
 }
 
 type GroupTransactionsResponse struct {
@@ -37,9 +37,10 @@ type GroupLentResponse struct {
 }
 
 type MemberDetail struct {
-	ID       uuid.UUID `json:"member_id"`
-	Name     string    `json:"name"`
-	Username string    `json:"username"`
-	Email    string    `json:"email"`
-	Color    uint      `json:"color"`
+	ID          uuid.UUID         `json:"member_id"`
+	Name        string            `json:"name"`
+	Username    string            `json:"username"`
+	Email       string            `json:"email"`
+	Color       uint              `json:"color"`
+	PaymentInfo types.PaymentInfo `json:"payment_info"`
 }
