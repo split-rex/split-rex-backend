@@ -12,6 +12,8 @@ func GroupRoute(e *echo.Echo) {
 	groupController := controllers.NewGroupController(database.DB.GetConnection())
 	e.POST("/userCreateGroup", groupController.UserCreateGroup, middlewares.AuthMiddleware)
 	e.POST("/editGroupInfo", groupController.EditGroupInfo, middlewares.AuthMiddleware)
+	e.POST("/addGroupMember", groupController.AddGroupMember, middlewares.AuthMiddleware)
+
 	
 	e.GET("/userGroups", groupController.UserGroups, middlewares.AuthMiddleware)
 	e.GET("/groupDetail", groupController.GroupDetail, middlewares.AuthMiddleware)
