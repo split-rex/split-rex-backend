@@ -10,12 +10,12 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (con *authController) AddPaymentInfo(c echo.Context) error {
+func (con *authController) EditPaymentInfo(c echo.Context) error {
 	db := con.db
 	response := entities.Response[string]{}
 
-	addPaymentInfoRequest := requests.PaymentInfo{}
-	if err := c.Bind(&addPaymentInfoRequest); err != nil {
+	editPaymentInfo := requests.EditPaymentInfoRequest{}
+	if err := c.Bind(&editPaymentInfo); err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusBadRequest, response)
 	}
@@ -42,19 +42,45 @@ func (con *authController) AddPaymentInfo(c echo.Context) error {
 		userPaymentInfo = user.PaymentInfo
 	}
 
-	// val is the value of "addPaymentInfoRequest.Payment_method" from the map if it exists, or a "zero value" if it doesn't.
-	_, ok := userPaymentInfo[addPaymentInfoRequest.Payment_method]
+	// DELETE PROCESS FOR OLD PAYMENT INFO
+	// check if payment method available
+	payment, ok := userPaymentInfo[editPaymentInfo.Old_payment_method]
 	if !ok {
-		userPaymentInfo[addPaymentInfoRequest.Payment_method] = make(map[int]string)
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
 	}
 
-	_, ok = userPaymentInfo[addPaymentInfoRequest.Payment_method][int(addPaymentInfoRequest.Account_number)]
+	// check if account number available
+	_, ok = payment[int(editPaymentInfo.Old_account_number)]
+	if !ok {
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// delete account number and account name
+	delete(userPaymentInfo[editPaymentInfo.Old_payment_method], int(editPaymentInfo.Old_account_number))
+
+	// if account number in payment method = 0, delete payment method
+	if len(userPaymentInfo[editPaymentInfo.Old_payment_method]) < 1 {
+		delete(userPaymentInfo, editPaymentInfo.Old_payment_method)
+	}
+
+	// ADD PROCESS FOR NEW PAYMENT INFO
+	// val is the value of "addPaymentInfoRequest.Payment_method" from the map if it exists, or a "zero value" if it doesn't.
+	_, ok = userPaymentInfo[editPaymentInfo.New_payment_method]
+	if !ok {
+		userPaymentInfo[editPaymentInfo.New_payment_method] = make(map[int]string)
+	}
+
+	_, ok = userPaymentInfo[editPaymentInfo.New_payment_method][int(editPaymentInfo.New_account_number)]
 	if ok {
+		// change back to original payment info
+		userPaymentInfo = user.PaymentInfo
 		response.Message = types.ERROR_PAYMENT_INFO_ALREADY_EXISTED
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
-	userPaymentInfo[addPaymentInfoRequest.Payment_method][int(addPaymentInfoRequest.Account_number)] = addPaymentInfoRequest.Account_name
+	userPaymentInfo[editPaymentInfo.New_payment_method][int(editPaymentInfo.New_account_number)] = editPaymentInfo.New_account_name
 
 	// update user
 	if err := db.Model(&user).Updates(entities.User{

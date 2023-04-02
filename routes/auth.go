@@ -20,4 +20,6 @@ func AuthRoute(e *echo.Echo) {
 	e.POST("/updatePassword", authController.UpdatePasswordController, middlewares.AuthMiddleware)
 
 	e.POST("/addPaymentInfo", authController.AddPaymentInfo, middlewares.AuthMiddleware)
+	e.POST("/editPaymentInfo", authController.EditPaymentInfo, middlewares.AuthMiddleware)
+	e.POST("/deletePaymentInfo", authController.DeletePaymentInfo, middlewares.AuthMiddleware)
 }

@@ -6,6 +6,11 @@ import (
 )
 
 type PaymentInfo map[string]map[int]string
+//{"payment_info": 
+// 	{
+// 		account_number:"account_name"
+// 	}
+//}
 
 func (paymentInfo *PaymentInfo) Scan(value interface{}) error {
 	return json.Unmarshal([]byte(value.(string)), &paymentInfo)

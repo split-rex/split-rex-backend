@@ -66,6 +66,31 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZ
 
 {
     "payment_method": "bni",
-    "account_number": 321,
-    "account_name": "se"
+    "account_number": 12321,
+    "account_name": "patrick amadededong"
+}
+
+###
+POST http://localhost:8080/deletePaymentInfo
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODA0NjE0MDYsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.L533FY_VIHk9t9DhAgPfuefOKUEJJL_bjmMFuOByC1w
+
+{
+    "payment_method": "bni",
+    "account_number": 12321,
+    "account_name": "patrick amadededong"
+}
+
+###
+POST http://localhost:8080/editPaymentInfo
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODA0NjE0MDYsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.L533FY_VIHk9t9DhAgPfuefOKUEJJL_bjmMFuOByC1w
+
+{
+    "old_payment_method": "bni",
+    "old_account_number": 12321,
+    "old_account_name": "patrick amadededong",
+    "new_payment_method": "bni",
+    "new_account_number": 123213,
+    "new_account_name": "patrick llalala"
 }

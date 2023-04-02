@@ -10,12 +10,12 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (con *authController) AddPaymentInfo(c echo.Context) error {
+func (con *authController) DeletePaymentInfo(c echo.Context) error {
 	db := con.db
 	response := entities.Response[string]{}
 
-	addPaymentInfoRequest := requests.PaymentInfo{}
-	if err := c.Bind(&addPaymentInfoRequest); err != nil {
+	deletePaymentInfo := requests.PaymentInfo{}
+	if err := c.Bind(&deletePaymentInfo); err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusBadRequest, response)
 	}
@@ -42,19 +42,27 @@ func (con *authController) AddPaymentInfo(c echo.Context) error {
 		userPaymentInfo = user.PaymentInfo
 	}
 
-	// val is the value of "addPaymentInfoRequest.Payment_method" from the map if it exists, or a "zero value" if it doesn't.
-	_, ok := userPaymentInfo[addPaymentInfoRequest.Payment_method]
+	// check if payment method available
+	payment, ok := userPaymentInfo[deletePaymentInfo.Payment_method]
 	if !ok {
-		userPaymentInfo[addPaymentInfoRequest.Payment_method] = make(map[int]string)
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
 	}
 
-	_, ok = userPaymentInfo[addPaymentInfoRequest.Payment_method][int(addPaymentInfoRequest.Account_number)]
-	if ok {
-		response.Message = types.ERROR_PAYMENT_INFO_ALREADY_EXISTED
-		return c.JSON(http.StatusBadRequest, response)
+	// check if account number available
+	_, ok = payment[int(deletePaymentInfo.Account_number)]
+	if !ok {
+		response.Message = types.ERROR_BAD_REQUEST
+		return c.JSON(http.StatusInternalServerError, response)
 	}
 
-	userPaymentInfo[addPaymentInfoRequest.Payment_method][int(addPaymentInfoRequest.Account_number)] = addPaymentInfoRequest.Account_name
+	// delete account number and account name
+	delete(userPaymentInfo[deletePaymentInfo.Payment_method], int(deletePaymentInfo.Account_number))
+
+	// if account number in payment method = 0, delete payment method
+	if len(userPaymentInfo[deletePaymentInfo.Payment_method]) < 1 {
+		delete(userPaymentInfo, deletePaymentInfo.Payment_method)
+	}
 
 	// update user
 	if err := db.Model(&user).Updates(entities.User{
