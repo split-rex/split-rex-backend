@@ -6,6 +6,7 @@ import (
 	"split-rex-backend/entities/requests"
 	"split-rex-backend/entities/responses"
 	"split-rex-backend/types"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -42,8 +43,9 @@ func (h *transactionController) UserCreateTransaction(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
+	transactionID := uuid.New()
 	transaction := entities.Transaction{
-		TransactionID: uuid.New(),
+		TransactionID: transactionID,
 		Name:          request.Name,
 		Description:   request.Description,
 		GroupID:       request.GroupID,
@@ -59,6 +61,47 @@ func (h *transactionController) UserCreateTransaction(c echo.Context) error {
 	if err := db.Create(&transaction).Error; err != nil {
 		response.Message = err.Error()
 		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// get set of consumers
+	users := make(map[uuid.UUID]bool)
+	for _, item := range request.Items {
+		for _, consumer := range item.Consumer {
+			users[consumer] = true
+		}
+	}
+
+	// get name of billowner
+	billOwner := entities.User{}
+	if err := db.Find(&billOwner, request.BillOwner).Error; err != nil {
+		response.Message = err.Error()
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// create activity and transaction activity
+	newID := uuid.New()
+	transactionActivity := entities.TransactionActivity{
+		TransactionActivityID: newID,
+		Name:                  billOwner.Name,
+		GroupName:             group.Name,
+	}
+	if err := db.Create(&transactionActivity).Error; err != nil {
+		response.Message = err.Error()
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+	for userID := range users {
+		activity := entities.Activity{
+			ActivityID:   uuid.New(),
+			ActivityType: "TRANSACTION",
+			UserID:       userID,
+			Date:         time.Now(),
+			RedirectID:   transactionID,
+			DetailID:     newID,
+		}
+		if err := db.Create(&activity).Error; err != nil {
+			response.Message = err.Error()
+			return c.JSON(http.StatusInternalServerError, response)
+		}
 	}
 
 	response.Message = types.SUCCESS
