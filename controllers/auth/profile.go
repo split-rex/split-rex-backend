@@ -18,7 +18,7 @@ func (con *authController) ProfileController(c echo.Context) error {
 
 	user := entities.User{}
 	condition := entities.User{ID: user_id}
-	if err := db.Where(&condition).Select("id", "username", "name", "color").Find(&user).Error; err != nil {
+	if err := db.Where(&condition).Select("id", "username", "email", "name", "color", "payment_info").Find(&user).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
@@ -26,8 +26,10 @@ func (con *authController) ProfileController(c echo.Context) error {
 
 	response.Data.User_id = user.ID.String()
 	response.Data.Username = user.Username
+	response.Data.Username = user.Email
 	response.Data.Fullname = user.Name
 	response.Data.Color = user.Color
+	response.Data.Payment_info = user.PaymentInfo
 
 	return c.JSON(http.StatusOK, response)
 }
