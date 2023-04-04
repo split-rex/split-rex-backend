@@ -2,6 +2,7 @@ package types
 
 import (
 	"database/sql/driver"
+	"errors"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -9,7 +10,12 @@ import (
 type EncryptedString []byte
 
 func (es *EncryptedString) Scan(value interface{}) error {
-	*es = EncryptedString(value.([]byte))
+	bytes, ok := value.([]byte)
+	if !ok {
+		return errors.New("")
+	}
+
+	*es = bytes
 	return nil
 }
 

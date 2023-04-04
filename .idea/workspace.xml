@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7261349d-5683-4dc8-b19a-72db6aab8bd3" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/controllers/auth/update_profile.go" beforeDir="false" afterPath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/controllers/auth/update_profile.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/controllers/group/group_add_member.go" beforeDir="false" afterPath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/controllers/group/group_add_member.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/entities/factories/friend.go" beforeDir="false" afterPath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/entities/factories/friend.go" afterDir="false" />
@@ -15,7 +16,14 @@
       <change beforePath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/routes/group.go" beforeDir="false" afterPath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/routes/group.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/types/payment_info.go" beforeDir="false" afterPath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/types/payment_info.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/database/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/configs/database/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/middlewares/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/configs/middlewares/auth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controllers/group/group.go" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/group/group.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controllers/group/group_add_member.go" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/group/group_add_member.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/types/constants.go" beforeDir="false" afterPath="$PROJECT_DIR$/types/constants.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/types/encrypted_string.go" beforeDir="false" afterPath="$PROJECT_DIR$/types/encrypted_string.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/types/payment_info.go" beforeDir="false" afterPath="$PROJECT_DIR$/types/payment_info.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/types/uuid_array.go" beforeDir="false" afterPath="$PROJECT_DIR$/types/uuid_array.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,15 +35,19 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="2Nwq4ngsm2nkNPSjJjhKIYIlPfb" />
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/root"
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/root&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

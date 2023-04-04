@@ -89,7 +89,7 @@ func ValidateGoogleJWT(tokenString string) (GoogleClaims, error) {
 
 	claims, ok := token.Claims.(*GoogleClaims)
 	if !ok {
-		return GoogleClaims{}, errors.New("Invalid Google JWT")
+		return GoogleClaims{}, errors.New("invalid Google JWT token")
 	}
 
 	if claims.Issuer != "accounts.google.com" && claims.Issuer != "https://accounts.google.com" {

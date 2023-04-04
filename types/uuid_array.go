@@ -9,7 +9,7 @@ import (
 
 type ArrayOfUUID []uuid.UUID
 
-func (arrayOfUUID *ArrayOfUUID) Scan(value interface{}) error {
+func (arrayOfUUID ArrayOfUUID) Scan(value interface{}) error {
 	return json.Unmarshal([]byte(value.(string)), &arrayOfUUID)
 }
 
@@ -27,8 +27,8 @@ func (arrayOfUUID ArrayOfUUID) Count() int {
 }
 
 func (arrayOfUUID ArrayOfUUID) Contains(id uuid.UUID) bool {
-	for _, uuid := range arrayOfUUID {
-		if uuid == id {
+	for _, uid := range arrayOfUUID {
+		if uid == id {
 			return true
 		}
 	}

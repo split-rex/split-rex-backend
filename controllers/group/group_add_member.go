@@ -71,7 +71,7 @@ func (con *groupController) AddGroupMember(c echo.Context) error {
 	// check if member already exist in group, then exclude
 	newMemberIDs := types.ArrayOfUUID{}
 	for _, newMemberId := range request.Friends_id {
-		if (!group.MemberID.Contains(newMemberId)) {
+		if !group.MemberID.Contains(newMemberId) {
 			newMemberIDs = append(newMemberIDs, newMemberId)
 		}
 	}

@@ -209,8 +209,8 @@ func (con *groupController) UserGroups(c echo.Context) error {
 	return c.JSON(http.StatusAccepted, response)
 }
 
-func (h *groupController) GroupDetail(c echo.Context) error {
-	db := h.db
+func (con *groupController) GroupDetail(c echo.Context) error {
+	db := con.db
 	response := entities.Response[responses.UserGroupResponse]{}
 
 	totalUnpaid := 0.0
@@ -299,8 +299,8 @@ func (h *groupController) GroupDetail(c echo.Context) error {
 	return c.JSON(http.StatusAccepted, response)
 }
 
-func (h *groupController) GroupTransactions(c echo.Context) error {
-	db := h.db
+func (con *groupController) GroupTransactions(c echo.Context) error {
+	db := con.db
 	response := entities.Response[[]responses.GroupTransactionsResponse]{}
 
 	groupID, _ := uuid.Parse(c.QueryParam("id"))

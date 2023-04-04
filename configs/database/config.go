@@ -39,7 +39,7 @@ func (database *Database) lazyInit() {
 			panic("Cannot connect database")
 		}
 
-		db.AutoMigrate(
+		err = db.AutoMigrate(
 			&entities.User{},
 			&entities.Group{},
 			&entities.Friend{},
@@ -52,6 +52,9 @@ func (database *Database) lazyInit() {
 			&entities.TransactionActivity{},
 			&entities.ReminderActivity{},
 		)
+		if err != nil {
+			panic("Database cannot automigrate")
+		}
 
 		database.connection = db
 	})
@@ -78,7 +81,7 @@ func (databaseTesting *DatabaseTesting) lazyInit() {
 			panic("Cannot connect database")
 		}
 
-		db.AutoMigrate(
+		err = db.AutoMigrate(
 			&entities.User{},
 			&entities.Group{},
 			&entities.Friend{},
@@ -91,6 +94,9 @@ func (databaseTesting *DatabaseTesting) lazyInit() {
 			&entities.TransactionActivity{},
 			&entities.ReminderActivity{},
 		)
+		if err != nil {
+			panic("Database cannot automigrate")
+		}
 
 		databaseTesting.connection = db
 	})
