@@ -175,8 +175,12 @@ func (h *paymentController) SettlePaymentLent(c echo.Context) error {
 	}
 
 	//update payment table
-	payment.TotalPaid = payment.TotalPaid - request.TotalPaid
-	payment.Status = types.STATUS_PAYMENT_PENDING
+	payment.TotalUnpaid = payment.TotalUnpaid + request.TotalPaid
+	if payment.TotalUnpaid == 0 {
+		payment.Status = types.STATUS_PAYMENT_PAID
+	} else {
+		payment.Status = types.STATUS_PAYMENT_PENDING
+	}
 	if err := db.Save(&payment).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
@@ -189,8 +193,12 @@ func (h *paymentController) SettlePaymentLent(c echo.Context) error {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
-	payment2.TotalPaid = payment2.TotalPaid + request.TotalPaid
-	payment2.Status = types.STATUS_PAYMENT_PENDING
+	payment2.TotalUnpaid = payment2.TotalUnpaid - request.TotalPaid
+	if payment2.TotalUnpaid == 0 {
+		payment2.Status = types.STATUS_PAYMENT_PAID
+	} else {
+		payment2.Status = types.STATUS_PAYMENT_PENDING
+	}
 
 	if err := db.Save(&payment2).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
@@ -215,7 +223,7 @@ func (h *paymentController) SettlePaymentLent(c echo.Context) error {
 	paymentActivity := entities.PaymentActivity{
 		PaymentActivityID: newID,
 		Name:              user.Name,
-		Status:            "UNCONFIRMED",
+		Status:            "CONFIRMED",
 		Amount:            request.TotalPaid,
 		GroupName:         group.Name,
 	}
@@ -233,6 +241,20 @@ func (h *paymentController) SettlePaymentLent(c echo.Context) error {
 		DetailID:     newID,
 	}
 	if err := db.Create(&activity).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// insert to group activity table
+	groupActivity := entities.GroupActivity{
+		ActivityID: uuid.New(),
+		GroupID:    payment.GroupID,
+		UserID1:    payment.UserID2,
+		UserID2:    payment.UserID1,
+		Amount:     request.TotalPaid,
+		Date:       time.Now(),
+	}
+	if err := db.Create(&groupActivity).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}

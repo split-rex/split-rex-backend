@@ -39,18 +39,20 @@ func (h *paymentController) GetUnconfirmedPayment(c echo.Context) error {
 	// move payments to response data
 	unconfirmedTransaction := []responses.UnconfirmedPaymentResponse{}
 	for _, payment := range payments {
-		user := entities.User{}
-		if err := db.Find(&user, payment.UserID2).Error; err != nil {
-			response.Message = types.ERROR_INTERNAL_SERVER
-			return c.JSON(http.StatusInternalServerError, response)
+		if payment.TotalPaid < 0 {
+			user := entities.User{}
+			if err := db.Find(&user, payment.UserID2).Error; err != nil {
+				response.Message = types.ERROR_INTERNAL_SERVER
+				return c.JSON(http.StatusInternalServerError, response)
+			}
+			unconfirmedTransaction = append(unconfirmedTransaction, responses.UnconfirmedPaymentResponse{
+				PaymentID: payment.PaymentID,
+				UserID:    payment.UserID2,
+				Name:      user.Name,
+				Color:     user.Color,
+				TotalPaid: payment.TotalPaid,
+			})
 		}
-		unconfirmedTransaction = append(unconfirmedTransaction, responses.UnconfirmedPaymentResponse{
-			PaymentID: payment.PaymentID,
-			UserID:    payment.UserID2,
-			Name:      user.Name,
-			Color:     user.Color,
-			TotalPaid: payment.TotalPaid,
-		})
 	}
 
 	response.Message = types.SUCCESS
