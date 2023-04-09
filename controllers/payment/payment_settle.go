@@ -177,9 +177,17 @@ func (h *paymentController) SettlePaymentLent(c echo.Context) error {
 	//update payment table
 	payment.TotalUnpaid = payment.TotalUnpaid + request.TotalPaid
 	if payment.TotalUnpaid == 0 {
-		payment.Status = types.STATUS_PAYMENT_PAID
+		if payment.TotalPaid == 0 {
+			payment.Status = types.STATUS_PAYMENT_PAID
+		} else {
+			payment.Status = types.STATUS_PAYMENT_PENDING
+		}
 	} else {
-		payment.Status = types.STATUS_PAYMENT_PENDING
+		if payment.TotalPaid == 0 {
+			payment.Status = types.STATUS_PAYMENT_UNPAID
+		} else {
+			payment.Status = types.STATUS_PAYMENT_PENDING
+		}
 	}
 	if err := db.Save(&payment).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
@@ -195,9 +203,17 @@ func (h *paymentController) SettlePaymentLent(c echo.Context) error {
 	}
 	payment2.TotalUnpaid = payment2.TotalUnpaid - request.TotalPaid
 	if payment2.TotalUnpaid == 0 {
-		payment2.Status = types.STATUS_PAYMENT_PAID
+		if payment2.TotalPaid == 0 {
+			payment2.Status = types.STATUS_PAYMENT_PAID
+		} else {
+			payment2.Status = types.STATUS_PAYMENT_PENDING
+		}
 	} else {
-		payment2.Status = types.STATUS_PAYMENT_PENDING
+		if payment2.TotalPaid == 0 {
+			payment2.Status = types.STATUS_PAYMENT_UNPAID
+		} else {
+			payment2.Status = types.STATUS_PAYMENT_PENDING
+		}
 	}
 
 	if err := db.Save(&payment2).Error; err != nil {
