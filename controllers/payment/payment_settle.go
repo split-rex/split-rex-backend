@@ -54,6 +54,34 @@ func (h *paymentController) GetUnsettledPayment(c echo.Context) error {
 		})
 	}
 
+	// get from payment table where GroupID = groupID and UserID1 = userID and Status = PENDING
+	payments = []entities.Payment{}
+	conditionPayment = entities.Payment{GroupID: groupID, UserID1: userID, Status: types.STATUS_PAYMENT_PENDING}
+	if err := db.Where(conditionPayment).Find(&payments).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// move payments to response data
+	for _, payment := range payments {
+		if payment.TotalPaid != payment.TotalUnpaid {
+			user := entities.User{}
+			if err := db.Find(&user, payment.UserID2).Error; err != nil {
+				response.Message = types.ERROR_INTERNAL_SERVER
+				return c.JSON(http.StatusInternalServerError, response)
+			}
+			unsettledTransaction = append(unsettledTransaction, responses.UnsettledPaymentResponse{
+				PaymentID:   payment.PaymentID,
+				UserID:      payment.UserID2,
+				Name:        user.Name,
+				Color:       user.Color,
+				TotalUnpaid: payment.TotalUnpaid - payment.TotalPaid,
+				TotalPaid:   payment.TotalPaid,
+				Status:      payment.Status,
+			})
+		}
+	}
+
 	response.Message = types.SUCCESS
 	response.Data = unsettledTransaction
 	return c.JSON(http.StatusOK, response)
