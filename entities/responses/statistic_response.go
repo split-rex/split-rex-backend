@@ -17,6 +17,12 @@ type BuddyResponse struct {
 	Buddy3 BuddyDetail `json:"buddy3"`
 }
 
+type ChartResponse struct {
+	Month        string    `json:"month"`
+	TotalExpense float64   `json:"total_expense"`
+	DailyExpense []float64 `json:"daily_expense"`
+}
+
 type MutationDetail struct {
 	Name         string  `json:"name"`
 	Color        uint    `json:"color"`

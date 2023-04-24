@@ -302,3 +302,51 @@ func (con *statisticController) SpendingBuddies(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, response)
 }
+
+func (con *statisticController) ExpenseChart(c echo.Context) error {
+	db := con.db
+	response := entities.Response[responses.ChartResponse]{}
+
+	id := c.Get("id").(uuid.UUID)
+
+	dateNow := time.Now()
+	month := dateNow.Month()
+	day := dateNow.Day()
+
+	// get expense from user within this month
+	expenses := []entities.Expense{}
+	condition := entities.Expense{UserID: id}
+	if err := db.Where(&condition).Find(&expenses).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// filter expense within this month
+	expensesThisMonth := []entities.Expense{}
+	for _, expense := range expenses {
+		if expense.Date.Month() == month {
+			expensesThisMonth = append(expensesThisMonth, expense)
+		}
+	}
+
+	// initialize daily expense
+	dailyExpense := []float64{}
+	for i := 0; i < day; i++ {
+		dailyExpense = append(dailyExpense, 0.0)
+	}
+
+	// get daily expense
+	totalExpense := 0.0
+	for _, expense := range expensesThisMonth {
+		dailyExpense[expense.Date.Day()-1] = dailyExpense[expense.Date.Day()-1] + expense.Amount
+		totalExpense = totalExpense + expense.Amount
+	}
+
+	// return
+	response.Message = types.SUCCESS
+	response.Data.Month = month.String()
+	response.Data.DailyExpense = dailyExpense
+	response.Data.TotalExpense = totalExpense
+
+	return c.JSON(http.StatusOK, response)
+}
