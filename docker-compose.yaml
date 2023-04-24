@@ -11,6 +11,8 @@ services:
       - .env
     volumes:
       - ./:/app
+    depends_on:
+      - postgres
   postgres:
     image: postgres
     container_name: split-rex-db
@@ -20,7 +22,9 @@ services:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-
+    volumes:
+      - ./.docker:/docker-entrypoint-initdb.d
+      
 volumes:
   data:
   
