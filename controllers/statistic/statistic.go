@@ -311,7 +311,6 @@ func (con *statisticController) ExpenseChart(c echo.Context) error {
 
 	dateNow := time.Now()
 	month := dateNow.Month()
-	day := dateNow.Day()
 
 	// get expense from user within this month
 	expenses := []entities.Expense{}
@@ -331,8 +330,18 @@ func (con *statisticController) ExpenseChart(c echo.Context) error {
 
 	// initialize daily expense
 	dailyExpense := []float64{}
-	for i := 0; i < day; i++ {
-		dailyExpense = append(dailyExpense, 0.0)
+	if month == time.January || month == time.March || month == time.May || month == time.July || month == time.August || month == time.October || month == time.December {
+		for i := 0; i < 31; i++ {
+			dailyExpense = append(dailyExpense, 0)
+		}
+	} else if month == time.April || month == time.June || month == time.September || month == time.November {
+		for i := 0; i < 30; i++ {
+			dailyExpense = append(dailyExpense, 0)
+		}
+	} else if month == time.February {
+		for i := 0; i < 28; i++ {
+			dailyExpense = append(dailyExpense, 0)
+		}
 	}
 
 	// get daily expense
