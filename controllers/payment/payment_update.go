@@ -5,6 +5,7 @@ import (
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
 	"split-rex-backend/types"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -40,8 +41,33 @@ func (h *paymentController) UpdatePayment(c echo.Context) error {
 		}
 	}()
 
-	// insert into payment table
+	// insert into expense table
+	newExpense := entities.Expense{
+		ExpenseID: uuid.New(),
+		UserID:    userID,
+		Amount:    request.OwnerExpense,
+		Date:      time.Now(),
+	}
+	if err := tx.Create(&newExpense).Error; err != nil {
+		tx.Rollback()
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+	// insert into payment table and expense table
 	for _, payment := range request.ListPayment {
+		// insert into expense table
+		newExpense := entities.Expense{
+			ExpenseID: uuid.New(),
+			UserID:    payment.UserID,
+			Amount:    payment.TotalUnpaid,
+			Date:      time.Now(),
+		}
+		if err := tx.Create(&newExpense).Error; err != nil {
+			tx.Rollback()
+			response.Message = types.ERROR_INTERNAL_SERVER
+			return c.JSON(http.StatusInternalServerError, response)
+		}
+
 		// check if user exist in group
 		memberExist := false
 		for _, member := range group.MemberID {
