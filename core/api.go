@@ -25,6 +25,7 @@ func Run() {
 	routes.FriendRoute(e)
 	routes.GroupRoute(e)
 	routes.ActivityRoute(e)
+	routes.StatisticRoute(e)
 
 	port := os.Getenv("PORT")
 	e.Logger.Fatal(e.Start(":" + port))
