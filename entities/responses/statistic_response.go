@@ -11,9 +11,21 @@ type MutationResponse struct {
 	ListMutation  []MutationDetail `json:"list_mutation"`
 }
 
+type BuddyResponse struct {
+	Buddy1 BuddyDetail `json:"buddy1"`
+	Buddy2 BuddyDetail `json:"buddy2"`
+	Buddy3 BuddyDetail `json:"buddy3"`
+}
+
 type MutationDetail struct {
 	Name         string  `json:"name"`
 	Color        uint    `json:"color"`
 	MutationType string  `json:"mutation_type"`
 	Amount       float64 `json:"amount"`
+}
+
+type BuddyDetail struct {
+	Name  string `json:"name"`
+	Color uint   `json:"color"`
+	Count int    `json:"count"`
 }

@@ -3,6 +3,7 @@ package controllers
 import (
 	"math"
 	"net/http"
+	"sort"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/responses"
 	"split-rex-backend/types"
@@ -169,5 +170,135 @@ func (con *statisticController) PaymentMutation(c echo.Context) error {
 	response.Data.ListMutation = mutationDetail
 	response.Data.TotalPaid = totalPaid
 	response.Data.TotalReceived = totalReceived
+	return c.JSON(http.StatusOK, response)
+}
+
+func (con *statisticController) SpendingBuddies(c echo.Context) error {
+	db := con.db
+	response := entities.Response[responses.BuddyResponse]{}
+
+	id := c.Get("id").(uuid.UUID)
+	user := entities.User{}
+	if err := db.Find(&user, id).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// get all friends of user
+	friends := entities.Friend{}
+	if err := db.Find(&friends, id).Error; err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
+
+	// create map from friend_id to number of common transaction
+	commonTransaction := map[uuid.UUID]int{}
+
+	// iterate through friends
+	for _, friend := range friends.Friend_id {
+		commonTransaction[friend] = 0
+		// get friend group
+		friendGroup := entities.User{}
+		if err := db.Find(&friendGroup, friend).Error; err != nil {
+			response.Message = types.ERROR_INTERNAL_SERVER
+			return c.JSON(http.StatusInternalServerError, response)
+		}
+
+		// get mutual group with user
+		mutualGroup := []uuid.UUID{}
+		for _, group := range user.Groups {
+			for _, friendGroup := range friendGroup.Groups {
+				if group == friendGroup {
+					mutualGroup = append(mutualGroup, group)
+				}
+			}
+		}
+
+		// get all transaction dengan group_id = mutual group
+		transactions := []entities.Transaction{}
+		for _, group := range mutualGroup {
+			transaction := []entities.Transaction{}
+			condition := entities.Transaction{GroupID: group}
+			if err := db.Where(&condition).Find(&transaction).Error; err != nil {
+				response.Message = types.ERROR_INTERNAL_SERVER
+				return c.JSON(http.StatusInternalServerError, response)
+			}
+			transactions = append(transactions, transaction...)
+		}
+
+		// iterate through all transaction
+		for _, transaction := range transactions {
+			userFound := false
+			friendFound := false
+			if transaction.BillOwner == id {
+				userFound = true
+			}
+			if transaction.BillOwner == friend {
+				friendFound = true
+			}
+			// iterate through all item in transaction to check if user or friend is consumer
+			for _, item := range transaction.Items {
+				// get item detail from item id
+				itemDetail := entities.Item{}
+				if err := db.Find(&itemDetail, item).Error; err != nil {
+					response.Message = types.ERROR_INTERNAL_SERVER
+					return c.JSON(http.StatusInternalServerError, response)
+				}
+				// iterate through all consumer in item
+				for _, consumer := range itemDetail.Consumer {
+					if consumer == id {
+						userFound = true
+					}
+					if consumer == friend {
+						friendFound = true
+					}
+					if userFound && friendFound {
+						break
+					}
+				}
+				if userFound && friendFound {
+					break
+				}
+			}
+			if userFound && friendFound {
+				commonTransaction[friend] = commonTransaction[friend] + 1
+			}
+		}
+	}
+
+	// get 3 highest common transaction
+	highestCommonTransaction := []responses.BuddyDetail{}
+	for friend, common := range commonTransaction {
+		// get friend name and color
+		friendDetail := entities.User{}
+		condition := entities.User{ID: friend}
+		if err := db.Where(&condition).Find(&friendDetail).Error; err != nil {
+			response.Message = types.ERROR_INTERNAL_SERVER
+			return c.JSON(http.StatusInternalServerError, response)
+		}
+		highestCommonTransaction = append(highestCommonTransaction, responses.BuddyDetail{
+			Name:  friendDetail.Name,
+			Color: friendDetail.Color,
+			Count: common,
+		})
+	}
+
+	// sort highestCommonTransaction
+	sort.Slice(highestCommonTransaction, func(i, j int) bool {
+		return highestCommonTransaction[i].Count > highestCommonTransaction[j].Count
+	})
+
+	// return
+	response.Message = types.SUCCESS
+	for i := 0; i < len(highestCommonTransaction); i++ {
+		if i == 0 {
+			response.Data.Buddy1 = highestCommonTransaction[i]
+		} else if i == 1 {
+			response.Data.Buddy2 = highestCommonTransaction[i]
+		} else if i == 2 {
+			response.Data.Buddy3 = highestCommonTransaction[i]
+		}
+	}
+
 	return c.JSON(http.StatusOK, response)
 }

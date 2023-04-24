@@ -13,4 +13,5 @@ func StatisticRoute(e *echo.Echo) {
 
 	e.GET("/owedLentPercentage", statisticController.OwedLentPercentage, middlewares.AuthMiddleware)
 	e.GET("/paymentMutation", statisticController.PaymentMutation, middlewares.AuthMiddleware)
+	e.GET("/spendingBuddies", statisticController.SpendingBuddies, middlewares.AuthMiddleware)
 }
