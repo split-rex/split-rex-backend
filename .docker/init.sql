@@ -1,0 +1,1 @@
+CREATE DATABASE `split-rex-db`;

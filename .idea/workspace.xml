@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="7261349d-5683-4dc8-b19a-72db6aab8bd3" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/controllers/auth/update_profile.go" beforeDir="false" afterPath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/controllers/auth/update_profile.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/controllers/group/group_add_member.go" beforeDir="false" afterPath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/controllers/group/group_add_member.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/entities/factories/friend.go" beforeDir="false" afterPath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/entities/factories/friend.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/entities/factories/group.go" beforeDir="false" afterPath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/entities/factories/group.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/entities/factories/item.go" beforeDir="false" afterPath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/entities/factories/item.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/entities/factories/transaction.go" beforeDir="false" afterPath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/entities/factories/transaction.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/entities/factories/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/entities/factories/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/routes/group.go" beforeDir="false" afterPath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/routes/group.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/types/payment_info.go" beforeDir="false" afterPath="$PROJECT_DIR$/builds/xE1QyKTT/0/IF3250_2023_K02_02_SPLIT-BILL/IF3250_2023_K02_02_SPLIT-BILL/types/payment_info.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="GOROOT" url="file:///usr/local/go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="2Nwq4ngsm2nkNPSjJjhKIYIlPfb" />
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "/root"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="VgoProject">
+    <settings-migrated>true</settings-migrated>
+  </component>
+</project>
