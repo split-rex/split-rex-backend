@@ -60,11 +60,11 @@ func (database *Database) lazyInit() {
 // Testing Database
 func (databaseTesting *DatabaseTesting) lazyInit() {
 	databaseTesting.once.Do(func() {
-		host := "34.101.183.3"
+		host := "34.101.52.136"
 		port := "5432"
 		dbname := "split-rex-db-testing"
-		username := "admin"
-		password := "yzOYPFI_M*{$[$&T"
+		username := "testing_admin"
+		password := "kvT9=5@K-Cz*ZIB"
 
 		dsn := "host=" + host
 		dsn += " user=" + username
