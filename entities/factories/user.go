@@ -62,7 +62,7 @@ func (uf *UserFactory) InitAuth() {
 
 // userA (is on DB, not going to be deleted)
 func (uf *UserFactory) UserA() {
-	id, _ := uuid.Parse("cf734de2-2952-4766-88f9-bfae95e1c2f0")
+	id, _ := uuid.Parse("f6b22870-d9b8-43df-a302-2f2bfc035640")
 	uf.ID = id
 	uf.Name = "userA"
 	uf.Email = "userA@gmail.com"
@@ -72,7 +72,7 @@ func (uf *UserFactory) UserA() {
 
 // userB (is on DB, not going to be deleted)
 func (uf *UserFactory) UserB() {
-	id, _ := uuid.Parse("06c2e522-30e9-4171-8efb-9d27b7c4bee9")
+	id, _ := uuid.Parse("421f9f47-f997-4d10-baaa-db8aacada674")
 	uf.ID = id
 	uf.Name = "userB"
 	uf.Email = "userB@gmail.com"
@@ -82,7 +82,7 @@ func (uf *UserFactory) UserB() {
 
 // userC (is on DB, not going to be deleted)
 func (uf *UserFactory) UserC() {
-	id, _ := uuid.Parse("acbe5a63-1390-41e1-b463-7c9b2b2a0f46")
+	id, _ := uuid.Parse("f2be1202-5b02-4e62-a05d-c2064bb4ba89")
 	uf.ID = id
 	uf.Name = "userC"
 	uf.Email = "userC@gmail.com"
