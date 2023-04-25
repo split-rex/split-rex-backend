@@ -3,9 +3,9 @@ Content-Type: application/json
 
 {
     "name": "grace",
-    "email": "grace@gmail.com",
-    "username": "grace",
-    "password": "grace"
+    "email": "13520075@gmail.com",
+    "username": "graceclaudia",
+    "password": "graceclaudia"
 }
 
 ###
@@ -14,8 +14,8 @@ POST http://localhost:8080/login
 Content-Type: application/json
 
 {
-    "email": "grace@gmail.com",
-    "password": "graceclaudia"
+    "email": "13520075@std.stei.itb.ac.id",
+    "password": "samuel"
 }
 
 ###
@@ -24,10 +24,10 @@ POST http://localhost:8080/register
 Content-Type: application/json
 
 {
-    "name": "wikwok",
-    "email": "wikwok@gmail.com",
-    "username": "wikwok",
-    "password": "wikwok"
+    "name": "samuel",
+    "email": "13520075@std.stei.itb.ac.id",
+    "username": "samuelswandi",
+    "password": "samuelswandi"
 }
 
 ###
@@ -36,8 +36,8 @@ POST https://split-rex-backend-7v6i6rndga-et.a.run.app/login
 Content-Type: application/json
 
 {
-    "email": "ubay@gmail.com",
-    "password": "ubay"
+    "email": "13520075@std.stei.itb.ac.id",
+    "password": "samuelswandi"
 }
 
 ###
@@ -101,7 +101,7 @@ POST http://localhost:8080/generateResetPassToken
 Content-Type: application/json
 
 {
-    "email": "grace@gmail.com"
+    "email": "13520075@std.stei.itb.ac.id"
 }
 
 ###
@@ -109,9 +109,9 @@ POST http://localhost:8080/verifyResetPassToken
 Content-Type: application/json
 
 {
-    "email": "grace@gmail.com",
-    "encrypted_token": "Yis5fl344MA1C5dCvactaRINDDyTfVjQqZcI7KM2txl1xhEMbyI=",
-    "code": "lWuOSZ"
+    "email": "13520075@std.stei.itb.ac.id",
+"encrypted_token": "Vs0TELfAeNKHzyWgfEDtEDrIEYk+hhUE8qgkjsQ6Wcf4t2BBpY4=",
+    "code": "vuWruQ"
 }
 
 ###
@@ -119,8 +119,8 @@ POST http://localhost:8080/changePassword
 Content-Type: application/json
 
 {
-    "email": "grace@gmail.com",
-    "encrypted_token": "Yis5fl344MA1C5dCvactaRINDDyTfVjQqZcI7KM2txl1xhEMbyI=",
-    "code": "lWuOSZ",
-    "new_password": "graceclaudia"
+    "email": "13520075@std.stei.itb.ac.id",
+"encrypted_token": "Vs0TELfAeNKHzyWgfEDtEDrIEYk+hhUE8qgkjsQ6Wcf4t2BBpY4=",
+    "code": "vuWruQ",
+    "new_password": "samuel"
 }

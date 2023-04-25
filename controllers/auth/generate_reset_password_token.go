@@ -13,6 +13,7 @@ import (
 	"split-rex-backend/entities/requests"
 	"split-rex-backend/entities/responses"
 	"split-rex-backend/types"
+
 	"time"
 	"unsafe"
 
@@ -135,11 +136,32 @@ func (con *authController) GenerateResetPassTokenController(c echo.Context) erro
 		}
 	}
 	// send to email the code
+	emailSenderName := os.Getenv("EMAIL_SENDER_NAME")
+	emailSenderAddress := os.Getenv("EMAIL_SENDER_ADDRESS")
+	emailSenderPassword := os.Getenv("EMAIL_SENDER_PASSWORD")
+	sender := NewGmailSender(emailSenderName, emailSenderAddress, emailSenderPassword)
+
+	subject := "Password Reset"
+	content := `
+	<h1>Request to Reset Your Password</h1>
+	<p>Someone requested a password reset at this email address for Splitrex Mobile.</p>
+	<p>To complete the reset password, enter the verification code below: </p>
+	<h2>` + code + `</h2>
+	<p>Code will expire in 2 minutes. If you did not request a password reset, you can safely ignore this email.</p>
+	<p>© 2023 Splitrex</p>
+	`
+	to := []string{user.Email}
+	// attachFiles := []string{"../README.md"}
+
+	err = sender.SendEmail(subject, content, to, nil, nil, nil)
+	if err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
 
 	// return the passwordResetToken
 	response.Data.EncryptedToken = encryptedToken
 	response.Data.Token = token
-	response.Data.Code = code
 
 	response.Message = types.SUCCESS
 	return c.JSON(http.StatusOK, response)

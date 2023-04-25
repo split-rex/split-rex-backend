@@ -58,7 +58,7 @@ func (con *authController) VerifyResetPassTokenController(c echo.Context) error 
 	timeRequested := time.Now()
 	timeGenerated := userToken.TokenExpiry
 	differenceInMinutes := timeRequested.Sub(timeGenerated).Minutes()
-	if differenceInMinutes > 100 {
+	if differenceInMinutes > 2 {
 		response.Message = types.ERROR_EXPIRED_CODE
 		return c.JSON(http.StatusBadRequest, response)
 	}
