@@ -11,6 +11,9 @@ type statisticController struct {
 
 type StatisticController interface {
 	OwedLentPercentage(c echo.Context) error
+	PaymentMutation(c echo.Context) error
+	SpendingBuddies(c echo.Context) error
+	ExpenseChart(c echo.Context) error
 }
 
 func NewStatisticController(db *gorm.DB) StatisticController {
