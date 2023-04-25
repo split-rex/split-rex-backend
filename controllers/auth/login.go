@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"split-rex-backend/configs/middlewares"
 	"split-rex-backend/entities"
@@ -20,6 +21,7 @@ func (con *authController) LoginController(c echo.Context) error {
 
 	loginRequest := requests.LoginRequest{}
 	if err := c.Bind(&loginRequest); err != nil {
+		fmt.Println("hi")
 		response.Message = types.ERROR_BAD_REQUEST
 		return c.JSON(http.StatusBadRequest, response)
 	}

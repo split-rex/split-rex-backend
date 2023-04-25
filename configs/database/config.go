@@ -51,6 +51,7 @@ func (database *Database) lazyInit() {
 			&entities.PaymentActivity{},
 			&entities.TransactionActivity{},
 			&entities.ReminderActivity{},
+			&entities.PasswordResetTokens{},
 		)
 
 		database.connection = db

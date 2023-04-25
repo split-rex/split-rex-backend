@@ -2,10 +2,10 @@ POST https://split-rex-backend-7v6i6rndga-et.a.run.app/register
 Content-Type: application/json
 
 {
-    "name": "samuel",
-    "email": "mencoba@gmail.com",
-    "username": "coba",
-    "password": "coba"
+    "name": "grace",
+    "email": "grace@gmail.com",
+    "username": "grace",
+    "password": "grace"
 }
 
 ###
@@ -14,8 +14,8 @@ POST http://localhost:8080/login
 Content-Type: application/json
 
 {
-    "email": "patrick@gmail.com",
-    "password": "patrick"
+    "email": "grace@gmail.com",
+    "password": "graceclaudia"
 }
 
 ###
@@ -93,4 +93,34 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZ
     "new_payment_method": "bni",
     "new_account_number": 123213,
     "new_account_name": "patrick llalala"
+}
+
+###
+
+POST http://localhost:8080/generateResetPassToken
+Content-Type: application/json
+
+{
+    "email": "grace@gmail.com"
+}
+
+###
+POST http://localhost:8080/verifyResetPassToken
+Content-Type: application/json
+
+{
+    "email": "grace@gmail.com",
+    "encrypted_token": "Yis5fl344MA1C5dCvactaRINDDyTfVjQqZcI7KM2txl1xhEMbyI=",
+    "code": "lWuOSZ"
+}
+
+###
+POST http://localhost:8080/changePassword
+Content-Type: application/json
+
+{
+    "email": "grace@gmail.com",
+    "encrypted_token": "Yis5fl344MA1C5dCvactaRINDDyTfVjQqZcI7KM2txl1xhEMbyI=",
+    "code": "lWuOSZ",
+    "new_password": "graceclaudia"
 }

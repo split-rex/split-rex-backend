@@ -12,6 +12,10 @@ import (
 func AuthRoute(e *echo.Echo) {
 	authController := controllers.NewAuthController(database.DB.GetConnection(), configs.Config.GetMetadata())
 
+	e.POST("/generateResetPassToken", authController.GenerateResetPassTokenController);
+	e.POST("/verifyResetPassToken", authController.VerifyResetPassTokenController);
+	e.POST("/changePassword", authController.ChangePasswordController);
+
 	e.POST("/login", authController.LoginController)
 	e.POST("/register", authController.RegisterController)
 
