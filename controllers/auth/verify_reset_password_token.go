@@ -59,13 +59,13 @@ func (con *authController) VerifyResetPassTokenController(c echo.Context) error 
 	timeGenerated := userToken.TokenExpiry
 	differenceInMinutes := timeRequested.Sub(timeGenerated).Minutes()
 	if differenceInMinutes > 2 {
-		response.Message = types.ERROR_EXPIRED_CODE
+		response.Message = types.ERROR_EXPIRED_OR_INVALID_CODE
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
 	// check code correct
 	if verifyTokenRequest.Code != userToken.Code {
-		response.Message = types.ERROR_INVALID_CODE
+		response.Message = types.ERROR_EXPIRED_OR_INVALID_CODE
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
@@ -102,7 +102,7 @@ func (con *authController) VerifyResetPassTokenController(c echo.Context) error 
 	}
 
 	if string(decryptedToken) != userToken.Token {
-		response.Message = types.ERROR_INVALID_TOKEN
+		response.Message = types.ERROR_EXPIRED_OR_INVALID_TOKEN
 		return c.JSON(http.StatusBadRequest, response)
 	}
 	response.Message = types.SUCCESS

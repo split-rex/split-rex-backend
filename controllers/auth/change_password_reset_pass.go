@@ -55,7 +55,7 @@ func (con *authController) ChangePasswordController(c echo.Context) error {
 	}
 	// check code correct
 	if changePasswordRequest.Code != userToken.Code {
-		response.Message = types.ERROR_INVALID_CODE
+		response.Message = types.ERROR_EXPIRED_OR_INVALID_CODE
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
@@ -92,7 +92,7 @@ func (con *authController) ChangePasswordController(c echo.Context) error {
 	}
 
 	if string(decryptedToken) != userToken.Token {
-		response.Message = types.ERROR_INVALID_TOKEN
+		response.Message = types.ERROR_EXPIRED_OR_INVALID_TOKEN
 		return c.JSON(http.StatusBadRequest, response)
 	}
 	// change the password in user db
