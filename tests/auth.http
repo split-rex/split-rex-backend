@@ -14,8 +14,8 @@ POST http://localhost:8080/login
 Content-Type: application/json
 
 {
-    "email": "13520075@std.stei.itb.ac.id",
-    "password": "samuel"
+    "email": "13520078@std.stei.itb.ac.id",
+    "password": "lol"
 }
 
 ###
@@ -101,7 +101,7 @@ POST http://localhost:8080/generateResetPassToken
 Content-Type: application/json
 
 {
-    "email": "13520075@std.stei.itb.ac.id"
+    "email": "13520078@std.stei.itb.ac.id"
 }
 
 ###
@@ -109,9 +109,9 @@ POST http://localhost:8080/verifyResetPassToken
 Content-Type: application/json
 
 {
-    "email": "13520075@std.stei.itb.ac.id",
-"encrypted_token": "Vs0TELfAeNKHzyWgfEDtEDrIEYk+hhUE8qgkjsQ6Wcf4t2BBpY4=",
-    "code": "vuWruQ"
+    "email": "13520078@std.stei.itb.ac.id",
+"encrypted_token": "j2c02Jf4XBMsYK8MujLC7I9pLxCMS7CGnOnFaPgqfYBNP60vZS4=",
+    "code": "aX57z9Xd"
 }
 
 ###
@@ -119,8 +119,8 @@ POST http://localhost:8080/changePassword
 Content-Type: application/json
 
 {
-    "email": "13520075@std.stei.itb.ac.id",
-"encrypted_token": "Vs0TELfAeNKHzyWgfEDtEDrIEYk+hhUE8qgkjsQ6Wcf4t2BBpY4=",
-    "code": "vuWruQ",
-    "new_password": "samuel"
+    "email": "13520078@std.stei.itb.ac.id",
+"encrypted_token": "j2c02Jf4XBMsYK8MujLC7I9pLxCMS7CGnOnFaPgqfYBNP60vZS4=",
+    "code": "aX57z9Xd",
+    "new_password": "lol"
 }

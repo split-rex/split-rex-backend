@@ -5,7 +5,7 @@ import (
 	"crypto/cipher"
 	"encoding/base64"
 	"net/http"
-	"os"
+	"split-rex-backend/configs"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
 	"split-rex-backend/types"
@@ -14,6 +14,7 @@ import (
 )
 
 func (con *authController) ChangePasswordController(c echo.Context) error {
+	config := configs.Config.GetMetadata()
 
 	// check db if exist
 	db := con.db
@@ -60,7 +61,7 @@ func (con *authController) ChangePasswordController(c echo.Context) error {
 	}
 
 	// check token correct
-	key := []byte(os.Getenv("RESET_PASS_KEY"))
+	key := config.ResetPasswordKey
 	cip, err := aes.NewCipher(key)
 	if err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER

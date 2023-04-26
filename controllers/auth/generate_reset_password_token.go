@@ -8,7 +8,7 @@ import (
 	"io"
 	mathRand "math/rand"
 	"net/http"
-	"os"
+	"split-rex-backend/configs"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
 	"split-rex-backend/entities/responses"
@@ -47,7 +47,7 @@ func randStringBytesMaskImprSrcUnsafe(n int) string {
 }
 
 func (con *authController) GenerateResetPassTokenController(c echo.Context) error {
-
+	config := configs.Config.GetMetadata()
 	// check to db if email exist
 	db := con.db
 	response := entities.Response[responses.GenerateResetPassTokenResponse]{}
@@ -76,7 +76,7 @@ func (con *authController) GenerateResetPassTokenController(c echo.Context) erro
 	}
 
 	// generate random for passwordToken
-	key := []byte(os.Getenv("RESET_PASS_KEY"))
+	key := config.ResetPasswordKey
 
 	// generate a new aes cipher using our 32 byte long key
 	cip, err := aes.NewCipher(key)
@@ -104,15 +104,11 @@ func (con *authController) GenerateResetPassTokenController(c echo.Context) erro
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 	token := randStringBytesMaskImprSrcUnsafe(10)
-	// encryptedToken := gcm.Seal(nonce, nonce, []byte(token), nil)
-	seal := gcm.Seal(nonce, nonce, []byte(token), nil)
-	encryptedToken := base64.StdEncoding.EncodeToString(seal)
+	encryptedToken := base64.StdEncoding.EncodeToString(gcm.Seal(nonce, nonce, []byte(token), nil))
 
 	// generate random for code
-	code := randStringBytesMaskImprSrcUnsafe(6)
-	// encryptedCode := base64.StdEncoding.EncodeToString(gcm.Seal(nonce, nonce, code, nil))
+	code := randStringBytesMaskImprSrcUnsafe(8)
 
-	// save to db raw code
 	passwordResetToken := entities.PasswordResetTokens{}
 	passwordResetToken.Email = user.Email
 	passwordResetToken.Token = token
@@ -137,32 +133,30 @@ func (con *authController) GenerateResetPassTokenController(c echo.Context) erro
 		}
 	}
 	// send to email the code
-	// emailSenderName := os.Getenv("EMAIL_SENDER_NAME")
-	// emailSenderAddress := os.Getenv("EMAIL_SENDER_ADDRESS")
-	// emailSenderPassword := os.Getenv("EMAIL_SENDER_PASSWORD")
-	// sender := NewGmailSender(emailSenderName, emailSenderAddress, emailSenderPassword)
+	emailSenderName := config.EmailSenderName
+	emailSenderAddress := config.EmailSenderAddress
+	emailSenderPassword := config.EmailSenderPassword
+	sender := NewGmailSender(emailSenderName, emailSenderAddress, emailSenderPassword)
 
-	// subject := "Password Reset"
-	// content := `
-	// <h1>Request to Reset Your Password</h1>
-	// <p>Someone requested a password reset at this email address for Splitrex Mobile.</p>
-	// <p>To complete the reset password, enter the verification code below: </p>
-	// <h2>` + code + `</h2>
-	// <p>Code will expire in 2 minutes. If you did not request a password reset, you can safely ignore this email.</p>
-	// <p>© 2023 Splitrex</p>
-	// `
-	// to := []string{user.Email}
+	subject := "Password Reset"
+	content := `x
+	<h1>Request to Reset Your Password</h1>
+	<p>Someone requested a password reset at this email address for Splitrex Mobile.</p>
+	<p>To complete the reset password, enter the verification code below: </p>
+	<h2>` + code + `</h2>
+	<p>Code will expire in 2 minutes. If you did not request a password reset, you can safely ignore this email.</p>
+	<p>© 2023 Splitrex</p>
+	`
+	to := []string{user.Email}
 
-	// err = sender.SendEmail(subject, content, to, nil, nil, nil)
-	// if err != nil {
-	// 	response.Message = types.ERROR_INTERNAL_SERVER
-	// 	return c.JSON(http.StatusInternalServerError, response)
-	// }
+	err = sender.SendEmail(subject, content, to, nil, nil, nil)
+	if err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
+	}
 
 	// return the passwordResetToken
-	response.Data.OnlyEncryptedToken = string(seal)
 	response.Data.EncryptedToken = encryptedToken
-	response.Data.Token = token
 
 	response.Message = types.SUCCESS
 	return c.JSON(http.StatusOK, response)
