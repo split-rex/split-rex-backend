@@ -59,6 +59,7 @@ func (con *authController) ChangePasswordController(c echo.Context) error {
 		response.Message = types.ERROR_EXPIRED_OR_INVALID_CODE
 		return c.JSON(http.StatusBadRequest, response)
 	}
+	
 
 	// check token correct
 	key := config.ResetPasswordKey

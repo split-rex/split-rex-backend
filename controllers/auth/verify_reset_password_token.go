@@ -3,11 +3,14 @@ package controllers
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/rand"
 	"encoding/base64"
+	"io"
 	"net/http"
 	"split-rex-backend/configs"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
+	"split-rex-backend/entities/responses"
 	"split-rex-backend/types"
 	"time"
 
@@ -19,7 +22,7 @@ func (con *authController) VerifyResetPassTokenController(c echo.Context) error 
 	config := configs.Config.GetMetadata()
 
 	db := con.db
-	response := entities.Response[string]{}
+	response := entities.Response[responses.VerifyResetPassTokenResponse]{}
 
 	verifyTokenRequest := requests.VerifyResetPassTokenRequest{}
 	if err := c.Bind(&verifyTokenRequest); err != nil {
@@ -27,7 +30,7 @@ func (con *authController) VerifyResetPassTokenController(c echo.Context) error 
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
-	if verifyTokenRequest.Code == "" || verifyTokenRequest.Email == "" || verifyTokenRequest.EncryptedToken == "" {
+	if verifyTokenRequest.Code == "" || verifyTokenRequest.Email == ""{
 		response.Message = types.ERROR_BAD_REQUEST
 		return c.JSON(http.StatusBadRequest, response)
 	}
@@ -71,42 +74,38 @@ func (con *authController) VerifyResetPassTokenController(c echo.Context) error 
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
-	// check token correct
+	// generate random for passwordToken
 	key := config.ResetPasswordKey
+
+	// generate a new aes cipher using our 32 byte long key
 	cip, err := aes.NewCipher(key)
+	// if there are any errors, handle them
 	if err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
 	gcm, err := cipher.NewGCM(cip)
-	if err != nil {
-		response.Message = types.ERROR_INTERNAL_SERVER
-		return c.JSON(http.StatusInternalServerError, response)
-	}
-	chiperText, err := base64.StdEncoding.DecodeString(verifyTokenRequest.EncryptedToken)
-	if err != nil {
-		response.Message = types.ERROR_INTERNAL_SERVER
-		return c.JSON(http.StatusInternalServerError, response)
-	}
-
-	nonceSize := gcm.NonceSize()
-	if len(chiperText) < nonceSize {
-		response.Message = types.ERROR_INTERNAL_SERVER
-		return c.JSON(http.StatusInternalServerError, response)
-	}
-
-	nonce, chiperText := chiperText[:nonceSize], chiperText[nonceSize:]
-	decryptedToken, err := gcm.Open(nil, nonce, chiperText, nil)
+	// if any error generating new GCM
+	// handle them
 	if err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
 
-	if string(decryptedToken) != userToken.Token {
-		response.Message = types.ERROR_EXPIRED_OR_INVALID_TOKEN
-		return c.JSON(http.StatusBadRequest, response)
+	// creates a new byte array the size of the nonce
+	// which must be passed to Seal
+	nonce := make([]byte, gcm.NonceSize())
+	// populates our nonce with a cryptographically secure
+	// random sequence
+	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
+		response.Message = types.ERROR_INTERNAL_SERVER
+		return c.JSON(http.StatusInternalServerError, response)
 	}
+	token := userToken.Token
+	encryptedToken := base64.StdEncoding.EncodeToString(gcm.Seal(nonce, nonce, []byte(token), nil))
+
+	response.Data.EncryptedToken = encryptedToken
 	response.Message = types.SUCCESS
 	return c.JSON(http.StatusOK, response)
 }

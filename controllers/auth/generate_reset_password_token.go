@@ -1,17 +1,11 @@
 package controllers
 
 import (
-	"crypto/aes"
-	"crypto/cipher"
-	"crypto/rand"
-	"encoding/base64"
-	"io"
 	mathRand "math/rand"
 	"net/http"
 	"split-rex-backend/configs"
 	"split-rex-backend/entities"
 	"split-rex-backend/entities/requests"
-	"split-rex-backend/entities/responses"
 	"split-rex-backend/types"
 
 	"time"
@@ -50,7 +44,7 @@ func (con *authController) GenerateResetPassTokenController(c echo.Context) erro
 	config := configs.Config.GetMetadata()
 	// check to db if email exist
 	db := con.db
-	response := entities.Response[responses.GenerateResetPassTokenResponse]{}
+	response := entities.Response[string]{}
 
 	generateTokenRequest := requests.GenerateResetPassTokenRequest{}
 	if err := c.Bind(&generateTokenRequest); err != nil {
@@ -75,37 +69,8 @@ func (con *authController) GenerateResetPassTokenController(c echo.Context) erro
 		return c.JSON(http.StatusOK, response)
 	}
 
-	// generate random for passwordToken
-	key := config.ResetPasswordKey
-
-	// generate a new aes cipher using our 32 byte long key
-	cip, err := aes.NewCipher(key)
-	// if there are any errors, handle them
-	if err != nil {
-		response.Message = types.ERROR_INTERNAL_SERVER
-		return c.JSON(http.StatusInternalServerError, response)
-	}
-
-	gcm, err := cipher.NewGCM(cip)
-	// if any error generating new GCM
-	// handle them
-	if err != nil {
-		response.Message = types.ERROR_INTERNAL_SERVER
-		return c.JSON(http.StatusInternalServerError, response)
-	}
-
-	// creates a new byte array the size of the nonce
-	// which must be passed to Seal
-	nonce := make([]byte, gcm.NonceSize())
-	// populates our nonce with a cryptographically secure
-	// random sequence
-	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
-		response.Message = types.ERROR_INTERNAL_SERVER
-		return c.JSON(http.StatusInternalServerError, response)
-	}
-	token := randStringBytesMaskImprSrcUnsafe(10)
-	encryptedToken := base64.StdEncoding.EncodeToString(gcm.Seal(nonce, nonce, []byte(token), nil))
-
+	// generate random for token
+	token := randStringBytesMaskImprSrcUnsafe(12)
 	// generate random for code
 	code := randStringBytesMaskImprSrcUnsafe(8)
 
@@ -149,14 +114,11 @@ func (con *authController) GenerateResetPassTokenController(c echo.Context) erro
 	`
 	to := []string{user.Email}
 
-	err = sender.SendEmail(subject, content, to, nil, nil, nil)
+	err := sender.SendEmail(subject, content, to, nil, nil, nil)
 	if err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
-
-	// return the passwordResetToken
-	response.Data.EncryptedToken = encryptedToken
 
 	response.Message = types.SUCCESS
 	return c.JSON(http.StatusOK, response)

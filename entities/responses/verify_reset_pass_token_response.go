@@ -1,5 +1,5 @@
 package responses
 
-type GenerateResetPassTokenResponse struct {
+type VerifyResetPassTokenResponse struct {
 	EncryptedToken     string `json:"encrypted_token"`
 }
