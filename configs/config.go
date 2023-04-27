@@ -14,6 +14,10 @@ type Metadata struct {
 	LoginExpirationDuration time.Duration
 	JWTSigningMethod        jwt.SigningMethod
 	JWTSignatureKey         []byte
+	ResetPasswordKey        []byte
+	EmailSenderName         string
+	EmailSenderAddress      string
+	EmailSenderPassword     string
 }
 
 type AuthConfig struct {
@@ -36,6 +40,10 @@ func (authConfig *AuthConfig) lazyInit() {
 		authConfig.metadata.LoginExpirationDuration = loginExpirationDuration
 		authConfig.metadata.JWTSigningMethod = jwtSigningMethod
 		authConfig.metadata.JWTSignatureKey = jwtSignatureKey
+		authConfig.metadata.ResetPasswordKey = []byte(os.Getenv("RESET_PASS_KEY"))
+		authConfig.metadata.EmailSenderName = os.Getenv("EMAIL_SENDER_NAME")
+		authConfig.metadata.EmailSenderAddress = os.Getenv("EMAIL_SENDER_ADDRESS")
+		authConfig.metadata.EmailSenderPassword = os.Getenv("EMAIL_SENDER_PASSWORD")
 	})
 }
 

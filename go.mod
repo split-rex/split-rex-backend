@@ -6,6 +6,7 @@ require (
 	github.com/bxcodec/faker/v4 v4.0.0-beta.3
 	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/joho/godotenv v1.5.1
+	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/labstack/echo/v4 v4.10.0
 	github.com/stretchr/testify v1.8.1
 	gorm.io/driver/postgres v1.4.7

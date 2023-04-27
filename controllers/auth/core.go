@@ -21,6 +21,9 @@ type AuthController interface {
 	AddPaymentInfo(c echo.Context) error
 	EditPaymentInfo(c echo.Context) error
 	DeletePaymentInfo(c echo.Context) error
+	GenerateResetPassTokenController(c echo.Context) error
+	ChangePasswordController(c echo.Context) error
+	VerifyResetPassTokenController(c echo.Context) error
 }
 
 func NewAuthController(db *gorm.DB, mt configs.Metadata) AuthController {

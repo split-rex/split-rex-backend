@@ -1,6 +1,6 @@
 POST https://split-rex-backend-7v6i6rndga-et.a.run.app/makeFriendRequest
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2NzgwMDMxODMsImlkIjoiNjI1MWFjODUtZTQzZC00Yjg4LTg3NzktNTg4MDk5ZGY1MDA4In0.5Aq8jPjBjDvd0B1mP6q883OqCLUX16eA_JiNFHaLdF0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODI0MzM1OTQsImlkIjoiOGE4YWM2OTQtYjg1ZC00M2NhLWI3YzktMzhmNzk4NTJlYjdkIn0.Gdx76TzUi4cvGfWx8cw-HijxkcTsCoLyHLnaabCWNgI
 
 {
     "friend_id": "183e04d7-c653-4c7d-aa66-3d751d4d7358"
