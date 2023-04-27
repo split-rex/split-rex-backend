@@ -5,8 +5,9 @@ import (
 )
 
 type UpdatePaymentRequest struct {
-	GroupID     uuid.UUID        `json:"group_id" form:"group_id" query:"group_id"`
-	ListPayment []PaymentRequest `json:"list_payment" form:"list_payment" query:"list_payment"`
+	GroupID      uuid.UUID        `json:"group_id" form:"group_id" query:"group_id"`
+	OwnerExpense float64          `json:"owner_expense" form:"owner_expense" query:"owner_expense"`
+	ListPayment  []PaymentRequest `json:"list_payment" form:"list_payment" query:"list_payment"`
 }
 
 type PaymentRequest struct {

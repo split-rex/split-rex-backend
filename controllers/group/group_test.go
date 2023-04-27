@@ -73,9 +73,7 @@ func TestUserCreateGroup(t *testing.T) {
 		t.Error(err.Error())
 	}
 
-	if err := db.Where(&entities.Group{
-		GroupID: groupID,
-	}).Delete(&entities.Group{}).Error; err != nil {
+	if err := db.Where(&entities.Group{GroupID: groupID}).Delete(&entities.Group{}).Error; err != nil {
 		t.Error(err.Error())
 	}
 }
@@ -123,8 +121,6 @@ func TestEditGroupInfo(t *testing.T) {
 	}
 
 	assert.Equal(t, request.Name, groupDb.Name)
-	// assert.Equal(t, request.StartDate, groupDb.StartDate)
-	// assert.Equal(t, request.EndDate, groupDb.EndDate)
 }
 
 func TestAddNewMemberToGroup(t *testing.T) {
