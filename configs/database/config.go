@@ -51,6 +51,7 @@ func (database *Database) lazyInit() {
 			&entities.PaymentActivity{},
 			&entities.TransactionActivity{},
 			&entities.ReminderActivity{},
+			&entities.Expense{},
 		)
 
 		database.connection = db
@@ -90,6 +91,7 @@ func (databaseTesting *DatabaseTesting) lazyInit() {
 			&entities.PaymentActivity{},
 			&entities.TransactionActivity{},
 			&entities.ReminderActivity{},
+			&entities.Expense{},
 		)
 
 		databaseTesting.connection = db
