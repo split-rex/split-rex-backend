@@ -28,7 +28,7 @@ func CreateTestUser() error {
 	db := database.DBTesting.GetConnection()
 
 	userFac := factories.UserFactory{}
-	userFac.UserB()
+	userFac.InitAuth()
 	user := entities.User{
 		ID:       uuid.New(),
 		Name:     userFac.Name,
