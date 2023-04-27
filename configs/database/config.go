@@ -92,6 +92,7 @@ func (databaseTesting *DatabaseTesting) lazyInit() {
 			&entities.PaymentActivity{},
 			&entities.TransactionActivity{},
 			&entities.ReminderActivity{},
+			&entities.PasswordResetTokens{},
 			&entities.Expense{},
 		)
 
