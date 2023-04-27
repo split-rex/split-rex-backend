@@ -21,7 +21,7 @@ type UserFactory struct {
 // init -> random + going to be deleted
 func (uf *UserFactory) Init(id uuid.UUID) {
 	uf.ID = id
-	
+
 	if uf.Name == "" {
 		uf.Name = faker.Name()
 	}
@@ -39,9 +39,9 @@ func (uf *UserFactory) Init(id uuid.UUID) {
 	}
 }
 
-// userAuth (is on DB, not going to be deleted)
+// userAuth (is on DB, not going to be deleted), this user is for updating endpoint
 func (uf *UserFactory) InitAuth() {
-	uf.ID = uuid.MustParse("82405519-d6ca-45ce-b7d6-eeba1a66df59")
+	uf.ID = uuid.MustParse("24ba7892-ea12-4d20-92ca-02e016ee711a")
 
 	if uf.Name == "" {
 		uf.Name = "auth_testing"
@@ -62,7 +62,7 @@ func (uf *UserFactory) InitAuth() {
 
 // userA (is on DB, not going to be deleted)
 func (uf *UserFactory) UserA() {
-	id, _ := uuid.Parse("cf734de2-2952-4766-88f9-bfae95e1c2f0")
+	id, _ := uuid.Parse("9368048d-7e77-4fc1-b81e-a5abfef844e1")
 	uf.ID = id
 	uf.Name = "userA"
 	uf.Email = "userA@gmail.com"
@@ -72,7 +72,7 @@ func (uf *UserFactory) UserA() {
 
 // userB (is on DB, not going to be deleted)
 func (uf *UserFactory) UserB() {
-	id, _ := uuid.Parse("06c2e522-30e9-4171-8efb-9d27b7c4bee9")
+	id, _ := uuid.Parse("3af1e0b7-2a57-4834-b8ba-a7d5f3f5da8b")
 	uf.ID = id
 	uf.Name = "userB"
 	uf.Email = "userB@gmail.com"
@@ -82,7 +82,7 @@ func (uf *UserFactory) UserB() {
 
 // userC (is on DB, not going to be deleted)
 func (uf *UserFactory) UserC() {
-	id, _ := uuid.Parse("acbe5a63-1390-41e1-b463-7c9b2b2a0f46")
+	id, _ := uuid.Parse("af902382-60d8-4dc6-bd76-dc3f1f061e7a")
 	uf.ID = id
 	uf.Name = "userC"
 	uf.Email = "userC@gmail.com"
@@ -92,7 +92,7 @@ func (uf *UserFactory) UserC() {
 
 // userD (is on DB, not going to be deleted)
 func (uf *UserFactory) UserD() {
-	id, _ := uuid.Parse("cf4dda6a-a3b6-47c8-b7a9-035e43b4967a")
+	id, _ := uuid.Parse("e7d56a3d-930f-45aa-9fcf-a154f2e2db8c")
 	uf.ID = id
 	uf.Name = "userD"
 	uf.Email = "userD@gmail.com"

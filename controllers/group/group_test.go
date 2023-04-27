@@ -24,7 +24,7 @@ var (
 )
 
 func TestUserCreateGroup(t *testing.T) {
-	// db := database.DBTesting.GetConnection()
+	db := database.DBTesting.GetConnection()
 
 	e := echo.New()
 
@@ -60,7 +60,7 @@ func TestUserCreateGroup(t *testing.T) {
 
 	group := responses.TestResponse[string]{}
 	if assert.NoError(t, testGroupController.UserCreateGroup(c)) {
-		// assert.Equal(t, http.StatusCreated, rec.Code)
+		assert.Equal(t, http.StatusCreated, rec.Code)
 
 		if err := json.Unmarshal(rec.Body.Bytes(), &group); err != nil {
 			t.Error(err.Error())
@@ -68,14 +68,14 @@ func TestUserCreateGroup(t *testing.T) {
 	}
 
 	// delete created group
-	// groupID, err := uuid.Parse(group.Data)
-	// if err != nil {
-	// 	t.Error(err.Error())
-	// }
+	groupID, err := uuid.Parse(group.Data)
+	if err != nil {
+		t.Error(err.Error())
+	}
 
-	// if err := db.Where(&entities.Group{GroupID: groupID}).Delete(&entities.Group{}).Error; err != nil {
-	// 	t.Error(err.Error())
-	// }
+	if err := db.Where(&entities.Group{GroupID: groupID}).Delete(&entities.Group{}).Error; err != nil {
+		t.Error(err.Error())
+	}
 }
 
 func TestEditGroupInfo(t *testing.T) {
@@ -120,9 +120,7 @@ func TestEditGroupInfo(t *testing.T) {
 		t.Error(err.Error())
 	}
 
-	// assert.Equal(t, request.Name, groupDb.Name)
-	// assert.Equal(t, request.StartDate, groupDb.StartDate)
-	// assert.Equal(t, request.EndDate, groupDb.EndDate)
+	assert.Equal(t, request.Name, groupDb.Name)
 }
 
 func TestAddNewMemberToGroup(t *testing.T) {
