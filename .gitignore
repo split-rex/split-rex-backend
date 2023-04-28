@@ -4,6 +4,4 @@
 /.vscode
 /builds
 __debug_bin
-# ./dockerfile
-# ./docker-compose.yaml
 main

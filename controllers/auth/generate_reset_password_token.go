@@ -104,10 +104,9 @@ func (con *authController) GenerateResetPassTokenController(c echo.Context) erro
 	sender := NewGmailSender(emailSenderName, emailSenderAddress, emailSenderPassword)
 
 	subject := "Password Reset"
-	content := `x
+	content := `
 	<h1>Request to Reset Your Password</h1>
-	<p>Someone requested a password reset at this email address for Splitrex Mobile.</p>
-	<p>To complete the reset password, enter the verification code below: </p>
+	<p>Someone requested a password reset at this email address for Split-rex Mobile. To complete the reset password, enter the verification code below: </p>
 	<h2>` + code + `</h2>
 	<p>Code will expire in 2 minutes. If you did not request a password reset, you can safely ignore this email.</p>
 	<p>© 2023 Splitrex</p>
