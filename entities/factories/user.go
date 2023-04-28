@@ -8,14 +8,15 @@ import (
 )
 
 type UserFactory struct {
-	ID          uuid.UUID
-	Name        string
-	Email       string
-	Username    string
-	Color       uint
-	Password    types.EncryptedString
-	Groups      types.ArrayOfUUID
-	PaymentInfo types.PaymentInfo
+	ID            uuid.UUID
+	Name          string
+	Email         string
+	Username      string
+	Color         uint
+	Password      types.EncryptedString
+	Groups        types.ArrayOfUUID
+	PaymentInfo   types.PaymentInfo
+	Notifications types.ArrayOfUUID
 }
 
 // init -> random + going to be deleted

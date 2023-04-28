@@ -1,0 +1,37 @@
+GET http://localhost:8080/getNotif
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODI3MzMzMjQsImlkIjoiZmU4YzhiMTktNmU1NC00MjBiLWI5NTItZjRlZDMxOWFmZmE2In0.LBKaF7cqLnBj_gGHZ-DJfoPNzH6wTLQAIJYDh6lWjh0
+
+###
+POST http://localhost:8080/insertNotif
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODI3MzU5ODcsImlkIjoiNjQzOTBiNzktNGRiMC00NjExLTk2OTQtODAwYmNlMjkwZmE3In0.Y20_MIVbUOtZNPkerFvRf4AQWe24jpBMHeViQAayoMg
+
+
+{
+    "user_id": "fe8c8b19-6e54-420b-b952-f4ed319affa6",
+    "group_id": "9567bce4-730a-411d-9ffb-f49de0d54719",
+    "group_name": "my 1st group",
+	"amount": 25000.0,
+	"name": "ubay",
+    "date": "2023-04-30T19:19:20.968831+07:00"
+}
+
+###
+POST http://localhost:8080/insertNotif
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODI3MzMzMjQsImlkIjoiZmU4YzhiMTktNmU1NC00MjBiLWI5NTItZjRlZDMxOWFmZmE2In0.LBKaF7cqLnBj_gGHZ-DJfoPNzH6wTLQAIJYDh6lWjh0
+
+{
+    "user_id": "9481f6fc-5fae-4d16-bab4-241beadf1a65",
+    "group_id": "70bf28c2-716b-45f2-a066-0bd334520073",
+    "group_name": "azka semua",
+	"amount": 1288270.0,
+	"name": "Sarah Azka",
+    "date": "2023-04-30T19:19:20.968831+07:00"
+}
+
+###
+POST http://localhost:8080/deleteNotif
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzcGxpdC1yZXgiLCJleHAiOjE2ODI3MzMzMjQsImlkIjoiZmU4YzhiMTktNmU1NC00MjBiLWI5NTItZjRlZDMxOWFmZmE2In0.LBKaF7cqLnBj_gGHZ-DJfoPNzH6wTLQAIJYDh6lWjh0

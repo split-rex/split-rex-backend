@@ -53,6 +53,7 @@ func (database *Database) lazyInit() {
 			&entities.ReminderActivity{},
 			&entities.PasswordResetTokens{},
 			&entities.Expense{},
+			&entities.Notification{},
 		)
 
 		database.connection = db
@@ -94,6 +95,7 @@ func (databaseTesting *DatabaseTesting) lazyInit() {
 			&entities.ReminderActivity{},
 			&entities.PasswordResetTokens{},
 			&entities.Expense{},
+			&entities.Notification{},
 		)
 
 		databaseTesting.connection = db
