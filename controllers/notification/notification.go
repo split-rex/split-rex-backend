@@ -40,15 +40,17 @@ func (con *notificationController) InsertNotif(c echo.Context) error {
 
 	// insert notification id to user table with id = request.user_id
 	user := entities.User{}
-	if err := db.Find(&user, request.UserID).Error; err != nil {
+	condition := entities.User{ID: request.UserID}
+	if err := db.Where(&condition).Find(&user).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
-	if user.Notifications == nil {
-		user.Notifications = []uuid.UUID{}
+	newNotif := user.Notifications
+	if newNotif == nil {
+		newNotif = []uuid.UUID{}
 	}
-	user.Notifications = append(user.Notifications, notif.NotificationID)
-	if err := db.Save(&user).Error; err != nil {
+	newNotif = append(newNotif, notif.NotificationID)
+	if err := db.Model(&user).Updates(entities.User{Notifications: newNotif}).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
