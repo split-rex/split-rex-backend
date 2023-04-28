@@ -113,8 +113,7 @@ func (con *notificationController) DeleteNotif(c echo.Context) error {
 	}
 
 	// delete all notification id from user table
-	user.Notifications = []uuid.UUID{}
-	if err := db.Save(&user).Error; err != nil {
+	if err := db.Model(&user).Updates(entities.User{Notifications: []uuid.UUID{}}).Error; err != nil {
 		response.Message = types.ERROR_INTERNAL_SERVER
 		return c.JSON(http.StatusInternalServerError, response)
 	}
