@@ -68,6 +68,8 @@ func (con *statisticController) OwedLentPercentage(c echo.Context) error {
 		response.Data.OwedPercentage = owedPercentage
 		response.Data.LentPercentage = lentPercentage
 	}
+	response.Data.TotalLent = totalLentGlobal
+	response.Data.TotalOwed = totalOwedGlobal
 
 	return c.JSON(http.StatusOK, response)
 }

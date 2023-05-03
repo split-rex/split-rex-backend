@@ -1,8 +1,10 @@
 package responses
 
 type PercentageResponse struct {
-	OwedPercentage int `json:"owed_percentage"`
-	LentPercentage int `json:"lent_percentage"`
+	TotalOwed      float64 `json:"total_owed"`
+	TotalLent      float64 `json:"total_lent"`
+	OwedPercentage int     `json:"owed_percentage"`
+	LentPercentage int     `json:"lent_percentage"`
 }
 
 type MutationResponse struct {
