@@ -93,7 +93,13 @@ func (con *groupController) AddGroupMember(c echo.Context) error {
 		user := entities.User{}
 		condition := entities.User{ID: member.ID}
 
-		if err := tx.Model(&user).Where(&condition).Update("groups", append(user.Groups, request.Group_id)).Error; err != nil {
+		if err := db.Find(&user, member.ID).Error; err != nil {
+			tx.Rollback()
+			response.Message = types.ERROR_BAD_REQUEST
+			return c.JSON(http.StatusBadRequest, response)
+		}	
+
+		if err := tx.Model(&entities.User{}).Where(&condition).Update("groups", append(user.Groups, request.Group_id)).Error; err != nil {
 			tx.Rollback()
 			response.Message = err.Error()
 			return c.JSON(http.StatusInternalServerError, response)
